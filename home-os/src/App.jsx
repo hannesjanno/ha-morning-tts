@@ -8,12 +8,13 @@ const floor2Rooms = [
   { name: 'Vannituba', area: '5,0 m²' },
 ];
 
-function Room({ className = '', name, area, note }) {
+function Room({ className = '', name, area, note, children }) {
   return (
     <button className={`plan-room ${className}`}>
       <span className="plan-room-name">{name}</span>
       {area && <span className="plan-room-area">{area}</span>}
       {note && <span className="plan-room-note">{note}</span>}
+      {children}
     </button>
   );
 }
@@ -22,18 +23,23 @@ function GroundFloor() {
   return (
     <div className="apartment-wrap">
       <div className="apartment-plan ground-floor" aria-label="Korter 1 esimese korruse plaan">
-        <Room className="utility" name="Abiruum" area="4,4 m²" />
-        <Room className="hall" name="Esik" area="4,4 m²" />
-        <Room className="wc" name="WC" area="2,0 m²" />
-        <Room className="wash" name="Pesuruum" area="10,4 m²" />
-        <Room className="sauna" name="Saun" area="3,6 m²" />
-        <Room className="living" name="Köök · Elutuba" area="45,3 m²" note="Terrassile" />
+        <Room className="kitchen" name="Köök" note="Köök + elutuba kokku 45,3 m²" />
+        <Room className="living" name="Elutuba" note="Terrassile" />
+
         <div className="stairs" aria-label="Trepp teisele korrusele">
           <span>↑</span><small>2. korrus</small>
         </div>
+
+        <Room className="hall" name="Esik" area="4,4 m²" />
+        <Room className="utility" name="Abiruum" area="4,4 m²" />
+        <Room className="wc" name="WC" area="2,0 m²" />
+        <Room className="wash" name="Pesuruum" area="10,4 m²">
+          <span className="sauna-inside"><b>Saun</b><small>3,6 m²</small></span>
+        </Room>
+
         <div className="terrace">TERRASS</div>
       </div>
-      <p className="plan-caption">Korter 1 · arhitektuurijoonise AR-2 järgi</p>
+      <p className="plan-caption">Korter 1 · paigutus täpsustatud tegeliku kodu järgi</p>
     </div>
   );
 }
