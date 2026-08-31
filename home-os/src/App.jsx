@@ -23,30 +23,23 @@ const floors = {
       { x1:350, y1:0, x2:424, y2:0 },
       { x1:790.31, y1:205, x2:790.31, y2:273 },
       { x1:790.31, y1:378, x2:790.31, y2:444 },
-      // Elutoa suurem aken terrassi poole.
-      { x1:188, y1:1049.9, x2:410, y2:1049.9 },
+      { x1:188, y1:1049.9, x2:400, y2:1049.9 },
     ],
     doors: [
-      // Esiku välisuks.
       { x:480.8, y:42, length:86, orientation:'v', swing:'left' },
-      // Abiruumi uks.
       { x:480.8, y:188, length:72, orientation:'v', swing:'right' },
-      // WC uks.
       { x:480.8, y:390, length:72, orientation:'v', swing:'left' },
-      // Pesuruumi siseuks.
       { x:480.8, y:598, length:98, orientation:'v', swing:'left' },
-      // Sauna uks.
       { x:640, y:530.64, length:72, orientation:'h', swing:'down' },
-      // Elutoa uks terrassile, alumises vasakus välisseinas.
       { x:45, y:1049.9, length:105, orientation:'h', swing:'down' },
-      // Pesuruumi uks terrassile.
+      { x:405, y:1049.9, length:75, orientation:'h', swing:'down' },
       { x:620, y:892.73, length:95, orientation:'h', swing:'down' },
     ],
     stairs: {
       type:'u',
-      x:175,
+      x:5,
       y:405,
-      w:285,
+      w:285.25,
       h:245,
       label:'Trepp ↑',
     },
@@ -59,13 +52,12 @@ const floors = {
       label:[395,1121],
       text:'TERRASS',
     },
-    // Avatud varjualune enne välisust: katus on olemas, külgseinu ei ole.
     canopy: {
       x1:480.8,
-      x2:790.31,
+      x2:720,
       yTop:-82,
       yBottom:157.47,
-      label:[635,78],
+      label:[600,78],
       text:'VARJUALUNE',
     },
   },
