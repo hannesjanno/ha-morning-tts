@@ -31,7 +31,7 @@ const floors = {
       { x:480.8, y:390, length:72, orientation:'v', swing:'left', hinge:'start' },
       { x:480.8, y:598, length:98, orientation:'v', swing:'left', hinge:'end' },
       { x:640, y:530.64, length:72, orientation:'h', swing:'down', hinge:'end' },
-      { x:45, y:1049.9, length:105, orientation:'h', swing:'up', hinge:'start' },
+      { x:90, y:1049.9, length:105, orientation:'h', swing:'up', hinge:'start' },
       { x:480.8, y:930, length:95, orientation:'v', swing:'left', hinge:'start' },
       { x:620, y:892.73, length:95, orientation:'h', swing:'up', hinge:'end' },
     ],
