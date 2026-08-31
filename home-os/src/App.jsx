@@ -36,13 +36,14 @@ const floors = {
       { x:620, y:892.73, length:95, orientation:'h', swing:'up', hinge:'end' },
     ],
     stairs: { type:'u', x:5, y:405, w:285.25, h:245, label:'Trepp ↑' },
+    fireplace:{ x:330, y:620, w:105, h:120, label:'KAMIN' },
     terrace: {
-      points:'0,1070 480.8,1070 480.8,892.73 900,892.73 900,1162 0,1162',
+      points:'0,1070 480.8,1070 480.8,892.73 980,892.73 980,1162 0,1162',
       segments:[
-        { x:0, y:1070, w:900, h:92, slats:'v' },
-        { x:480.8, y:892.73, w:419.2, h:177.27, slats:'h' },
+        { x:0, y:1070, w:980, h:92, slats:'v' },
+        { x:480.8, y:892.73, w:499.2, h:177.27, slats:'h' },
       ],
-      label:[450,1121], text:'TERRASS',
+      label:[490,1121], text:'TERRASS',
     },
     canopy: {
       x1:480.8, x2:790.31, yTop:0, yBottom:157.47,
@@ -57,9 +58,12 @@ const floors = {
       text:'PARKLA',
       vehicleGate:{ x1:150, x2:870, y:-300, direction:'right' },
       pedestrianGate:{ x1:-55, x2:95, y:-300, hinge:'start', swing:'down' },
+      gardenGate:{ x1:790.31, x2:900, y:0, hinge:'end', swing:'up', label:'AIAVÄRAV' },
       tesla:{ x:315, y:-255, w:330, h:150, label:'TESLA' },
       wallbox:{ x:452, y:0, label:'WALLBOX' },
       paving:{ x:900, y1:0, y2:892.73, label:'SILLUTUSKIVI' },
+      heatPump:{ x:815, y:165, w:48, h:86, label:'DAIKIN' },
+      flowerBed:{ x:900, y:325.28, w:80, h:567.45, label:'PEENAR' },
       wardrobe:{ x:290.25, y:92, w:52, h:177, label:'GARDEROOB' },
     },
   },
@@ -215,13 +219,27 @@ function CanopyMark({ item }) {
   );
 }
 
+function FireplaceMark({ item }) {
+  if (!item) return null;
+  return (
+    <g className="fireplace-mark" aria-label="Kamin">
+      <rect x={item.x} y={item.y} width={item.w} height={item.h} rx="4" fill="rgba(255,255,255,.035)" stroke="rgba(226,234,242,.62)" strokeWidth="2.5" vectorEffect="non-scaling-stroke" />
+      <path d={`M ${item.x + item.w/2} ${item.y + item.h - 22} C ${item.x + item.w*0.34} ${item.y + item.h*0.62}, ${item.x + item.w*0.67} ${item.y + item.h*0.52}, ${item.x + item.w/2} ${item.y + 24} C ${item.x + item.w*0.72} ${item.y + item.h*0.55}, ${item.x + item.w*0.72} ${item.y + item.h*0.72}, ${item.x + item.w/2} ${item.y + item.h - 22}`} fill="none" stroke="rgba(226,234,242,.42)" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+      <text x={item.x + item.w/2} y={item.y + item.h + 20} textAnchor="middle" fill="#718092" fontSize="11" letterSpacing="1.5">{item.label}</text>
+    </g>
+  );
+}
+
 function ParkingMark({ item }) {
   if (!item) return null;
   const gate = item.vehicleGate;
   const walk = item.pedestrianGate;
+  const gardenGate = item.gardenGate;
   const tesla = item.tesla;
   const wallbox = item.wallbox;
   const paving = item.paving;
+  const heatPump = item.heatPump;
+  const flowerBed = item.flowerBed;
   const wardrobe = item.wardrobe;
   return (
     <g className="parking-mark" aria-label="Parkla">
@@ -243,6 +261,13 @@ function ParkingMark({ item }) {
         <text x={(walk.x1 + walk.x2) / 2} y={walk.y + 82} textAnchor="middle" fill="#718092" fontSize="12" letterSpacing="2">JALGVÄRAV</text>
       </g>
 
+      {gardenGate && <g aria-label="Aiavärav">
+        <line x1={gardenGate.x1} y1={gardenGate.y} x2={gardenGate.x2} y2={gardenGate.y} stroke="rgba(226,234,242,.78)" strokeWidth="6" vectorEffect="non-scaling-stroke" />
+        <line x1={gardenGate.x2} y1={gardenGate.y} x2={gardenGate.x2} y2={gardenGate.y - (gardenGate.x2 - gardenGate.x1)} stroke="rgba(226,234,242,.7)" strokeWidth="3" vectorEffect="non-scaling-stroke" />
+        <path d={`M ${gardenGate.x1} ${gardenGate.y} A ${gardenGate.x2 - gardenGate.x1} ${gardenGate.x2 - gardenGate.x1} 0 0 0 ${gardenGate.x2} ${gardenGate.y - (gardenGate.x2 - gardenGate.x1)}`} fill="none" stroke="rgba(226,234,242,.55)" strokeWidth="2" strokeDasharray="6 5" vectorEffect="non-scaling-stroke" />
+        <text x={(gardenGate.x1 + gardenGate.x2)/2} y={gardenGate.y - 20} textAnchor="middle" fill="#718092" fontSize="11" letterSpacing="1.5">{gardenGate.label} ↑</text>
+      </g>}
+
       <g aria-label="Tesla parkimiskoht">
         <rect x={tesla.x} y={tesla.y} width={tesla.w} height={tesla.h} rx="18" fill="rgba(255,255,255,.018)" stroke="rgba(226,234,242,.24)" strokeWidth="2" strokeDasharray="10 8" vectorEffect="non-scaling-stroke" />
         <text x={tesla.x + tesla.w / 2} y={tesla.y + tesla.h / 2 + 6} textAnchor="middle" fill="#718092" fontSize="18" letterSpacing="4">{tesla.label}</text>
@@ -258,6 +283,17 @@ function ParkingMark({ item }) {
         <line x1={paving.x} y1={paving.y1} x2={paving.x} y2={paving.y2} stroke="rgba(226,234,242,.48)" strokeWidth="3" strokeDasharray="8 7" strokeLinecap="butt" vectorEffect="non-scaling-stroke" />
         <text x={paving.x + 18} y={(paving.y1 + paving.y2) / 2} transform={`rotate(90 ${paving.x + 18} ${(paving.y1 + paving.y2) / 2})`} textAnchor="middle" fill="#718092" fontSize="11" letterSpacing="2">{paving.label}</text>
       </g>
+
+      {heatPump && <g aria-label="Daikin soojuspumba välisosa">
+        <rect x={heatPump.x} y={heatPump.y} width={heatPump.w} height={heatPump.h} rx="4" fill="rgba(255,255,255,.03)" stroke="rgba(226,234,242,.62)" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+        <circle cx={heatPump.x + heatPump.w/2} cy={heatPump.y + heatPump.h/2} r={Math.min(heatPump.w,heatPump.h)*0.26} fill="none" stroke="rgba(226,234,242,.3)" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
+        <text x={heatPump.x + heatPump.w/2} y={heatPump.y - 10} textAnchor="middle" fill="#718092" fontSize="10" letterSpacing="1">{heatPump.label}</text>
+      </g>}
+
+      {flowerBed && <g aria-label="Peenar">
+        <rect x={flowerBed.x} y={flowerBed.y} width={flowerBed.w} height={flowerBed.h} rx="4" fill="rgba(255,255,255,.018)" stroke="rgba(226,234,242,.38)" strokeWidth="2" strokeDasharray="7 6" vectorEffect="non-scaling-stroke" />
+        <text x={flowerBed.x + flowerBed.w/2} y={flowerBed.y + flowerBed.h/2} transform={`rotate(90 ${flowerBed.x + flowerBed.w/2} ${flowerBed.y + flowerBed.h/2})`} textAnchor="middle" fill="#718092" fontSize="11" letterSpacing="2">{flowerBed.label}</text>
+      </g>}
 
       <g aria-label="Garderoobikapp">
         <rect x={wardrobe.x} y={wardrobe.y} width={wardrobe.w} height={wardrobe.h} rx="3" fill="rgba(255,255,255,.035)" stroke="rgba(226,234,242,.55)" strokeWidth="2" vectorEffect="non-scaling-stroke" />
@@ -313,6 +349,7 @@ function FloorSvg({ floor, selected, onSelect }) {
           {data.doors.map((item, index) => <DoorMark key={`door-${index}`} item={item} />)}
         </g>
         <StairsMark item={data.stairs} />
+        <FireplaceMark item={data.fireplace} />
       </svg>
       <div className="scan-meta"><span>Parandatud 2D plaan · {floor}. korrus</span><strong>{data.area}</strong></div>
     </div>
