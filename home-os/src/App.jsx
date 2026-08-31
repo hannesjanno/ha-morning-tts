@@ -13,35 +13,34 @@ const floors = {
       { id:'wash', name:'Pesuruum', area:'10,5 m²', points:'480.8,536.22 480.8,700 480.8,892.73 790.31,892.73 790.31,666.19 790.31,530.64 599.74,530.64 599.74,536.22 480.8,536.22', label:[636,710] },
     ],
     openPassages: [
-      // Köök, esik ja elutuba on selles servas avatud ruum.
+      // Köök, esik ja elutuba on siin avatud; soovitud köögi sein lisatakse eraldi allpool.
       { x1:0, y1:269.1, x2:480.8, y2:269.1 },
     ],
+    walls: [
+      // Köögi alumine sisesein kasutaja musta märkuse järgi.
+      { x1:170, y1:269.1, x2:290.25, y2:269.1 },
+    ],
     windows: [
-      // Köögi aken.
       { x1:64, y1:0, x2:184, y2:0 },
-      // Esiku aken.
       { x1:350, y1:0, x2:424, y2:0 },
-      // Abiruumi aken paremas välisseinas.
       { x1:790.31, y1:205, x2:790.31, y2:273 },
-      // Sauna aken paremas välisseinas.
       { x1:790.31, y1:378, x2:790.31, y2:444 },
-      // Elutoa alumise seina olemasolev väiksem aken.
       { x1:62, y1:1049.9, x2:168, y2:1049.9 },
-      // Elutoa alumise seina suurem aken kasutaja märkuse järgi.
       { x1:188, y1:1049.9, x2:410, y2:1049.9 },
-      // Pesuruumi alumine aken.
       { x1:650, y1:892.73, x2:735, y2:892.73 },
     ],
     doors: [
-      // Esiku välisuks paremas välisseinas.
+      // Esiku välisuks.
       { x:480.8, y:42, length:86, orientation:'v', swing:'left' },
-      // WC uks eluruumi poolt.
+      // Abiruumi uks esiku/eluala poolt.
+      { x:480.8, y:188, length:72, orientation:'v', swing:'right' },
+      // WC uks.
       { x:480.8, y:390, length:72, orientation:'v', swing:'left' },
-      // Pesuruumi uks eluruumi poolt.
+      // Pesuruumi uks.
       { x:480.8, y:598, length:98, orientation:'v', swing:'left' },
-      // Sauna uks avaneb pesuruumi poole.
+      // Sauna uks.
       { x:640, y:530.64, length:72, orientation:'h', swing:'down' },
-      // Elutoa uks terrassile paremas alumises välisseinas.
+      // Elutoa terrassiuks.
       { x:480.8, y:940, length:86, orientation:'v', swing:'left' },
     ],
     stairs: { x:105, y:382, w:300, h:132, label:'Trepp ↑' },
@@ -51,33 +50,29 @@ const floors = {
     rooms: [
       { id:'room1', name:'Tuba 1', area:'17,3 m²', points:'431.72,659.18 431.72,892.94 481.4,892.94 790.31,892.94 790.31,386.14 431.72,386.14 431.72,659.18', label:[611,635] },
       { id:'bath', name:'Vannituba', area:'7,6 m²', points:'431.72,386.14 790.31,386.14 790.31,157.69 431.72,157.69 431.72,283.08 431.72,386.14', label:[611,267] },
-      { id:'stair', name:'Trepp', area:'1,3 m²', points:'0,595.89 0,659.18 246.48,659.18 246.48,595.89 0,595.89', label:[123,623] },
       { id:'room3', name:'Tuba 3', area:'14,5 m²', points:'431.72,157.69 465.67,157.69 465.67,0 0,0 0,381.56 256.23,381.56 256.23,283.08 431.72,283.08 431.72,157.69', label:[216,137] },
       { id:'room2', name:'Tuba 2', area:'16,8 m²', points:'246.48,659.18 0,659.18 0,1050.69 481.4,1050.69 481.4,892.94 431.72,892.94 431.72,659.18 246.48,659.18', label:[216,850] },
-      { id:'landing', name:'Trepihall', area:'11,4 m²', points:'431.72,659.18 431.72,386.14 431.72,283.08 256.23,283.08 256.23,381.56 0,381.56 0,595.89 246.48,595.89 246.48,659.18 431.72,659.18', label:[216,484] },
+      // Endine eraldi trepikast on nüüd trepihalli osa.
+      { id:'landing', name:'Trepihall', area:'11,4 m²', points:'431.72,659.18 431.72,386.14 431.72,283.08 256.23,283.08 256.23,381.56 0,381.56 0,659.18 431.72,659.18', label:[216,420] },
     ],
     openPassages: [],
+    walls: [],
     windows: [
-      // Tuba 3: kaks akent kõrvuti ülemises välisseinas.
       { x1:78, y1:0, x2:190, y2:0 },
       { x1:205, y1:0, x2:317, y2:0 },
-      // Tuba 1: kaks akent kõrvuti paremas välisseinas.
       { x1:790.31, y1:455, x2:790.31, y2:565 },
       { x1:790.31, y1:578, x2:790.31, y2:688 },
-      // Tuba 2: kaks akent kõrvuti alumises välisseinas.
       { x1:145, y1:1050.69, x2:245, y2:1050.69 },
       { x1:255, y1:1050.69, x2:355, y2:1050.69 },
     ],
     doors: [
-      // Tuba 3 uks trepihalli poolt.
       { x:345, y:283.08, length:78, orientation:'h', swing:'up' },
-      // Vannitoa uks.
       { x:431.72, y:292, length:74, orientation:'v', swing:'left' },
-      // Tuba 1 alumine uks. Ülemine vale uks eemaldatud kasutaja märgise järgi.
       { x:431.72, y:548, length:78, orientation:'v', swing:'right' },
-      // Tuba 2 uks.
       { x:346, y:659.18, length:78, orientation:'h', swing:'down' },
     ],
+    // Trepp on nüüd trepihalli keskel.
+    stairs: { x:82, y:472, w:290, h:108, label:'Trepp ↑' },
   },
 };
 
@@ -164,11 +159,17 @@ function FloorSvg({ floor, selected, onSelect }) {
           {data.rooms.map((room) => <polygon key={`wall-${room.id}`} points={room.points} />)}
         </g>
 
+        <g aria-hidden="true">
+          {(data.walls || []).map((wall, index) => (
+            <line key={`manual-wall-${index}`} x1={wall.x1} y1={wall.y1} x2={wall.x2} y2={wall.y2} stroke="rgba(226,234,242,.72)" strokeWidth="3" vectorEffect="non-scaling-stroke" />
+          ))}
+        </g>
+
         <g className="opening-layer">
           {data.windows.map((item, index) => <WindowMark key={`window-${index}`} item={item} />)}
           {data.doors.map((item, index) => <DoorMark key={`door-${index}`} item={item} />)}
         </g>
-        {floor === 1 && <StairsMark item={data.stairs} />}
+        <StairsMark item={data.stairs} />
       </svg>
       <div className="scan-meta"><span>Parandatud 2D plaan · {floor}. korrus</span><strong>{data.area}</strong></div>
     </div>
