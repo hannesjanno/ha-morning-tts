@@ -64,7 +64,7 @@ const floors = {
     doors: [
       { x:345, y:283.08, length:78, orientation:'h', swing:'up', hinge:'end' },
       { x:431.72, y:292, length:74, orientation:'v', swing:'right', hinge:'end' },
-      { x:431.72, y:548, length:78, orientation:'v', swing:'right', hinge:'end' },
+      { x:431.72, y:490, length:78, orientation:'v', swing:'right', hinge:'start' },
       { x:346, y:659.18, length:78, orientation:'h', swing:'down' },
     ],
     stairs: { type:'straight', x:0, y:430, w:235, h:205, label:'Trepp ↑' },
