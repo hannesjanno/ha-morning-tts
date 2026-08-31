@@ -54,10 +54,10 @@ const floors = {
     },
     canopy: {
       x1:480.8,
-      x2:670,
+      x2:790.31,
       yTop:0,
       yBottom:157.47,
-      label:[575,78],
+      label:[635,78],
       text:'VARJUALUNE',
     },
   },
