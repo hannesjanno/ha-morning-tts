@@ -200,7 +200,8 @@ function CanopyMark({ item }) {
   if (!item) return null;
   return (
     <g className="canopy-mark" aria-label="Varjualune">
-      <line x1={item.x1} y1={item.yTop} x2={item.x2} y2={item.yTop} stroke="rgba(226,234,242,.42)" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+      <line x1={item.x1} y1={item.yTop} x2={item.x2} y2={item.yTop} stroke="rgba(226,234,242,.42)" strokeWidth="2" strokeDasharray="8 7" vectorEffect="non-scaling-stroke" />
+      <line x1={item.x2} y1={item.yTop} x2={item.x2} y2={item.yBottom} stroke="rgba(226,234,242,.42)" strokeWidth="2" strokeDasharray="8 7" vectorEffect="non-scaling-stroke" />
       <line x1={item.x1} y1={item.yBottom} x2={item.x2} y2={item.yBottom} stroke="rgba(226,234,242,.42)" strokeWidth="2" strokeDasharray="9 7" vectorEffect="non-scaling-stroke" />
       <text x={item.label[0]} y={item.label[1]} textAnchor="middle" fill="#718092" fontSize="15" letterSpacing="3">{item.text}</text>
     </g>
