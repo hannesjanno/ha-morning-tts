@@ -23,17 +23,24 @@ const floors = {
       { x1:350, y1:0, x2:424, y2:0 },
       { x1:790.31, y1:205, x2:790.31, y2:273 },
       { x1:790.31, y1:378, x2:790.31, y2:444 },
-      { x1:62, y1:1049.9, x2:168, y2:1049.9 },
+      // Elutoa suurem aken terrassi poole.
       { x1:188, y1:1049.9, x2:410, y2:1049.9 },
-      { x1:650, y1:892.73, x2:735, y2:892.73 },
     ],
     doors: [
+      // Esiku välisuks.
       { x:480.8, y:42, length:86, orientation:'v', swing:'left' },
+      // Abiruumi uks.
       { x:480.8, y:188, length:72, orientation:'v', swing:'right' },
+      // WC uks.
       { x:480.8, y:390, length:72, orientation:'v', swing:'left' },
+      // Pesuruumi siseuks.
       { x:480.8, y:598, length:98, orientation:'v', swing:'left' },
+      // Sauna uks.
       { x:640, y:530.64, length:72, orientation:'h', swing:'down' },
-      { x:480.8, y:940, length:86, orientation:'v', swing:'left' },
+      // Elutoa uks terrassile, alumises vasakus välisseinas.
+      { x:45, y:1049.9, length:105, orientation:'h', swing:'down' },
+      // Pesuruumi uks terrassile.
+      { x:620, y:892.73, length:95, orientation:'h', swing:'down' },
     ],
     stairs: {
       type:'u',
@@ -51,6 +58,15 @@ const floors = {
       ],
       label:[395,1121],
       text:'TERRASS',
+    },
+    // Avatud varjualune enne välisust: katus on olemas, külgseinu ei ole.
+    canopy: {
+      x1:480.8,
+      x2:790.31,
+      yTop:-82,
+      yBottom:157.47,
+      label:[635,78],
+      text:'VARJUALUNE',
     },
   },
   2: {
@@ -188,16 +204,27 @@ function TerraceMark({ item }) {
   );
 }
 
+function CanopyMark({ item }) {
+  if (!item) return null;
+  return (
+    <g className="canopy-mark" aria-label="Varjualune">
+      <line x1={item.x1} y1={item.yTop} x2={item.x2} y2={item.yTop} stroke="rgba(226,234,242,.42)" strokeWidth="2" strokeDasharray="9 7" vectorEffect="non-scaling-stroke" />
+      <line x1={item.x1} y1={item.yBottom} x2={item.x2} y2={item.yBottom} stroke="rgba(226,234,242,.42)" strokeWidth="2" strokeDasharray="9 7" vectorEffect="non-scaling-stroke" />
+      <text x={item.label[0]} y={item.label[1]} textAnchor="middle" fill="#718092" fontSize="15" letterSpacing="3">{item.text}</text>
+    </g>
+  );
+}
+
 function FloorSvg({ floor, selected, onSelect }) {
   const data = floors[floor];
   const maskId = `wall-mask-${floor}`;
-  const viewBox = floor === 1 ? '-90 -90 970 1345' : '-90 -90 970 1230';
+  const viewBox = floor === 1 ? '-110 -120 1010 1400' : '-90 -90 970 1230';
   return (
     <div className="scan-wrap">
       <svg className="scan-plan" viewBox={viewBox} role="img" aria-label={`${floor}. korruse parandatud 2D plaan`}>
         <defs>
-          <mask id={maskId} maskUnits="userSpaceOnUse" x="-100" y="-100" width="1000" height="1400">
-            <rect x="-100" y="-100" width="1000" height="1400" fill="white" />
+          <mask id={maskId} maskUnits="userSpaceOnUse" x="-120" y="-130" width="1050" height="1450">
+            <rect x="-120" y="-130" width="1050" height="1450" fill="white" />
             {(data.openPassages || []).map((item, index) => (
               <line key={`open-${index}`} x1={item.x1} y1={item.y1} x2={item.x2} y2={item.y2} stroke="black" strokeWidth="12" strokeLinecap="butt" />
             ))}
@@ -205,6 +232,7 @@ function FloorSvg({ floor, selected, onSelect }) {
         </defs>
 
         <TerraceMark item={data.terrace} />
+        <CanopyMark item={data.canopy} />
 
         <g className="room-layer">
           {data.rooms.map((room) => (
@@ -244,7 +272,7 @@ function FloorPlan({ floor }) {
     <div className="floor-plan">
       <FloorSvg floor={floor} selected={selected} onSelect={(id) => setSelected(id === selected ? null : id)} />
       <div className="room-detail">
-        {room ? <><span>VALITUD RUUM</span><strong>{room.name}</strong><small>{room.area} · siia lisame hiljem Home Assistanti olekud ja juhtimise</small></> : <><span>INTERAKTIIVNE PLAAN</span><strong>Puuduta ruumi</strong><small>2D plaani seinad, uksed, aknad, trepp ja terrass on täpsustatud Polycami, projekti, fotode ja sinu märkuste järgi.</small></>}
+        {room ? <><span>VALITUD RUUM</span><strong>{room.name}</strong><small>{room.area} · siia lisame hiljem Home Assistanti olekud ja juhtimise</small></> : <><span>INTERAKTIIVNE PLAAN</span><strong>Puuduta ruumi</strong><small>2D plaani seinad, uksed, aknad, trepp, terrass ja varjualune on täpsustatud sinu märkuste järgi.</small></>}
       </div>
     </div>
   );
