@@ -59,6 +59,8 @@ const floors = {
       pedestrianGate:{ x1:-55, x2:95, y:-300 },
       tesla:{ x:315, y:-255, w:330, h:150, label:'TESLA' },
       wallbox:{ x:452, y:0, label:'WALLBOX' },
+      paving:{ x:900, y1:-300, y2:1162, label:'SILLUTUSKIVI' },
+      wardrobe:{ x:290.25, y:92, w:52, h:177, label:'GARDEROOB' },
     },
   },
   2: {
@@ -213,6 +215,8 @@ function ParkingMark({ item }) {
   const walk = item.pedestrianGate;
   const tesla = item.tesla;
   const wallbox = item.wallbox;
+  const paving = item.paving;
+  const wardrobe = item.wardrobe;
   return (
     <g className="parking-mark" aria-label="Parkla">
       <path d={`M ${item.xLeft} ${item.yBottom} V ${item.yTop} H ${item.xRight} V ${item.yBottom}`} fill="none" stroke="rgba(226,234,242,.38)" strokeWidth="2" strokeDasharray="8 7" vectorEffect="non-scaling-stroke" />
@@ -241,6 +245,17 @@ function ParkingMark({ item }) {
         <rect x={wallbox.x - 14} y={wallbox.y - 18} width="28" height="36" rx="5" fill="#202832" stroke="rgba(226,234,242,.75)" strokeWidth="2" vectorEffect="non-scaling-stroke" />
         <path d={`M ${wallbox.x + 4} ${wallbox.y - 8} L ${wallbox.x - 3} ${wallbox.y + 1} H ${wallbox.x + 3} L ${wallbox.x - 4} ${wallbox.y + 11}`} fill="none" stroke="rgba(226,234,242,.9)" strokeWidth="2" vectorEffect="non-scaling-stroke" />
         <text x={wallbox.x} y={wallbox.y - 29} textAnchor="middle" fill="#718092" fontSize="11" letterSpacing="1.5">{wallbox.label}</text>
+      </g>
+
+      <g aria-label="Sillutuskivi serv">
+        <line x1={paving.x} y1={paving.y1} x2={paving.x} y2={paving.y2} stroke="rgba(226,234,242,.48)" strokeWidth="5" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+        <text x={paving.x + 18} y={(paving.y1 + paving.y2) / 2} transform={`rotate(90 ${paving.x + 18} ${(paving.y1 + paving.y2) / 2})`} textAnchor="middle" fill="#718092" fontSize="11" letterSpacing="2">{paving.label}</text>
+      </g>
+
+      <g aria-label="Garderoobikapp">
+        <rect x={wardrobe.x} y={wardrobe.y} width={wardrobe.w} height={wardrobe.h} rx="3" fill="rgba(255,255,255,.035)" stroke="rgba(226,234,242,.55)" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+        <line x1={wardrobe.x + wardrobe.w / 2} y1={wardrobe.y + 8} x2={wardrobe.x + wardrobe.w / 2} y2={wardrobe.y + wardrobe.h - 8} stroke="rgba(226,234,242,.25)" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+        <text x={wardrobe.x + wardrobe.w / 2} y={wardrobe.y + wardrobe.h / 2} transform={`rotate(-90 ${wardrobe.x + wardrobe.w / 2} ${wardrobe.y + wardrobe.h / 2})`} textAnchor="middle" fill="#718092" fontSize="10" letterSpacing="1.3">{wardrobe.label}</text>
       </g>
     </g>
   );
