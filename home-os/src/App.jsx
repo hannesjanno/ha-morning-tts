@@ -59,7 +59,7 @@ const floors = {
       pedestrianGate:{ x1:-55, x2:95, y:-300 },
       tesla:{ x:315, y:-255, w:330, h:150, label:'TESLA' },
       wallbox:{ x:452, y:0, label:'WALLBOX' },
-      paving:{ x:900, y1:-300, y2:1162, label:'SILLUTUSKIVI' },
+      paving:{ x:900, y1:0, y2:1070, label:'SILLUTUSKIVI' },
       wardrobe:{ x:290.25, y:92, w:52, h:177, label:'GARDEROOB' },
     },
   },
@@ -248,7 +248,7 @@ function ParkingMark({ item }) {
       </g>
 
       <g aria-label="Sillutuskivi serv">
-        <line x1={paving.x} y1={paving.y1} x2={paving.x} y2={paving.y2} stroke="rgba(226,234,242,.48)" strokeWidth="5" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+        <line x1={paving.x} y1={paving.y1} x2={paving.x} y2={paving.y2} stroke="rgba(226,234,242,.48)" strokeWidth="3" strokeDasharray="8 7" strokeLinecap="butt" vectorEffect="non-scaling-stroke" />
         <text x={paving.x + 18} y={(paving.y1 + paving.y2) / 2} transform={`rotate(90 ${paving.x + 18} ${(paving.y1 + paving.y2) / 2})`} textAnchor="middle" fill="#718092" fontSize="11" letterSpacing="2">{paving.label}</text>
       </g>
 
