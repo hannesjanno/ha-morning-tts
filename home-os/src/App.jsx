@@ -36,7 +36,7 @@ const floors = {
       { x:620, y:892.73, length:95, orientation:'h', swing:'up', hinge:'end' },
     ],
     stairs: { type:'u', x:5, y:405, w:285.25, h:245, label:'Trepp ↑' },
-    fireplace:{ x:330, y:620, w:105, h:120, label:'KAMIN' },
+    fireplace:{ x:375.8, y:705, w:105, h:120, label:'KAMIN' },
     terrace: {
       points:'0,1070 480.8,1070 480.8,892.73 980,892.73 980,1260 480.8,1260 480.8,1162 0,1162',
       segments:[
