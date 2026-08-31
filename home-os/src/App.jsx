@@ -13,11 +13,9 @@ const floors = {
       { id:'wash', name:'Pesuruum', area:'10,5 m²', points:'480.8,536.22 480.8,700 480.8,892.73 790.31,892.73 790.31,666.19 790.31,530.64 599.74,530.64 599.74,536.22 480.8,536.22', label:[636,710] },
     ],
     openPassages: [
-      // Köök, esik ja elutuba on siin avatud; soovitud köögi sein lisatakse eraldi allpool.
       { x1:0, y1:269.1, x2:480.8, y2:269.1 },
     ],
     walls: [
-      // Köögi alumine sisesein kasutaja musta märkuse järgi.
       { x1:170, y1:269.1, x2:290.25, y2:269.1 },
     ],
     windows: [
@@ -30,20 +28,22 @@ const floors = {
       { x1:650, y1:892.73, x2:735, y2:892.73 },
     ],
     doors: [
-      // Esiku välisuks.
       { x:480.8, y:42, length:86, orientation:'v', swing:'left' },
-      // Abiruumi uks esiku/eluala poolt.
       { x:480.8, y:188, length:72, orientation:'v', swing:'right' },
-      // WC uks.
       { x:480.8, y:390, length:72, orientation:'v', swing:'left' },
-      // Pesuruumi uks.
       { x:480.8, y:598, length:98, orientation:'v', swing:'left' },
-      // Sauna uks.
       { x:640, y:530.64, length:72, orientation:'h', swing:'down' },
-      // Elutoa terrassiuks.
       { x:480.8, y:940, length:86, orientation:'v', swing:'left' },
     ],
-    stairs: { x:105, y:382, w:300, h:132, label:'Trepp ↑' },
+    stairs: {
+      type:'u',
+      x:175,
+      y:405,
+      w:285,
+      h:245,
+      label:'Trepp ↑',
+    },
+    terrace: { x:0, y:1070, w:790.31, h:92, label:'TERRASS' },
   },
   2: {
     area: '68,9 m²',
@@ -52,7 +52,6 @@ const floors = {
       { id:'bath', name:'Vannituba', area:'7,6 m²', points:'431.72,386.14 790.31,386.14 790.31,157.69 431.72,157.69 431.72,283.08 431.72,386.14', label:[611,267] },
       { id:'room3', name:'Tuba 3', area:'14,5 m²', points:'431.72,157.69 465.67,157.69 465.67,0 0,0 0,381.56 256.23,381.56 256.23,283.08 431.72,283.08 431.72,157.69', label:[216,137] },
       { id:'room2', name:'Tuba 2', area:'16,8 m²', points:'246.48,659.18 0,659.18 0,1050.69 481.4,1050.69 481.4,892.94 431.72,892.94 431.72,659.18 246.48,659.18', label:[216,850] },
-      // Endine eraldi trepikast on nüüd trepihalli osa.
       { id:'landing', name:'Trepihall', area:'11,4 m²', points:'431.72,659.18 431.72,386.14 431.72,283.08 256.23,283.08 256.23,381.56 0,381.56 0,659.18 431.72,659.18', label:[216,420] },
     ],
     openPassages: [],
@@ -71,8 +70,7 @@ const floors = {
       { x:431.72, y:548, length:78, orientation:'v', swing:'right' },
       { x:346, y:659.18, length:78, orientation:'h', swing:'down' },
     ],
-    // Trepp on nüüd trepihalli keskel.
-    stairs: { x:82, y:472, w:290, h:108, label:'Trepp ↑' },
+    stairs: { type:'straight', x:82, y:472, w:290, h:108, label:'Trepp ↑' },
   },
 };
 
@@ -112,8 +110,7 @@ function DoorMark({ item }) {
   );
 }
 
-function StairsMark({ item }) {
-  if (!item) return null;
+function StraightStairs({ item }) {
   const stepCount = 7;
   const inset = 12;
   const usable = item.w - inset * 2;
@@ -130,20 +127,70 @@ function StairsMark({ item }) {
   );
 }
 
+function UStairs({ item }) {
+  const { x, y, w, h } = item;
+  const gap = 22;
+  const flightH = (h - gap) / 2;
+  const left = x + 12;
+  const right = x + w - 12;
+  const upperY = y + flightH / 2;
+  const lowerY = y + flightH + gap + flightH / 2;
+  const stepCount = 8;
+  return (
+    <g className="stairs-mark u-stairs" aria-label="U-kujuline trepp">
+      <rect x={x} y={y} width={w} height={h} rx="5" />
+      <line x1={x} y1={y + flightH + gap / 2} x2={x + w} y2={y + flightH + gap / 2} />
+      {Array.from({ length: stepCount }).map((_, index) => {
+        const sx = left + ((right - left) / (stepCount + 1)) * (index + 1);
+        return <React.Fragment key={index}>
+          <line x1={sx} y1={y + 8} x2={sx} y2={y + flightH - 8} />
+          <line x1={sx} y1={y + flightH + gap + 8} x2={sx} y2={y + h - 8} />
+        </React.Fragment>;
+      })}
+      <path d={`M ${right - 12} ${lowerY} H ${left + 14} Q ${left - 4} ${lowerY} ${left - 4} ${lowerY - 18} V ${upperY + 18} Q ${left - 4} ${upperY} ${left + 14} ${upperY} H ${right - 12}`} />
+      <path d={`M ${right - 30} ${upperY - 12} L ${right - 12} ${upperY} L ${right - 30} ${upperY + 12}`} />
+      <text x={x + w / 2} y={y - 12} textAnchor="middle">{item.label}</text>
+    </g>
+  );
+}
+
+function StairsMark({ item }) {
+  if (!item) return null;
+  return item.type === 'u' ? <UStairs item={item} /> : <StraightStairs item={item} />;
+}
+
+function TerraceMark({ item }) {
+  if (!item) return null;
+  const slatCount = 18;
+  return (
+    <g className="terrace-mark" aria-label="Terrass">
+      <rect x={item.x} y={item.y} width={item.w} height={item.h} rx="4" fill="rgba(255,255,255,.025)" stroke="rgba(226,234,242,.38)" strokeWidth="2" strokeDasharray="8 7" vectorEffect="non-scaling-stroke" />
+      {Array.from({ length: slatCount }).map((_, index) => {
+        const sx = item.x + (item.w / slatCount) * index;
+        return <line key={index} x1={sx} y1={item.y + 8} x2={sx} y2={item.y + item.h - 8} stroke="rgba(226,234,242,.12)" strokeWidth="1" vectorEffect="non-scaling-stroke" />;
+      })}
+      <text x={item.x + item.w / 2} y={item.y + item.h / 2 + 6} textAnchor="middle" fill="#718092" fontSize="18" letterSpacing="5">{item.label}</text>
+    </g>
+  );
+}
+
 function FloorSvg({ floor, selected, onSelect }) {
   const data = floors[floor];
   const maskId = `wall-mask-${floor}`;
+  const viewBox = floor === 1 ? '-90 -90 970 1345' : '-90 -90 970 1230';
   return (
     <div className="scan-wrap">
-      <svg className="scan-plan" viewBox="-90 -90 970 1230" role="img" aria-label={`${floor}. korruse parandatud 2D plaan`}>
+      <svg className="scan-plan" viewBox={viewBox} role="img" aria-label={`${floor}. korruse parandatud 2D plaan`}>
         <defs>
-          <mask id={maskId} maskUnits="userSpaceOnUse" x="-100" y="-100" width="1000" height="1250">
-            <rect x="-100" y="-100" width="1000" height="1250" fill="white" />
+          <mask id={maskId} maskUnits="userSpaceOnUse" x="-100" y="-100" width="1000" height="1400">
+            <rect x="-100" y="-100" width="1000" height="1400" fill="white" />
             {(data.openPassages || []).map((item, index) => (
               <line key={`open-${index}`} x1={item.x1} y1={item.y1} x2={item.x2} y2={item.y2} stroke="black" strokeWidth="12" strokeLinecap="butt" />
             ))}
           </mask>
         </defs>
+
+        <TerraceMark item={data.terrace} />
 
         <g className="room-layer">
           {data.rooms.map((room) => (
@@ -183,7 +230,7 @@ function FloorPlan({ floor }) {
     <div className="floor-plan">
       <FloorSvg floor={floor} selected={selected} onSelect={(id) => setSelected(id === selected ? null : id)} />
       <div className="room-detail">
-        {room ? <><span>VALITUD RUUM</span><strong>{room.name}</strong><small>{room.area} · siia lisame hiljem Home Assistanti olekud ja juhtimise</small></> : <><span>INTERAKTIIVNE PLAAN</span><strong>Puuduta ruumi</strong><small>2D plaani seinad, uksed ja aknad on täpsustatud Polycami, projekti, fotode ja sinu märkuste järgi.</small></>}
+        {room ? <><span>VALITUD RUUM</span><strong>{room.name}</strong><small>{room.area} · siia lisame hiljem Home Assistanti olekud ja juhtimise</small></> : <><span>INTERAKTIIVNE PLAAN</span><strong>Puuduta ruumi</strong><small>2D plaani seinad, uksed, aknad, trepp ja terrass on täpsustatud Polycami, projekti, fotode ja sinu märkuste järgi.</small></>}
       </div>
     </div>
   );
