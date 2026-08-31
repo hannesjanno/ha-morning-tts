@@ -12,7 +12,17 @@ const floors = {
       { id:'sauna', name:'Saun', area:'3,5 m²', points:'599.74,530.64 790.31,530.64 790.31,325.28 599.74,325.28 599.74,530.64', label:[695,424] },
       { id:'wash', name:'Pesuruum', area:'10,5 m²', points:'480.8,536.22 480.8,700 480.8,892.73 790.31,892.73 790.31,666.19 790.31,530.64 599.74,530.64 599.74,536.22 480.8,536.22', label:[636,710] },
     ],
-    stairs: { x:380, y:700, w:90, h:120, label:'Trepp' },
+    windows: [
+      { x1:64, y1:0, x2:184, y2:0 },
+      { x1:350, y1:0, x2:424, y2:0 },
+      { x1:790.31, y1:378, x2:790.31, y2:444 },
+      { x1:62, y1:1049.9, x2:168, y2:1049.9 },
+      { x1:650, y1:892.73, x2:735, y2:892.73 },
+    ],
+    doors: [
+      { x:290.25, y:209, length:60, orientation:'v', swing:'left' },
+      { x:480.8, y:598, length:98, orientation:'v', swing:'left' },
+    ],
   },
   2: {
     area: '68,9 m²',
@@ -24,14 +34,64 @@ const floors = {
       { id:'room2', name:'Tuba 2', area:'16,8 m²', points:'246.48,659.18 0,659.18 0,1050.69 481.4,1050.69 481.4,892.94 431.72,892.94 431.72,659.18 246.48,659.18', label:[216,850] },
       { id:'landing', name:'Trepihall', area:'11,4 m²', points:'431.72,659.18 431.72,386.14 431.72,283.08 256.23,283.08 256.23,381.56 0,381.56 0,595.89 246.48,595.89 246.48,659.18 431.72,659.18', label:[216,484] },
     ],
+    windows: [
+      { x1:104, y1:0, x2:218, y2:0 },
+      { x1:790.31, y1:448, x2:790.31, y2:516 },
+      { x1:790.31, y1:744, x2:790.31, y2:820 },
+      { x1:72, y1:1050.69, x2:163, y2:1050.69 },
+      { x1:348, y1:1050.69, x2:432, y2:1050.69 },
+      { x1:0, y1:760, x2:0, y2:846 },
+    ],
+    doors: [
+      { x:431.72, y:292, length:74, orientation:'v', swing:'left' },
+      { x:431.72, y:400, length:76, orientation:'v', swing:'right' },
+      { x:431.72, y:548, length:78, orientation:'v', swing:'right' },
+      { x:346, y:659.18, length:78, orientation:'h', swing:'down' },
+    ],
   },
 };
+
+function WindowMark({ item }) {
+  const dx = item.x2 - item.x1;
+  const dy = item.y2 - item.y1;
+  const length = Math.hypot(dx, dy) || 1;
+  const nx = (-dy / length) * 5;
+  const ny = (dx / length) * 5;
+  return (
+    <g className="window-mark" aria-label="Aken">
+      <line x1={item.x1 + nx} y1={item.y1 + ny} x2={item.x2 + nx} y2={item.y2 + ny} />
+      <line x1={item.x1 - nx} y1={item.y1 - ny} x2={item.x2 - nx} y2={item.y2 - ny} />
+    </g>
+  );
+}
+
+function DoorMark({ item }) {
+  const { x, y, length, orientation, swing } = item;
+  if (orientation === 'v') {
+    const dir = swing === 'left' ? -1 : 1;
+    return (
+      <g className="door-mark" aria-label="Uks">
+        <line className="door-gap" x1={x} y1={y} x2={x} y2={y + length} />
+        <line className="door-leaf" x1={x} y1={y + length} x2={x + dir * length} y2={y + length} />
+        <path className="door-arc" d={`M ${x} ${y} A ${length} ${length} 0 0 ${dir < 0 ? 0 : 1} ${x + dir * length} ${y + length}`} />
+      </g>
+    );
+  }
+  const dir = swing === 'up' ? -1 : 1;
+  return (
+    <g className="door-mark" aria-label="Uks">
+      <line className="door-gap" x1={x} y1={y} x2={x + length} y2={y} />
+      <line className="door-leaf" x1={x} y1={y} x2={x} y2={y + dir * length} />
+      <path className="door-arc" d={`M ${x + length} ${y} A ${length} ${length} 0 0 ${dir > 0 ? 1 : 0} ${x} ${y + dir * length}`} />
+    </g>
+  );
+}
 
 function FloorSvg({ floor, selected, onSelect }) {
   const data = floors[floor];
   return (
     <div className="scan-wrap">
-      <svg className="scan-plan" viewBox="-18 -18 826 1087" role="img" aria-label={`${floor}. korruse Polycam skänni järgi plaan`}>
+      <svg className="scan-plan" viewBox="-90 -90 970 1230" role="img" aria-label={`${floor}. korruse Polycam skänni järgi plaan`}>
         <g className="room-layer">
           {data.rooms.map((room) => (
             <g key={room.id} className={`svg-room ${selected === room.id ? 'selected' : ''}`} onClick={() => onSelect(room.id)} role="button" tabIndex="0" onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onSelect(room.id)}>
@@ -41,9 +101,13 @@ function FloorSvg({ floor, selected, onSelect }) {
             </g>
           ))}
         </g>
+        <g className="opening-layer">
+          {data.windows.map((item, index) => <WindowMark key={`window-${index}`} item={item} />)}
+          {data.doors.map((item, index) => <DoorMark key={`door-${index}`} item={item} />)}
+        </g>
         {floor === 1 && <g className="stairs-mark"><rect x="382" y="704" width="84" height="116" rx="4"/><path d="M392 806h64M392 790h64M392 774h64M392 758h64M392 742h64M392 726h64"/><text x="424" y="695" textAnchor="middle">Trepp ↑</text></g>}
       </svg>
-      <div className="scan-meta"><span>Polycam · {floor}. korrus</span><strong>{data.area}</strong></div>
+      <div className="scan-meta"><span>Polycam · {floor}. korrus · uksed + aknad</span><strong>{data.area}</strong></div>
     </div>
   );
 }
@@ -55,7 +119,7 @@ function FloorPlan({ floor }) {
     <div className="floor-plan">
       <FloorSvg floor={floor} selected={selected} onSelect={(id) => setSelected(id === selected ? null : id)} />
       <div className="room-detail">
-        {room ? <><span>VALITUD RUUM</span><strong>{room.name}</strong><small>{room.area} · siia lisame hiljem Home Assistanti olekud ja juhtimise</small></> : <><span>INTERAKTIIVNE PLAAN</span><strong>Puuduta ruumi</strong><small>Ruumide kuju ja proportsioonid pärinevad Polycami skännist.</small></>}
+        {room ? <><span>VALITUD RUUM</span><strong>{room.name}</strong><small>{room.area} · siia lisame hiljem Home Assistanti olekud ja juhtimise</small></> : <><span>INTERAKTIIVNE PLAAN</span><strong>Puuduta ruumi</strong><small>Ruumide kuju, uksed ja aknad on viidud vastavusse Polycami ekspordiga.</small></>}
       </div>
     </div>
   );
