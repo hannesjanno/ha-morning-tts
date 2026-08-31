@@ -37,12 +37,12 @@ const floors = {
     ],
     stairs: { type:'u', x:5, y:405, w:285.25, h:245, label:'Trepp ↑' },
     terrace: {
-      points:'0,1070 480.8,1070 480.8,892.73 790.31,892.73 790.31,1162 0,1162',
+      points:'0,1070 480.8,1070 480.8,892.73 900,892.73 900,1162 0,1162',
       segments:[
-        { x:0, y:1070, w:790.31, h:92, slats:'v' },
-        { x:480.8, y:892.73, w:309.51, h:177.27, slats:'h' },
+        { x:0, y:1070, w:900, h:92, slats:'v' },
+        { x:480.8, y:892.73, w:419.2, h:177.27, slats:'h' },
       ],
-      label:[395,1121], text:'TERRASS',
+      label:[450,1121], text:'TERRASS',
     },
     canopy: {
       x1:480.8, x2:790.31, yTop:0, yBottom:157.47,
@@ -59,7 +59,7 @@ const floors = {
       pedestrianGate:{ x1:-55, x2:95, y:-300 },
       tesla:{ x:315, y:-255, w:330, h:150, label:'TESLA' },
       wallbox:{ x:452, y:0, label:'WALLBOX' },
-      paving:{ x:900, y1:0, y2:1070, label:'SILLUTUSKIVI' },
+      paving:{ x:900, y1:0, y2:892.73, label:'SILLUTUSKIVI' },
       wardrobe:{ x:290.25, y:92, w:52, h:177, label:'GARDEROOB' },
     },
   },
