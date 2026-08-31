@@ -35,30 +35,30 @@ const floors = {
       { x:480.8, y:930, length:95, orientation:'v', swing:'right' },
       { x:620, y:892.73, length:95, orientation:'h', swing:'down' },
     ],
-    stairs: {
-      type:'u',
-      x:5,
-      y:405,
-      w:285.25,
-      h:245,
-      label:'Trepp ↑',
-    },
+    stairs: { type:'u', x:5, y:405, w:285.25, h:245, label:'Trepp ↑' },
     terrace: {
       points:'0,1070 480.8,1070 480.8,892.73 790.31,892.73 790.31,1162 0,1162',
       segments:[
         { x:0, y:1070, w:790.31, h:92, slats:'v' },
         { x:480.8, y:892.73, w:309.51, h:177.27, slats:'h' },
       ],
-      label:[395,1121],
-      text:'TERRASS',
+      label:[395,1121], text:'TERRASS',
     },
     canopy: {
-      x1:480.8,
-      x2:790.31,
-      yTop:0,
-      yBottom:157.47,
-      label:[635,78],
-      text:'VARJUALUNE',
+      x1:480.8, x2:790.31, yTop:0, yBottom:157.47,
+      label:[635,78], text:'VARJUALUNE',
+    },
+    parking: {
+      xLeft:-80,
+      xRight:980,
+      yTop:-300,
+      yBottom:0,
+      label:[450,-205],
+      text:'PARKLA',
+      vehicleGate:{ x1:150, x2:870, y:-300, direction:'right' },
+      pedestrianGate:{ x1:-55, x2:95, y:-300 },
+      tesla:{ x:315, y:-255, w:330, h:150, label:'TESLA' },
+      wallbox:{ x:452, y:0, label:'WALLBOX' },
     },
   },
   2: {
@@ -70,8 +70,7 @@ const floors = {
       { id:'room2', name:'Tuba 2', area:'16,8 m²', points:'246.48,659.18 0,659.18 0,1050.69 481.4,1050.69 481.4,892.94 431.72,892.94 431.72,659.18 246.48,659.18', label:[216,850] },
       { id:'landing', name:'Trepihall', area:'11,4 m²', points:'431.72,659.18 431.72,386.14 431.72,283.08 256.23,283.08 256.23,381.56 0,381.56 0,659.18 431.72,659.18', label:[216,420] },
     ],
-    openPassages: [],
-    walls: [],
+    openPassages: [], walls: [],
     windows: [
       { x1:78, y1:0, x2:190, y2:0 },
       { x1:205, y1:0, x2:317, y2:0 },
@@ -208,22 +207,62 @@ function CanopyMark({ item }) {
   );
 }
 
+function ParkingMark({ item }) {
+  if (!item) return null;
+  const gate = item.vehicleGate;
+  const walk = item.pedestrianGate;
+  const tesla = item.tesla;
+  const wallbox = item.wallbox;
+  return (
+    <g className="parking-mark" aria-label="Parkla">
+      <path d={`M ${item.xLeft} ${item.yBottom} V ${item.yTop} H ${item.xRight} V ${item.yBottom}`} fill="none" stroke="rgba(226,234,242,.38)" strokeWidth="2" strokeDasharray="8 7" vectorEffect="non-scaling-stroke" />
+      <line x1={item.xLeft} y1={item.yBottom} x2={0} y2={item.yBottom} stroke="rgba(226,234,242,.38)" strokeWidth="2" strokeDasharray="8 7" vectorEffect="non-scaling-stroke" />
+      <line x1={790.31} y1={item.yBottom} x2={item.xRight} y2={item.yBottom} stroke="rgba(226,234,242,.38)" strokeWidth="2" strokeDasharray="8 7" vectorEffect="non-scaling-stroke" />
+      <text x={item.label[0]} y={item.label[1]} textAnchor="middle" fill="#718092" fontSize="18" letterSpacing="5">{item.text}</text>
+
+      <g aria-label="Auto lükandvärav">
+        <line x1={gate.x1} y1={gate.y} x2={gate.x2} y2={gate.y} stroke="#9b6b42" strokeWidth="8" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+        <path d={`M ${gate.x2 - 42} ${gate.y - 18} L ${gate.x2} ${gate.y} L ${gate.x2 - 42} ${gate.y + 18}`} fill="none" stroke="#9b6b42" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+        <text x={(gate.x1 + gate.x2) / 2} y={gate.y - 18} textAnchor="middle" fill="#8b735f" fontSize="13" letterSpacing="2">LÜKANDVÄRAV →</text>
+      </g>
+
+      <g aria-label="Jalgvärav">
+        <line x1={walk.x1} y1={walk.y} x2={walk.x2} y2={walk.y} stroke="rgba(226,234,242,.78)" strokeWidth="6" vectorEffect="non-scaling-stroke" />
+        <path d={`M ${walk.x1} ${walk.y} Q ${(walk.x1 + walk.x2) / 2} ${walk.y + 58} ${walk.x2} ${walk.y}`} fill="none" stroke="rgba(226,234,242,.55)" strokeWidth="2" strokeDasharray="6 5" vectorEffect="non-scaling-stroke" />
+        <text x={(walk.x1 + walk.x2) / 2} y={walk.y + 82} textAnchor="middle" fill="#718092" fontSize="12" letterSpacing="2">JALGVÄRAV</text>
+      </g>
+
+      <g aria-label="Tesla parkimiskoht">
+        <rect x={tesla.x} y={tesla.y} width={tesla.w} height={tesla.h} rx="18" fill="rgba(255,255,255,.018)" stroke="rgba(226,234,242,.24)" strokeWidth="2" strokeDasharray="10 8" vectorEffect="non-scaling-stroke" />
+        <text x={tesla.x + tesla.w / 2} y={tesla.y + tesla.h / 2 + 6} textAnchor="middle" fill="#718092" fontSize="18" letterSpacing="4">{tesla.label}</text>
+      </g>
+
+      <g aria-label="Wallbox laadija">
+        <rect x={wallbox.x - 14} y={wallbox.y - 18} width="28" height="36" rx="5" fill="#202832" stroke="rgba(226,234,242,.75)" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+        <path d={`M ${wallbox.x + 4} ${wallbox.y - 8} L ${wallbox.x - 3} ${wallbox.y + 1} H ${wallbox.x + 3} L ${wallbox.x - 4} ${wallbox.y + 11}`} fill="none" stroke="rgba(226,234,242,.9)" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+        <text x={wallbox.x} y={wallbox.y - 29} textAnchor="middle" fill="#718092" fontSize="11" letterSpacing="1.5">{wallbox.label}</text>
+      </g>
+    </g>
+  );
+}
+
 function FloorSvg({ floor, selected, onSelect }) {
   const data = floors[floor];
   const maskId = `wall-mask-${floor}`;
-  const viewBox = floor === 1 ? '-110 -120 1010 1400' : '-90 -90 970 1230';
+  const viewBox = floor === 1 ? '-130 -360 1160 1660' : '-90 -90 970 1230';
   return (
     <div className="scan-wrap">
       <svg className="scan-plan" viewBox={viewBox} role="img" aria-label={`${floor}. korruse parandatud 2D plaan`}>
         <defs>
-          <mask id={maskId} maskUnits="userSpaceOnUse" x="-120" y="-130" width="1050" height="1450">
-            <rect x="-120" y="-130" width="1050" height="1450" fill="white" />
+          <mask id={maskId} maskUnits="userSpaceOnUse" x="-150" y="-380" width="1200" height="1700">
+            <rect x="-150" y="-380" width="1200" height="1700" fill="white" />
             {(data.openPassages || []).map((item, index) => (
               <line key={`open-${index}`} x1={item.x1} y1={item.y1} x2={item.x2} y2={item.y2} stroke="black" strokeWidth="12" strokeLinecap="butt" />
             ))}
           </mask>
         </defs>
 
+        <ParkingMark item={data.parking} />
         <TerraceMark item={data.terrace} />
         <CanopyMark item={data.canopy} />
 
@@ -265,7 +304,7 @@ function FloorPlan({ floor }) {
     <div className="floor-plan">
       <FloorSvg floor={floor} selected={selected} onSelect={(id) => setSelected(id === selected ? null : id)} />
       <div className="room-detail">
-        {room ? <><span>VALITUD RUUM</span><strong>{room.name}</strong><small>{room.area} · siia lisame hiljem Home Assistanti olekud ja juhtimise</small></> : <><span>INTERAKTIIVNE PLAAN</span><strong>Puuduta ruumi</strong><small>2D plaani seinad, uksed, aknad, trepp, terrass ja varjualune on täpsustatud sinu märkuste järgi.</small></>}
+        {room ? <><span>VALITUD RUUM</span><strong>{room.name}</strong><small>{room.area} · siia lisame hiljem Home Assistanti olekud ja juhtimise</small></> : <><span>INTERAKTIIVNE PLAAN</span><strong>Puuduta ruumi</strong><small>2D plaan sisaldab nüüd ka parkla, väravad, Wallboxi, terrassi ja varjualust.</small></>}
       </div>
     </div>
   );
