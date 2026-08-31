@@ -38,12 +38,14 @@ const floors = {
     stairs: { type:'u', x:5, y:405, w:285.25, h:245, label:'Trepp ↑' },
     fireplace:{ x:330, y:620, w:105, h:120, label:'KAMIN' },
     terrace: {
-      points:'0,1070 480.8,1070 480.8,892.73 980,892.73 980,1162 0,1162',
+      points:'0,1070 480.8,1070 480.8,892.73 980,892.73 980,1260 480.8,1260 480.8,1162 0,1162',
       segments:[
         { x:0, y:1070, w:980, h:92, slats:'v' },
         { x:480.8, y:892.73, w:499.2, h:177.27, slats:'h' },
+        { x:480.8, y:1162, w:499.2, h:98, slats:'v' },
       ],
-      label:[490,1121], text:'TERRASS',
+      flowerBed:{ x:0, y:1162, w:480.8, h:98, label:'LILLEPEENAR' },
+      label:[730,1222], text:'TERRASS',
     },
     canopy: {
       x1:480.8, x2:790.31, yTop:0, yBottom:157.47,
@@ -188,6 +190,7 @@ function StairsMark({ item }) {
 
 function TerraceMark({ item }) {
   if (!item) return null;
+  const flowerBed = item.flowerBed;
   return (
     <g className="terrace-mark" aria-label="Terrass">
       <polygon points={item.points} fill="rgba(255,255,255,.025)" stroke="rgba(226,234,242,.38)" strokeWidth="2" strokeDasharray="8 7" vectorEffect="non-scaling-stroke" />
@@ -202,6 +205,10 @@ function TerraceMark({ item }) {
           return <line key={`${segmentIndex}-${index}`} x1={sx} y1={segment.y + 8} x2={sx} y2={segment.y + segment.h - 8} stroke="rgba(226,234,242,.12)" strokeWidth="1" vectorEffect="non-scaling-stroke" />;
         });
       })}
+      {flowerBed && <g aria-label="Lillepeenar terrassi kõrval">
+        <rect x={flowerBed.x} y={flowerBed.y} width={flowerBed.w} height={flowerBed.h} rx="4" fill="rgba(255,255,255,.018)" stroke="rgba(226,234,242,.38)" strokeWidth="2" strokeDasharray="7 6" vectorEffect="non-scaling-stroke" />
+        <text x={flowerBed.x + flowerBed.w/2} y={flowerBed.y + flowerBed.h/2 + 5} textAnchor="middle" fill="#718092" fontSize="13" letterSpacing="2">{flowerBed.label}</text>
+      </g>}
       <text x={item.label[0]} y={item.label[1]} textAnchor="middle" fill="#718092" fontSize="18" letterSpacing="5">{item.text}</text>
     </g>
   );
@@ -307,13 +314,13 @@ function ParkingMark({ item }) {
 function FloorSvg({ floor, selected, onSelect }) {
   const data = floors[floor];
   const maskId = `wall-mask-${floor}`;
-  const viewBox = floor === 1 ? '-130 -360 1160 1660' : '-90 -90 970 1230';
+  const viewBox = floor === 1 ? '-130 -360 1160 1710' : '-90 -90 970 1230';
   return (
     <div className="scan-wrap">
       <svg className="scan-plan" viewBox={viewBox} role="img" aria-label={`${floor}. korruse parandatud 2D plaan`}>
         <defs>
-          <mask id={maskId} maskUnits="userSpaceOnUse" x="-150" y="-380" width="1200" height="1700">
-            <rect x="-150" y="-380" width="1200" height="1700" fill="white" />
+          <mask id={maskId} maskUnits="userSpaceOnUse" x="-150" y="-380" width="1200" height="1750">
+            <rect x="-150" y="-380" width="1200" height="1750" fill="white" />
             {(data.openPassages || []).map((item, index) => (
               <line key={`open-${index}`} x1={item.x1} y1={item.y1} x2={item.x2} y2={item.y2} stroke="black" strokeWidth="12" strokeLinecap="butt" />
             ))}
