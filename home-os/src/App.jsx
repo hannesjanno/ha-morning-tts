@@ -43,7 +43,15 @@ const floors = {
       h:245,
       label:'Trepp ↑',
     },
-    terrace: { x:0, y:1070, w:790.31, h:92, label:'TERRASS' },
+    terrace: {
+      points:'0,1070 480.8,1070 480.8,892.73 790.31,892.73 790.31,1162 0,1162',
+      segments:[
+        { x:0, y:1070, w:790.31, h:92, slats:'v' },
+        { x:480.8, y:892.73, w:309.51, h:177.27, slats:'h' },
+      ],
+      label:[395,1121],
+      text:'TERRASS',
+    },
   },
   2: {
     area: '68,9 m²',
@@ -161,15 +169,21 @@ function StairsMark({ item }) {
 
 function TerraceMark({ item }) {
   if (!item) return null;
-  const slatCount = 18;
   return (
     <g className="terrace-mark" aria-label="Terrass">
-      <rect x={item.x} y={item.y} width={item.w} height={item.h} rx="4" fill="rgba(255,255,255,.025)" stroke="rgba(226,234,242,.38)" strokeWidth="2" strokeDasharray="8 7" vectorEffect="non-scaling-stroke" />
-      {Array.from({ length: slatCount }).map((_, index) => {
-        const sx = item.x + (item.w / slatCount) * index;
-        return <line key={index} x1={sx} y1={item.y + 8} x2={sx} y2={item.y + item.h - 8} stroke="rgba(226,234,242,.12)" strokeWidth="1" vectorEffect="non-scaling-stroke" />;
+      <polygon points={item.points} fill="rgba(255,255,255,.025)" stroke="rgba(226,234,242,.38)" strokeWidth="2" strokeDasharray="8 7" vectorEffect="non-scaling-stroke" />
+      {(item.segments || []).map((segment, segmentIndex) => {
+        const count = segment.slats === 'h' ? 7 : 18;
+        return Array.from({ length: count }).map((_, index) => {
+          if (segment.slats === 'h') {
+            const sy = segment.y + (segment.h / count) * index;
+            return <line key={`${segmentIndex}-${index}`} x1={segment.x + 8} y1={sy} x2={segment.x + segment.w - 8} y2={sy} stroke="rgba(226,234,242,.12)" strokeWidth="1" vectorEffect="non-scaling-stroke" />;
+          }
+          const sx = segment.x + (segment.w / count) * index;
+          return <line key={`${segmentIndex}-${index}`} x1={sx} y1={segment.y + 8} x2={sx} y2={segment.y + segment.h - 8} stroke="rgba(226,234,242,.12)" strokeWidth="1" vectorEffect="non-scaling-stroke" />;
+        });
       })}
-      <text x={item.x + item.w / 2} y={item.y + item.h / 2 + 6} textAnchor="middle" fill="#718092" fontSize="18" letterSpacing="5">{item.label}</text>
+      <text x={item.label[0]} y={item.label[1]} textAnchor="middle" fill="#718092" fontSize="18" letterSpacing="5">{item.text}</text>
     </g>
   );
 }
