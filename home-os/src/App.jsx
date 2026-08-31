@@ -26,14 +26,14 @@ const floors = {
       { x1:188, y1:1049.9, x2:400, y2:1049.9 },
     ],
     doors: [
-      { x:480.8, y:42, length:86, orientation:'v', swing:'right' },
-      { x:480.8, y:188, length:72, orientation:'v', swing:'left' },
-      { x:480.8, y:390, length:72, orientation:'v', swing:'left' },
-      { x:480.8, y:598, length:98, orientation:'v', swing:'right' },
-      { x:640, y:530.64, length:72, orientation:'h', swing:'down' },
-      { x:45, y:1049.9, length:105, orientation:'h', swing:'down' },
-      { x:480.8, y:930, length:95, orientation:'v', swing:'left' },
-      { x:620, y:892.73, length:95, orientation:'h', swing:'up' },
+      { x:480.8, y:42, length:86, orientation:'v', swing:'right', hinge:'end' },
+      { x:480.8, y:188, length:72, orientation:'v', swing:'left', hinge:'start' },
+      { x:480.8, y:390, length:72, orientation:'v', swing:'left', hinge:'start' },
+      { x:480.8, y:598, length:98, orientation:'v', swing:'right', hinge:'end' },
+      { x:640, y:530.64, length:72, orientation:'h', swing:'down', hinge:'end' },
+      { x:45, y:1049.9, length:105, orientation:'h', swing:'up', hinge:'start' },
+      { x:480.8, y:930, length:95, orientation:'v', swing:'left', hinge:'start' },
+      { x:620, y:892.73, length:95, orientation:'h', swing:'up', hinge:'end' },
     ],
     stairs: { type:'u', x:5, y:405, w:285.25, h:245, label:'Trepp ↑' },
     terrace: {
@@ -56,7 +56,7 @@ const floors = {
       label:[450,-205],
       text:'PARKLA',
       vehicleGate:{ x1:150, x2:870, y:-300, direction:'right' },
-      pedestrianGate:{ x1:-55, x2:95, y:-300 },
+      pedestrianGate:{ x1:-55, x2:95, y:-300, hinge:'start', swing:'down' },
       tesla:{ x:315, y:-255, w:330, h:150, label:'TESLA' },
       wallbox:{ x:452, y:0, label:'WALLBOX' },
       paving:{ x:900, y1:0, y2:892.73, label:'SILLUTUSKIVI' },
@@ -106,23 +106,29 @@ function WindowMark({ item }) {
 }
 
 function DoorMark({ item }) {
-  const { x, y, length, orientation, swing } = item;
+  const { x, y, length, orientation, swing, hinge = 'end' } = item;
   if (orientation === 'v') {
     const dir = swing === 'left' ? -1 : 1;
+    const hingeY = hinge === 'start' ? y : y + length;
+    const oppositeY = hinge === 'start' ? y + length : y;
+    const sweep = hinge === 'start' ? (dir < 0 ? 1 : 0) : (dir < 0 ? 0 : 1);
     return (
       <g className="door-mark" aria-label="Uks">
         <line className="door-gap" x1={x} y1={y} x2={x} y2={y + length} />
-        <line className="door-leaf" x1={x} y1={y + length} x2={x + dir * length} y2={y + length} />
-        <path className="door-arc" d={`M ${x} ${y} A ${length} ${length} 0 0 ${dir < 0 ? 0 : 1} ${x + dir * length} ${y + length}`} />
+        <line className="door-leaf" x1={x} y1={hingeY} x2={x + dir * length} y2={hingeY} />
+        <path className="door-arc" d={`M ${x} ${oppositeY} A ${length} ${length} 0 0 ${sweep} ${x + dir * length} ${hingeY}`} />
       </g>
     );
   }
   const dir = swing === 'up' ? -1 : 1;
+  const hingeX = hinge === 'start' ? x : x + length;
+  const oppositeX = hinge === 'start' ? x + length : x;
+  const sweep = hinge === 'start' ? (dir > 0 ? 1 : 0) : (dir > 0 ? 0 : 1);
   return (
     <g className="door-mark" aria-label="Uks">
       <line className="door-gap" x1={x} y1={y} x2={x + length} y2={y} />
-      <line className="door-leaf" x1={x} y1={y} x2={x} y2={y + dir * length} />
-      <path className="door-arc" d={`M ${x + length} ${y} A ${length} ${length} 0 0 ${dir > 0 ? 1 : 0} ${x} ${y + dir * length}`} />
+      <line className="door-leaf" x1={hingeX} y1={y} x2={hingeX} y2={y + dir * length} />
+      <path className="door-arc" d={`M ${oppositeX} ${y} A ${length} ${length} 0 0 ${sweep} ${hingeX} ${y + dir * length}`} />
     </g>
   );
 }
@@ -232,7 +238,8 @@ function ParkingMark({ item }) {
 
       <g aria-label="Jalgvärav">
         <line x1={walk.x1} y1={walk.y} x2={walk.x2} y2={walk.y} stroke="rgba(226,234,242,.78)" strokeWidth="6" vectorEffect="non-scaling-stroke" />
-        <path d={`M ${walk.x1} ${walk.y} Q ${(walk.x1 + walk.x2) / 2} ${walk.y + 58} ${walk.x2} ${walk.y}`} fill="none" stroke="rgba(226,234,242,.55)" strokeWidth="2" strokeDasharray="6 5" vectorEffect="non-scaling-stroke" />
+        <line x1={walk.x1} y1={walk.y} x2={walk.x1} y2={walk.y + (walk.x2 - walk.x1)} stroke="rgba(226,234,242,.7)" strokeWidth="3" vectorEffect="non-scaling-stroke" />
+        <path d={`M ${walk.x2} ${walk.y} A ${walk.x2 - walk.x1} ${walk.x2 - walk.x1} 0 0 1 ${walk.x1} ${walk.y + (walk.x2 - walk.x1)}`} fill="none" stroke="rgba(226,234,242,.55)" strokeWidth="2" strokeDasharray="6 5" vectorEffect="non-scaling-stroke" />
         <text x={(walk.x1 + walk.x2) / 2} y={walk.y + 82} textAnchor="middle" fill="#718092" fontSize="12" letterSpacing="2">JALGVÄRAV</text>
       </g>
 
