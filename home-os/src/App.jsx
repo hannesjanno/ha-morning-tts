@@ -12,16 +12,28 @@ const floors = {
       { id:'sauna', name:'Saun', area:'3,5 m²', points:'599.74,530.64 790.31,530.64 790.31,325.28 599.74,325.28 599.74,530.64', label:[695,424] },
       { id:'wash', name:'Pesuruum', area:'10,5 m²', points:'480.8,536.22 480.8,700 480.8,892.73 790.31,892.73 790.31,666.19 790.31,530.64 599.74,530.64 599.74,536.22 480.8,536.22', label:[636,710] },
     ],
+    openPassages: [
+      // Tegelikus kodus on köök + elutuba + esik selles servas avatud ruum.
+      { x1:0, y1:269.1, x2:480.8, y2:269.1 },
+    ],
     windows: [
       { x1:64, y1:0, x2:184, y2:0 },
       { x1:350, y1:0, x2:424, y2:0 },
+      // Abiruumi aken paremas välisseinas.
+      { x1:790.31, y1:205, x2:790.31, y2:273 },
+      // Sauna aken paremas välisseinas.
       { x1:790.31, y1:378, x2:790.31, y2:444 },
       { x1:62, y1:1049.9, x2:168, y2:1049.9 },
       { x1:650, y1:892.73, x2:735, y2:892.73 },
     ],
     doors: [
       { x:290.25, y:209, length:60, orientation:'v', swing:'left' },
+      // WC uks eluruumi poolt.
+      { x:480.8, y:390, length:72, orientation:'v', swing:'left' },
+      // Pesuruumi uks eluruumi poolt.
       { x:480.8, y:598, length:98, orientation:'v', swing:'left' },
+      // Sauna uks avaneb pesuruumi poole.
+      { x:640, y:530.64, length:72, orientation:'h', swing:'down' },
     ],
   },
   2: {
@@ -34,15 +46,20 @@ const floors = {
       { id:'room2', name:'Tuba 2', area:'16,8 m²', points:'246.48,659.18 0,659.18 0,1050.69 481.4,1050.69 481.4,892.94 431.72,892.94 431.72,659.18 246.48,659.18', label:[216,850] },
       { id:'landing', name:'Trepihall', area:'11,4 m²', points:'431.72,659.18 431.72,386.14 431.72,283.08 256.23,283.08 256.23,381.56 0,381.56 0,595.89 246.48,595.89 246.48,659.18 431.72,659.18', label:[216,484] },
     ],
+    openPassages: [],
     windows: [
+      // Tuba 3 olemasolev välisaken.
       { x1:104, y1:0, x2:218, y2:0 },
-      { x1:790.31, y1:448, x2:790.31, y2:516 },
-      { x1:790.31, y1:744, x2:790.31, y2:820 },
-      { x1:72, y1:1050.69, x2:163, y2:1050.69 },
-      { x1:348, y1:1050.69, x2:432, y2:1050.69 },
-      { x1:0, y1:760, x2:0, y2:846 },
+      // Tuba 1: kaks akent kõrvuti samas otsaseinas (foto järgi).
+      { x1:520, y1:892.94, x2:615, y2:892.94 },
+      { x1:625, y1:892.94, x2:720, y2:892.94 },
+      // Tuba 2: kaks akent kõrvuti samas otsaseinas (foto järgi).
+      { x1:145, y1:1050.69, x2:245, y2:1050.69 },
+      { x1:255, y1:1050.69, x2:355, y2:1050.69 },
     ],
     doors: [
+      // Tuba 3 uks trepihalli poolt.
+      { x:345, y:283.08, length:78, orientation:'h', swing:'up' },
       { x:431.72, y:292, length:74, orientation:'v', swing:'left' },
       { x:431.72, y:400, length:76, orientation:'v', swing:'right' },
       { x:431.72, y:548, length:78, orientation:'v', swing:'right' },
@@ -89,9 +106,19 @@ function DoorMark({ item }) {
 
 function FloorSvg({ floor, selected, onSelect }) {
   const data = floors[floor];
+  const maskId = `wall-mask-${floor}`;
   return (
     <div className="scan-wrap">
-      <svg className="scan-plan" viewBox="-90 -90 970 1230" role="img" aria-label={`${floor}. korruse Polycam skänni järgi plaan`}>
+      <svg className="scan-plan" viewBox="-90 -90 970 1230" role="img" aria-label={`${floor}. korruse parandatud 2D plaan`}>
+        <defs>
+          <mask id={maskId} maskUnits="userSpaceOnUse" x="-100" y="-100" width="1000" height="1250">
+            <rect x="-100" y="-100" width="1000" height="1250" fill="white" />
+            {(data.openPassages || []).map((item, index) => (
+              <line key={`open-${index}`} x1={item.x1} y1={item.y1} x2={item.x2} y2={item.y2} stroke="black" strokeWidth="12" strokeLinecap="butt" />
+            ))}
+          </mask>
+        </defs>
+
         <g className="room-layer">
           {data.rooms.map((room) => (
             <g key={room.id} className={`svg-room ${selected === room.id ? 'selected' : ''}`} onClick={() => onSelect(room.id)} role="button" tabIndex="0" onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onSelect(room.id)}>
@@ -101,13 +128,18 @@ function FloorSvg({ floor, selected, onSelect }) {
             </g>
           ))}
         </g>
+
+        <g className="wall-layer" mask={`url(#${maskId})`} aria-hidden="true">
+          {data.rooms.map((room) => <polygon key={`wall-${room.id}`} points={room.points} />)}
+        </g>
+
         <g className="opening-layer">
           {data.windows.map((item, index) => <WindowMark key={`window-${index}`} item={item} />)}
           {data.doors.map((item, index) => <DoorMark key={`door-${index}`} item={item} />)}
         </g>
         {floor === 1 && <g className="stairs-mark"><rect x="382" y="704" width="84" height="116" rx="4"/><path d="M392 806h64M392 790h64M392 774h64M392 758h64M392 742h64M392 726h64"/><text x="424" y="695" textAnchor="middle">Trepp ↑</text></g>}
       </svg>
-      <div className="scan-meta"><span>Polycam · {floor}. korrus · uksed + aknad</span><strong>{data.area}</strong></div>
+      <div className="scan-meta"><span>Parandatud 2D plaan · {floor}. korrus</span><strong>{data.area}</strong></div>
     </div>
   );
 }
@@ -119,7 +151,7 @@ function FloorPlan({ floor }) {
     <div className="floor-plan">
       <FloorSvg floor={floor} selected={selected} onSelect={(id) => setSelected(id === selected ? null : id)} />
       <div className="room-detail">
-        {room ? <><span>VALITUD RUUM</span><strong>{room.name}</strong><small>{room.area} · siia lisame hiljem Home Assistanti olekud ja juhtimise</small></> : <><span>INTERAKTIIVNE PLAAN</span><strong>Puuduta ruumi</strong><small>Ruumide kuju, uksed ja aknad on viidud vastavusse Polycami ekspordiga.</small></>}
+        {room ? <><span>VALITUD RUUM</span><strong>{room.name}</strong><small>{room.area} · siia lisame hiljem Home Assistanti olekud ja juhtimise</small></> : <><span>INTERAKTIIVNE PLAAN</span><strong>Puuduta ruumi</strong><small>2D plaani seinad, uksed ja aknad on täpsustatud Polycami, projekti ja tegelike fotode järgi.</small></>}
       </div>
     </div>
   );
