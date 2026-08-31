@@ -13,28 +13,38 @@ const floors = {
       { id:'wash', name:'Pesuruum', area:'10,5 m²', points:'480.8,536.22 480.8,700 480.8,892.73 790.31,892.73 790.31,666.19 790.31,530.64 599.74,530.64 599.74,536.22 480.8,536.22', label:[636,710] },
     ],
     openPassages: [
-      // Tegelikus kodus on köök + elutuba + esik selles servas avatud ruum.
+      // Köök, esik ja elutuba on selles servas avatud ruum.
       { x1:0, y1:269.1, x2:480.8, y2:269.1 },
     ],
     windows: [
+      // Köögi aken.
       { x1:64, y1:0, x2:184, y2:0 },
+      // Esiku aken.
       { x1:350, y1:0, x2:424, y2:0 },
       // Abiruumi aken paremas välisseinas.
       { x1:790.31, y1:205, x2:790.31, y2:273 },
       // Sauna aken paremas välisseinas.
       { x1:790.31, y1:378, x2:790.31, y2:444 },
+      // Elutoa alumise seina olemasolev väiksem aken.
       { x1:62, y1:1049.9, x2:168, y2:1049.9 },
+      // Elutoa alumise seina suurem aken kasutaja märkuse järgi.
+      { x1:188, y1:1049.9, x2:410, y2:1049.9 },
+      // Pesuruumi alumine aken.
       { x1:650, y1:892.73, x2:735, y2:892.73 },
     ],
     doors: [
-      { x:290.25, y:209, length:60, orientation:'v', swing:'left' },
+      // Esiku välisuks paremas välisseinas.
+      { x:480.8, y:42, length:86, orientation:'v', swing:'left' },
       // WC uks eluruumi poolt.
       { x:480.8, y:390, length:72, orientation:'v', swing:'left' },
       // Pesuruumi uks eluruumi poolt.
       { x:480.8, y:598, length:98, orientation:'v', swing:'left' },
       // Sauna uks avaneb pesuruumi poole.
       { x:640, y:530.64, length:72, orientation:'h', swing:'down' },
+      // Elutoa uks terrassile paremas alumises välisseinas.
+      { x:480.8, y:940, length:86, orientation:'v', swing:'left' },
     ],
+    stairs: { x:105, y:382, w:300, h:132, label:'Trepp ↑' },
   },
   2: {
     area: '68,9 m²',
@@ -48,21 +58,24 @@ const floors = {
     ],
     openPassages: [],
     windows: [
-      // Tuba 3 olemasolev välisaken.
-      { x1:104, y1:0, x2:218, y2:0 },
-      // Tuba 1: kaks akent kõrvuti samas otsaseinas (foto järgi).
-      { x1:520, y1:892.94, x2:615, y2:892.94 },
-      { x1:625, y1:892.94, x2:720, y2:892.94 },
-      // Tuba 2: kaks akent kõrvuti samas otsaseinas (foto järgi).
+      // Tuba 3: kaks akent kõrvuti ülemises välisseinas.
+      { x1:78, y1:0, x2:190, y2:0 },
+      { x1:205, y1:0, x2:317, y2:0 },
+      // Tuba 1: kaks akent kõrvuti paremas välisseinas.
+      { x1:790.31, y1:455, x2:790.31, y2:565 },
+      { x1:790.31, y1:578, x2:790.31, y2:688 },
+      // Tuba 2: kaks akent kõrvuti alumises välisseinas.
       { x1:145, y1:1050.69, x2:245, y2:1050.69 },
       { x1:255, y1:1050.69, x2:355, y2:1050.69 },
     ],
     doors: [
       // Tuba 3 uks trepihalli poolt.
       { x:345, y:283.08, length:78, orientation:'h', swing:'up' },
+      // Vannitoa uks.
       { x:431.72, y:292, length:74, orientation:'v', swing:'left' },
-      { x:431.72, y:400, length:76, orientation:'v', swing:'right' },
+      // Tuba 1 alumine uks. Ülemine vale uks eemaldatud kasutaja märgise järgi.
       { x:431.72, y:548, length:78, orientation:'v', swing:'right' },
+      // Tuba 2 uks.
       { x:346, y:659.18, length:78, orientation:'h', swing:'down' },
     ],
   },
@@ -104,6 +117,24 @@ function DoorMark({ item }) {
   );
 }
 
+function StairsMark({ item }) {
+  if (!item) return null;
+  const stepCount = 7;
+  const inset = 12;
+  const usable = item.w - inset * 2;
+  return (
+    <g className="stairs-mark" aria-label="Trepp">
+      <rect x={item.x} y={item.y} width={item.w} height={item.h} rx="4" />
+      {Array.from({ length: stepCount }).map((_, index) => {
+        const x = item.x + inset + (usable / (stepCount + 1)) * (index + 1);
+        return <line key={index} x1={x} y1={item.y + 10} x2={x} y2={item.y + item.h - 10} />;
+      })}
+      <path d={`M ${item.x + 20} ${item.y + item.h / 2} H ${item.x + item.w - 28} M ${item.x + item.w - 42} ${item.y + item.h / 2 - 12} L ${item.x + item.w - 28} ${item.y + item.h / 2} L ${item.x + item.w - 42} ${item.y + item.h / 2 + 12}`} />
+      <text x={item.x + item.w / 2} y={item.y - 12} textAnchor="middle">{item.label}</text>
+    </g>
+  );
+}
+
 function FloorSvg({ floor, selected, onSelect }) {
   const data = floors[floor];
   const maskId = `wall-mask-${floor}`;
@@ -137,7 +168,7 @@ function FloorSvg({ floor, selected, onSelect }) {
           {data.windows.map((item, index) => <WindowMark key={`window-${index}`} item={item} />)}
           {data.doors.map((item, index) => <DoorMark key={`door-${index}`} item={item} />)}
         </g>
-        {floor === 1 && <g className="stairs-mark"><rect x="382" y="704" width="84" height="116" rx="4"/><path d="M392 806h64M392 790h64M392 774h64M392 758h64M392 742h64M392 726h64"/><text x="424" y="695" textAnchor="middle">Trepp ↑</text></g>}
+        {floor === 1 && <StairsMark item={data.stairs} />}
       </svg>
       <div className="scan-meta"><span>Parandatud 2D plaan · {floor}. korrus</span><strong>{data.area}</strong></div>
     </div>
@@ -151,7 +182,7 @@ function FloorPlan({ floor }) {
     <div className="floor-plan">
       <FloorSvg floor={floor} selected={selected} onSelect={(id) => setSelected(id === selected ? null : id)} />
       <div className="room-detail">
-        {room ? <><span>VALITUD RUUM</span><strong>{room.name}</strong><small>{room.area} · siia lisame hiljem Home Assistanti olekud ja juhtimise</small></> : <><span>INTERAKTIIVNE PLAAN</span><strong>Puuduta ruumi</strong><small>2D plaani seinad, uksed ja aknad on täpsustatud Polycami, projekti ja tegelike fotode järgi.</small></>}
+        {room ? <><span>VALITUD RUUM</span><strong>{room.name}</strong><small>{room.area} · siia lisame hiljem Home Assistanti olekud ja juhtimise</small></> : <><span>INTERAKTIIVNE PLAAN</span><strong>Puuduta ruumi</strong><small>2D plaani seinad, uksed ja aknad on täpsustatud Polycami, projekti, fotode ja sinu märkuste järgi.</small></>}
       </div>
     </div>
   );
