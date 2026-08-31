@@ -32,7 +32,7 @@ const floors = {
       { x:480.8, y:598, length:98, orientation:'v', swing:'left' },
       { x:640, y:530.64, length:72, orientation:'h', swing:'down' },
       { x:45, y:1049.9, length:105, orientation:'h', swing:'down' },
-      { x:405, y:1049.9, length:75, orientation:'h', swing:'down' },
+      { x:480.8, y:930, length:95, orientation:'v', swing:'right' },
       { x:620, y:892.73, length:95, orientation:'h', swing:'down' },
     ],
     stairs: {
@@ -54,10 +54,10 @@ const floors = {
     },
     canopy: {
       x1:480.8,
-      x2:720,
+      x2:670,
       yTop:-82,
       yBottom:157.47,
-      label:[600,78],
+      label:[575,78],
       text:'VARJUALUNE',
     },
   },
