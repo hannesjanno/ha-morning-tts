@@ -65,13 +65,13 @@ function addMarekiRoomFurniture(svg) {
   // Kõrge kapp voodi paremal pool.
   rect(group, 712, 665, 58, 225, 'KAPP', 'wardrobe', 2);
 
-  // Kirjutuslaud vastu ülemist seina; aken jääb lauast paremale.
-  rect(group, 455, 390, 195, 62, 'LAUD', 'desk', 3);
+  // Kirjutuslaud vastu ülemist seina, aknale lähemal.
+  rect(group, 535, 390, 195, 62, 'LAUD', 'desk', 3);
 
   // Kontoritool laua ees, toa poole.
   const chair = svgEl('g', { 'data-furniture-type': 'chair', 'aria-label': 'Kontoritool' });
   chair.appendChild(svgEl('circle', {
-    cx: 555, cy: 490, r: 27,
+    cx: 635, cy: 490, r: 27,
     fill: 'rgba(255,255,255,.025)',
     stroke: 'rgba(226,234,242,.44)',
     'stroke-width': 2,
