@@ -65,13 +65,30 @@ function addMarekiRoomFurniture(svg) {
   // Kõrge kapp voodi paremal pool.
   rect(group, 712, 665, 58, 225, 'KAPP', 'wardrobe', 2);
 
-  // Kirjutuslaud vastu ülemist seina, aknale lähemal.
-  rect(group, 535, 390, 195, 62, 'LAUD', 'desk', 3);
+  // Seinapeegel ülemisel seinal, lauast vasakul.
+  const mirror = svgEl('g', { 'data-furniture-type': 'mirror', 'aria-label': 'Seinapeegel' });
+  mirror.appendChild(svgEl('rect', {
+    x: 500, y: 390, width: 32, height: 105, rx: 2,
+    fill: 'rgba(255,255,255,.025)',
+    stroke: 'rgba(226,234,242,.52)',
+    'stroke-width': 2,
+    'vector-effect': 'non-scaling-stroke',
+  }));
+  mirror.appendChild(svgEl('line', {
+    x1: 504, y1: 489, x2: 528, y2: 396,
+    stroke: 'rgba(226,234,242,.28)',
+    'stroke-width': 1.5,
+    'vector-effect': 'non-scaling-stroke',
+  }));
+  group.appendChild(mirror);
+
+  // Kirjutuslaud vastu ülemist seina, veel lähemal parempoolsele aknale.
+  rect(group, 565, 390, 195, 62, 'LAUD', 'desk', 3);
 
   // Kontoritool laua ees, toa poole.
   const chair = svgEl('g', { 'data-furniture-type': 'chair', 'aria-label': 'Kontoritool' });
   chair.appendChild(svgEl('circle', {
-    cx: 635, cy: 490, r: 27,
+    cx: 665, cy: 490, r: 27,
     fill: 'rgba(255,255,255,.025)',
     stroke: 'rgba(226,234,242,.44)',
     'stroke-width': 2,
