@@ -37,7 +37,31 @@ function addRect(group, { x, y, w, h, rx = 4, label, type }) {
   return item;
 }
 
+function adjustGuestRoomWindows(svg) {
+  if (svg.dataset.guestRoomWindowsAdjusted === 'true') return;
+
+  const windowMarks = svg.querySelectorAll('.window-mark');
+  if (windowMarks.length < 2) return;
+
+  // Külaliste toa ülemine sein: laua kohal jääb sein ja aken algab kohe pärast lauda.
+  const positions = [
+    { x1: 170, x2: 245 },
+    { x1: 252, x2: 330 },
+  ];
+
+  positions.forEach((pos, index) => {
+    const lines = windowMarks[index].querySelectorAll('line');
+    lines.forEach(line => {
+      line.setAttribute('x1', pos.x1);
+      line.setAttribute('x2', pos.x2);
+    });
+  });
+
+  svg.dataset.guestRoomWindowsAdjusted = 'true';
+}
+
 function addGuestRoomFurniture(svg) {
+  adjustGuestRoomWindows(svg);
   if (svg.querySelector('[data-guest-room-furniture]')) return;
 
   const group = svgEl('g', {
@@ -45,29 +69,29 @@ function addGuestRoomFurniture(svg) {
     'pointer-events': 'none',
   });
 
-  // Voodi: risti toa suhtes, peats vastu vasakut seina.
+  // Voodi: peats vastu Külaliste toa alumist ehk Trepihalli seina.
   const bed = addRect(group, {
-    x: 18, y: 175, w: 255, h: 150, rx: 7,
+    x: 80, y: 145, w: 150, h: 235, rx: 7,
     label: 'VOODI', type: 'bed',
   });
   bed.appendChild(svgEl('rect', {
-    x: 30, y: 188, width: 42, height: 54, rx: 10,
+    x: 92, y: 315, width: 54, height: 42, rx: 10,
     fill: 'none', stroke: 'rgba(226,234,242,.34)',
     'stroke-width': 1.5, 'vector-effect': 'non-scaling-stroke',
   }));
   bed.appendChild(svgEl('rect', {
-    x: 30, y: 255, width: 42, height: 54, rx: 10,
+    x: 164, y: 315, width: 54, height: 42, rx: 10,
     fill: 'none', stroke: 'rgba(226,234,242,.34)',
     'stroke-width': 1.5, 'vector-effect': 'non-scaling-stroke',
   }));
   bed.appendChild(svgEl('line', {
-    x1: 18, y1: 175, x2: 18, y2: 325,
+    x1: 80, y1: 380, x2: 230, y2: 380,
     stroke: 'rgba(226,234,242,.72)',
     'stroke-width': 5,
     'vector-effect': 'non-scaling-stroke',
   }));
 
-  // Kirjutuslaud vastu aknapoolset seina vasakul pool.
+  // Kirjutuslaud vastu aknapoolset seina vasakul pool; laua kohal on sein.
   addRect(group, {
     x: 8, y: 18, w: 155, h: 58, rx: 3,
     label: 'LAUD', type: 'desk',
