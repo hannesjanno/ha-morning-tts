@@ -43,7 +43,6 @@ function adjustGuestRoomWindows(svg) {
   const windowMarks = svg.querySelectorAll('.window-mark');
   if (windowMarks.length < 2) return;
 
-  // Külaliste toa ülemine sein: laua kohal jääb sein ja aken algab kohe pärast lauda.
   const positions = [
     { x1: 170, x2: 245 },
     { x1: 252, x2: 330 },
@@ -69,7 +68,6 @@ function addGuestRoomFurniture(svg) {
     'pointer-events': 'none',
   });
 
-  // Voodi: peats vastu Külaliste toa alumist ehk Trepihalli seina.
   const bed = addRect(group, {
     x: 80, y: 145, w: 150, h: 235, rx: 7,
     label: 'VOODI', type: 'bed',
@@ -91,19 +89,16 @@ function addGuestRoomFurniture(svg) {
     'vector-effect': 'non-scaling-stroke',
   }));
 
-  // Öökapp voodi peatsi vasakul: nurgas vastu vasakut ja Trepihalli seina.
   addRect(group, {
     x: 0, y: 329.56, w: 58, h: 52, rx: 3,
     label: 'ÖÖKAPP', type: 'nightstand',
   });
 
-  // Kirjutuslaud vastu aknapoolset seina vasakul pool; laua kohal on sein.
   addRect(group, {
     x: 8, y: 18, w: 155, h: 58, rx: 3,
     label: 'LAUD', type: 'desk',
   });
 
-  // Kontoritool laua ees, toa poole.
   const chair = svgEl('g', {
     'data-furniture-type': 'chair',
     'aria-label': 'Kontoritool',
@@ -123,20 +118,19 @@ function addGuestRoomFurniture(svg) {
   }));
   group.appendChild(chair);
 
-  // Täispikk peegel akna ja olemasoleva suure kapi vahel.
   const mirror = svgEl('g', {
     'data-furniture-type': 'mirror',
     'aria-label': 'Peegel',
   });
   mirror.appendChild(svgEl('rect', {
-    x: 356, y: 25, width: 34, height: 120, rx: 3,
+    x: 330, y: 18, width: 30, height: 120, rx: 3,
     fill: 'rgba(255,255,255,.02)',
     stroke: 'rgba(226,234,242,.55)',
     'stroke-width': 2,
     'vector-effect': 'non-scaling-stroke',
   }));
   mirror.appendChild(svgEl('line', {
-    x1: 361, y1: 137, x2: 385, y2: 33,
+    x1: 334, y1: 132, x2: 356, y2: 24,
     stroke: 'rgba(226,234,242,.18)',
     'stroke-width': 1,
     'vector-effect': 'non-scaling-stroke',
