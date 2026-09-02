@@ -16,7 +16,7 @@ function addVacuum(svg) {
   });
 
   group.appendChild(svgEl('rect', {
-    x: 392, y: 96, width: 58, height: 34, rx: 4,
+    x: 366, y: 0, width: 48, height: 28, rx: 4,
     fill: 'rgba(255,255,255,.035)',
     stroke: 'rgba(226,234,242,.52)',
     'stroke-width': 2,
@@ -24,7 +24,7 @@ function addVacuum(svg) {
   }));
 
   group.appendChild(svgEl('circle', {
-    cx: 421, cy: 151, r: 22,
+    cx: 390, cy: 52, r: 19,
     fill: 'rgba(255,255,255,.025)',
     stroke: 'rgba(226,234,242,.52)',
     'stroke-width': 2,
@@ -32,7 +32,7 @@ function addVacuum(svg) {
   }));
 
   group.appendChild(svgEl('circle', {
-    cx: 421, cy: 151, r: 5,
+    cx: 390, cy: 52, r: 5,
     fill: 'none',
     stroke: 'rgba(226,234,242,.32)',
     'stroke-width': 1.5,
