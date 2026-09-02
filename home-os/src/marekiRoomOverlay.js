@@ -39,42 +39,45 @@ function addMarekiRoomFurniture(svg) {
     'pointer-events': 'none',
   });
 
-  // Voodi toa alumises osas, peats vastu vasakpoolset siseseina.
-  const bed = rect(group, 470, 665, 185, 210, 'VOODI', 'bed', 7);
+  // Voodi: peats vastu Mareki toa alumist seina.
+  const bed = rect(group, 555, 650, 150, 240, 'VOODI', 'bed', 7);
   bed.appendChild(svgEl('rect', {
-    x: 485, y: 680, width: 68, height: 40, rx: 9,
+    x: 568, y: 833, width: 54, height: 42, rx: 9,
     fill: 'none', stroke: 'rgba(226,234,242,.34)',
     'stroke-width': 1.5, 'vector-effect': 'non-scaling-stroke',
   }));
   bed.appendChild(svgEl('rect', {
-    x: 570, y: 680, width: 68, height: 40, rx: 9,
+    x: 638, y: 833, width: 54, height: 42, rx: 9,
     fill: 'none', stroke: 'rgba(226,234,242,.34)',
     'stroke-width': 1.5, 'vector-effect': 'non-scaling-stroke',
   }));
+  bed.appendChild(svgEl('line', {
+    x1: 555, y1: 890, x2: 705, y2: 890,
+    stroke: 'rgba(226,234,242,.72)',
+    'stroke-width': 5,
+    'vector-effect': 'non-scaling-stroke',
+  }));
 
-  // Kaks kõrget kappi voodi mõlemal küljel.
-  rect(group, 438, 650, 28, 225, 'KAPP', 'wardrobe', 2);
-  rect(group, 662, 650, 42, 225, 'KAPP', 'wardrobe', 2);
+  // Vasak kapp, siis öökapp, siis voodi.
+  rect(group, 445, 665, 58, 225, 'KAPP', 'wardrobe', 2);
+  rect(group, 510, 830, 38, 60, 'ÖÖKAPP', 'nightstand', 3);
 
-  // Öökapp voodi paremal küljel.
-  rect(group, 708, 770, 48, 52, 'ÖÖKAPP', 'nightstand', 3);
+  // Kõrge kapp voodi paremal pool.
+  rect(group, 712, 665, 58, 225, 'KAPP', 'wardrobe', 2);
 
-  // Kirjutuslaud akende seina ääres.
-  rect(group, 690, 430, 88, 165, 'LAUD', 'desk', 3);
+  // Kirjutuslaud vastu ülemist seina; aken jääb lauast paremale.
+  rect(group, 455, 390, 195, 62, 'LAUD', 'desk', 3);
 
-  // Kontoritool laua ees.
+  // Kontoritool laua ees, toa poole.
   const chair = svgEl('g', { 'data-furniture-type': 'chair', 'aria-label': 'Kontoritool' });
   chair.appendChild(svgEl('circle', {
-    cx: 655, cy: 515, r: 27,
+    cx: 555, cy: 490, r: 27,
     fill: 'rgba(255,255,255,.025)',
     stroke: 'rgba(226,234,242,.44)',
     'stroke-width': 2,
     'vector-effect': 'non-scaling-stroke',
   }));
   group.appendChild(chair);
-
-  // Väike taburet/alus akna kõrval.
-  rect(group, 704, 610, 44, 38, 'ALUS', 'stool', 3);
 
   svg.appendChild(group);
 }
