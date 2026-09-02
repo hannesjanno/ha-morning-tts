@@ -91,6 +91,12 @@ function addGuestRoomFurniture(svg) {
     'vector-effect': 'non-scaling-stroke',
   }));
 
+  // Öökapp voodi peatsi vasakul: nurgas vastu vasakut ja Trepihalli seina.
+  addRect(group, {
+    x: 0, y: 329.56, w: 58, h: 52, rx: 3,
+    label: 'ÖÖKAPP', type: 'nightstand',
+  });
+
   // Kirjutuslaud vastu aknapoolset seina vasakul pool; laua kohal on sein.
   addRect(group, {
     x: 8, y: 18, w: 155, h: 58, rx: 3,
