@@ -45,42 +45,48 @@ function addGuestRoomFurniture(svg) {
     'pointer-events': 'none',
   });
 
-  // Voodi: fotode järgi toa keskel/vasakul, pikisuunas akende poole.
+  // Voodi: risti toa suhtes, peats vastu vasakut seina.
   const bed = addRect(group, {
-    x: 112, y: 105, w: 190, h: 235, rx: 7,
+    x: 18, y: 175, w: 255, h: 150, rx: 7,
     label: 'VOODI', type: 'bed',
   });
   bed.appendChild(svgEl('rect', {
-    x: 126, y: 116, width: 72, height: 42, rx: 10,
+    x: 30, y: 188, width: 42, height: 54, rx: 10,
     fill: 'none', stroke: 'rgba(226,234,242,.34)',
     'stroke-width': 1.5, 'vector-effect': 'non-scaling-stroke',
   }));
   bed.appendChild(svgEl('rect', {
-    x: 216, y: 116, width: 72, height: 42, rx: 10,
+    x: 30, y: 255, width: 42, height: 54, rx: 10,
     fill: 'none', stroke: 'rgba(226,234,242,.34)',
     'stroke-width': 1.5, 'vector-effect': 'non-scaling-stroke',
   }));
+  bed.appendChild(svgEl('line', {
+    x1: 18, y1: 175, x2: 18, y2: 325,
+    stroke: 'rgba(226,234,242,.72)',
+    'stroke-width': 5,
+    'vector-effect': 'non-scaling-stroke',
+  }));
 
-  // Kirjutuslaud akendest vasakul külgseina ääres.
+  // Kirjutuslaud vastu aknapoolset seina vasakul pool.
   addRect(group, {
-    x: 10, y: 88, w: 72, h: 150, rx: 3,
+    x: 8, y: 18, w: 155, h: 58, rx: 3,
     label: 'LAUD', type: 'desk',
   });
 
-  // Kontoritool laua ees.
+  // Kontoritool laua ees, toa poole.
   const chair = svgEl('g', {
     'data-furniture-type': 'chair',
     'aria-label': 'Kontoritool',
   });
   chair.appendChild(svgEl('circle', {
-    cx: 104, cy: 170, r: 28,
+    cx: 86, cy: 108, r: 28,
     fill: 'rgba(255,255,255,.025)',
     stroke: 'rgba(226,234,242,.44)',
     'stroke-width': 2,
     'vector-effect': 'non-scaling-stroke',
   }));
   chair.appendChild(svgEl('line', {
-    x1: 104, y1: 142, x2: 104, y2: 128,
+    x1: 86, y1: 80, x2: 86, y2: 72,
     stroke: 'rgba(226,234,242,.38)',
     'stroke-width': 2,
     'vector-effect': 'non-scaling-stroke',
