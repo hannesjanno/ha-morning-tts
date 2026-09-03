@@ -50,9 +50,9 @@ function addBedroomFurniture(svg) {
   // Öökapp vasakus alumises nurgas, enne voodit.
   rect(group, 5, 980, 58, 58, 'ÖÖKAPP', 'nightstand', 3);
 
-  // Parema seina juures garderoobi ei ole. TV ja selle all olev kummut on vastu paremat seina.
-  rect(group, 439, 730, 40, 112, 'TV', 'tv', 2);
-  rect(group, 421, 850, 58, 125, 'KUMMUT', 'cabinet', 2);
+  // Kummut asub parema seina ääres endise TV asukoha juures; TV paikneb kummuti peal.
+  rect(group, 421, 730, 58, 125, 'KUMMUT', 'cabinet', 2);
+  rect(group, 435, 748, 30, 88, 'TV', 'tv', 2);
 
   // Kompaktsem tugitool kummuti ja alumise seina vahel.
   const chair = svgEl('g', { 'data-furniture-type': 'armchair', 'aria-label': 'Tugitool' });
