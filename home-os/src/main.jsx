@@ -5,6 +5,7 @@ import './styles.css';
 import { installFurnitureOverlay } from './furnitureOverlay.js';
 import { installVacuumOverlay } from './vacuumOverlay.js';
 import { installMarekiRoomOverlay } from './marekiRoomOverlay.js';
+import { installBedroomOverlay } from './bedroomOverlay.js';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -15,3 +16,4 @@ createRoot(document.getElementById('root')).render(
 installFurnitureOverlay();
 installVacuumOverlay();
 installMarekiRoomOverlay();
+installBedroomOverlay();
