@@ -34,9 +34,22 @@ function rect(group, x, y, width, height, label, type, rx = 4) {
 function addMarekiRoomFurniture(svg) {
   if (svg.querySelector('[data-mareki-room-furniture]')) return;
 
+  // Hoia Mareki toa mööbel visuaalselt ainult Mareki toa sees.
+  // Alumises osas algab toa vasak piir x=481.4, seega ei joonistu vasak kapp magamistoa peale.
+  const defs = svg.querySelector('defs') || svg.insertBefore(svgEl('defs'), svg.firstChild);
+  const clipId = 'mareki-room-furniture-clip';
+  if (!svg.querySelector(`#${clipId}`)) {
+    const clipPath = svgEl('clipPath', { id: clipId });
+    clipPath.appendChild(svgEl('polygon', {
+      points: '431.72,386.14 790.31,386.14 790.31,892.94 481.4,892.94 481.4,659.18 431.72,659.18',
+    }));
+    defs.appendChild(clipPath);
+  }
+
   const group = svgEl('g', {
     'data-mareki-room-furniture': 'true',
     'pointer-events': 'none',
+    'clip-path': `url(#${clipId})`,
   });
 
   // Voodi: peats vastu Mareki toa alumist seina.
