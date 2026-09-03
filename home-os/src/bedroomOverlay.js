@@ -63,10 +63,10 @@ function addBedroomFurniture(svg) {
   }));
   group.appendChild(chair);
 
-  // Ümmargune laud kummuti ja tugitooli vahel, mõlemale lähemal.
+  // Ümmargune laud tugitooli kõrval, ilma kattumiseta.
   const table = svgEl('g', { 'data-furniture-type': 'side-table', 'aria-label': 'Väike laud' });
   table.appendChild(svgEl('circle', {
-    cx: 397, cy: 984, r: 20,
+    cx: 381, cy: 984, r: 20,
     fill: 'rgba(255,255,255,.035)', stroke: 'rgba(226,234,242,.48)',
     'stroke-width': 2, 'vector-effect': 'non-scaling-stroke',
   }));
