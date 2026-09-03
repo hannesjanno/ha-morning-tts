@@ -67,7 +67,7 @@ const floors = {
       { x:431.72, y:490, length:78, orientation:'v', swing:'right', hinge:'start' },
       { x:346, y:659.18, length:78, orientation:'h', swing:'down' },
     ],
-    stairs: { type:'straight', x:0, y:430, w:235, h:205, label:'Trepp ↑' },
+    stairs: { type:'straight', x:0, y:430, w:240, h:205, label:'Trepp ↑' },
     fixtures: [
       { type:'wardrobe-v', x:420, y:0, w:45, h:157.69, label:'KAPP' },
       { type:'wc', x:438, y:168, w:70, h:92, label:'WC' },
