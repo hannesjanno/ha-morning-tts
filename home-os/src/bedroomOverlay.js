@@ -54,10 +54,10 @@ function addBedroomFurniture(svg) {
   rect(group, 439, 730, 40, 112, 'TV', 'tv', 2);
   rect(group, 421, 850, 58, 125, 'KUMMUT', 'cabinet', 2);
 
-  // Tugitool paremas alumises nurgas.
+  // Kompaktsem tugitool kummuti ja alumise seina vahel.
   const chair = svgEl('g', { 'data-furniture-type': 'armchair', 'aria-label': 'Tugitool' });
   chair.appendChild(svgEl('rect', {
-    x: 385, y: 948, width: 88, height: 92, rx: 18,
+    x: 405, y: 982, width: 68, height: 58, rx: 15,
     fill: 'rgba(255,255,255,.035)', stroke: 'rgba(226,234,242,.48)',
     'stroke-width': 2, 'vector-effect': 'non-scaling-stroke',
   }));
