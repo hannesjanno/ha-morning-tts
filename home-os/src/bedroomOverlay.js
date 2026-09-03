@@ -32,23 +32,23 @@ function addBedroomFurniture(svg) {
   if (svg.querySelector('[data-bedroom-furniture]')) return;
   const group = svgEl('g', { 'data-bedroom-furniture': 'true', 'pointer-events': 'none' });
 
-  // Kaheinimesevoodi: peats vastu magamistoa ülemist seina.
-  const bed = rect(group, 155, 730, 205, 255, 'VOODI', 'bed', 8);
+  // Kaheinimesevoodi: peats vastu vasakut seina, toa keskel.
+  const bed = rect(group, 5, 780, 255, 185, 'VOODI', 'bed', 8);
   bed.appendChild(svgEl('line', {
-    x1: 155, y1: 730, x2: 360, y2: 730,
+    x1: 5, y1: 780, x2: 5, y2: 965,
     stroke: 'rgba(226,234,242,.72)', 'stroke-width': 5, 'vector-effect': 'non-scaling-stroke',
   }));
   bed.appendChild(svgEl('rect', {
-    x: 170, y: 744, width: 78, height: 46, rx: 10,
+    x: 18, y: 794, width: 48, height: 70, rx: 10,
     fill: 'none', stroke: 'rgba(226,234,242,.34)', 'stroke-width': 1.5, 'vector-effect': 'non-scaling-stroke',
   }));
   bed.appendChild(svgEl('rect', {
-    x: 267, y: 744, width: 78, height: 46, rx: 10,
+    x: 18, y: 880, width: 48, height: 70, rx: 10,
     fill: 'none', stroke: 'rgba(226,234,242,.34)', 'stroke-width': 1.5, 'vector-effect': 'non-scaling-stroke',
   }));
 
-  // Väike öökapp voodi ja vasaku aknaseina vahel.
-  rect(group, 92, 730, 52, 58, 'ÖÖKAPP', 'nightstand', 3);
+  // Öökapp vasakus alumises nurgas, enne voodit.
+  rect(group, 5, 980, 58, 58, 'ÖÖKAPP', 'nightstand', 3);
 
   // Fotodel nähtav suur lükandustega garderoob paremal seinal.
   rect(group, 421, 730, 58, 245, 'GARDEROOB', 'wardrobe', 2);
@@ -57,18 +57,19 @@ function addBedroomFurniture(svg) {
   rect(group, 365, 675, 105, 42, 'TV', 'tv', 2);
   rect(group, 340, 620, 130, 48, 'KUMMUT', 'cabinet', 2);
 
-  // Akna juures tugitool ja väike ümmargune laud.
+  // Tugitool paremas alumises nurgas.
   const chair = svgEl('g', { 'data-furniture-type': 'armchair', 'aria-label': 'Tugitool' });
   chair.appendChild(svgEl('rect', {
-    x: 18, y: 820, width: 82, height: 92, rx: 18,
+    x: 385, y: 948, width: 88, height: 92, rx: 18,
     fill: 'rgba(255,255,255,.035)', stroke: 'rgba(226,234,242,.48)',
     'stroke-width': 2, 'vector-effect': 'non-scaling-stroke',
   }));
   group.appendChild(chair);
 
+  // Ümmargune laud tugitooli kõrval.
   const table = svgEl('g', { 'data-furniture-type': 'side-table', 'aria-label': 'Väike laud' });
   table.appendChild(svgEl('circle', {
-    cx: 112, cy: 842, r: 24,
+    cx: 348, cy: 988, r: 24,
     fill: 'rgba(255,255,255,.035)', stroke: 'rgba(226,234,242,.48)',
     'stroke-width': 2, 'vector-effect': 'non-scaling-stroke',
   }));
