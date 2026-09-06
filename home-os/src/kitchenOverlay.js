@@ -46,14 +46,14 @@ function addKitchenFurniture(svg) {
     'stroke-width': 1.2, 'vector-effect': 'non-scaling-stroke',
   }));
 
-  // Pliidiplaat parempoolsel tööpinnal.
+  // Pliidiplaat parempoolsel tööpinnal, vahetult kõrge kapi kõrval.
   const hob = svgEl('g', { 'aria-label': 'Pliidiplaat' });
   hob.appendChild(svgEl('rect', {
-    x: 234, y: 76, width: 38, height: 55, rx: 2,
+    x: 234, y: 133, width: 38, height: 55, rx: 2,
     fill: 'none', stroke: 'rgba(226,234,242,.48)',
     'stroke-width': 1.5, 'vector-effect': 'non-scaling-stroke',
   }));
-  [[244,90],[261,90],[244,115],[261,115]].forEach(([cx,cy]) => {
+  [[244,147],[261,147],[244,172],[261,172]].forEach(([cx,cy]) => {
     hob.appendChild(svgEl('circle', {
       cx, cy, r: 6, fill: 'none', stroke: 'rgba(226,234,242,.35)',
       'stroke-width': 1.2, 'vector-effect': 'non-scaling-stroke',
