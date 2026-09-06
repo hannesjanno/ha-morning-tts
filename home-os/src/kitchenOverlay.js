@@ -116,6 +116,14 @@ function addKitchenFurniture(svg) {
     }));
   });
 
+  // Esiku pink ülemise välisseina ääres, kasutaja märgitud asukohas.
+  group.appendChild(svgEl('rect', {
+    x: 300, y: 8, width: 112, height: 32, rx: 3,
+    fill: 'rgba(255,255,255,.035)', stroke: 'rgba(226,234,242,.48)',
+    'stroke-width': 2, 'vector-effect': 'non-scaling-stroke',
+  }));
+  addLabel(group, 356, 29, 'PINK', 7);
+
   // Robottolmuimeja ja dokk vasaku seina ääres, vahetult enne treppi.
   const vacuum = svgEl('g', { 'aria-label': 'Robottolmuimeja ja dokk' });
   vacuum.appendChild(svgEl('rect', {
