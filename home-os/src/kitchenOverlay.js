@@ -61,14 +61,14 @@ function addKitchenFurniture(svg) {
   });
   group.appendChild(hob);
 
-  // Kõrge kapiplokk koos ahju/mikrolaineahju tsooniga.
-  group.appendChild(svgEl('rect', { x: 224, y: 137, width: 58, height: 81, rx: 2, ...common }));
+  // Kõrge kapiplokk köögi paremas alumises nurgas koos ahju/mikrolaineahju tsooniga.
+  group.appendChild(svgEl('rect', { x: 224, y: 188, width: 58, height: 81, rx: 2, ...common }));
   group.appendChild(svgEl('rect', {
-    x: 233, y: 150, width: 40, height: 31, rx: 2,
+    x: 233, y: 201, width: 40, height: 31, rx: 2,
     fill: 'none', stroke: 'rgba(226,234,242,.52)',
     'stroke-width': 1.5, 'vector-effect': 'non-scaling-stroke',
   }));
-  addLabel(group, 253, 201, 'KÕRGE KAPP', 6.5);
+  addLabel(group, 253, 252, 'KÕRGE KAPP', 6.5);
 
   // Kõrge baar-/söögilaud avatud poolel.
   group.appendChild(svgEl('rect', {
