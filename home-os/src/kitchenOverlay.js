@@ -70,6 +70,13 @@ function addKitchenFurniture(svg) {
   }));
   addLabel(group, 253, 252, 'KÕRGE KAPP', 6.5);
 
+  // Peida alumise seina osa, mis jääb kõrge kapi taha. Alles jääb sein x=170...224.14.
+  group.appendChild(svgEl('line', {
+    x1: 224.14, y1: 269.1, x2: 290.25, y2: 269.1,
+    stroke: '#151a20', 'stroke-width': 8,
+    'stroke-linecap': 'butt', 'vector-effect': 'non-scaling-stroke',
+  }));
+
   // Kõrge baar-/söögilaud avatud poolel.
   group.appendChild(svgEl('rect', {
     x: 22, y: 145, width: 150, height: 62, rx: 4,
