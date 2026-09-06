@@ -13,6 +13,7 @@ import { installFirstFloorWcOverlay } from './wcOverlay.js';
 import { installFirstFloorSaunaOverlay } from './saunaOverlay.js';
 import { installFirstFloorWashroomOverlay } from './washroomOverlay.js';
 import { installFirstFloorUtilityRoomOverlay } from './utilityRoomOverlay.js';
+import { installFloor3DOverlay } from './floor3DOverlay.js';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -31,3 +32,4 @@ installFirstFloorWcOverlay();
 installFirstFloorSaunaOverlay();
 installFirstFloorWashroomOverlay();
 installFirstFloorUtilityRoomOverlay();
+installFloor3DOverlay();
