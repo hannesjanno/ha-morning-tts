@@ -85,6 +85,13 @@ function addKitchenFurniture(svg) {
   }));
   addLabel(group, 253, 252, 'KÕRGE KAPP', 6.5);
 
+  // Pikk kapp vahetult kõrge kapi all, kasutaja märgitud asukohas.
+  group.appendChild(svgEl('rect', {
+    x: 224, y: 269.1, width: 58, height: 52, rx: 2,
+    ...common,
+  }));
+  addLabel(group, 253, 300, 'KAPP', 6.5);
+
   // Alumine sein jääb kõrge kapi juures alles. Kapi järel on vahekäik kööki.
   group.appendChild(svgEl('line', {
     x1: 170, y1: 269.1, x2: 224.14, y2: 269.1,
@@ -108,6 +115,25 @@ function addKitchenFurniture(svg) {
       'stroke-width': 1.7, 'vector-effect': 'non-scaling-stroke',
     }));
   });
+
+  // Robottolmuimeja ja dokk vasaku seina ääres, vahetult enne treppi.
+  const vacuum = svgEl('g', { 'aria-label': 'Robottolmuimeja ja dokk' });
+  vacuum.appendChild(svgEl('rect', {
+    x: 4, y: 348, width: 20, height: 48, rx: 3,
+    fill: 'rgba(255,255,255,.045)', stroke: 'rgba(226,234,242,.5)',
+    'stroke-width': 1.7, 'vector-effect': 'non-scaling-stroke',
+  }));
+  vacuum.appendChild(svgEl('circle', {
+    cx: 45, cy: 374, r: 19,
+    fill: 'rgba(255,255,255,.03)', stroke: 'rgba(226,234,242,.55)',
+    'stroke-width': 1.8, 'vector-effect': 'non-scaling-stroke',
+  }));
+  vacuum.appendChild(svgEl('circle', {
+    cx: 45, cy: 374, r: 4,
+    fill: 'none', stroke: 'rgba(226,234,242,.35)',
+    'stroke-width': 1.1, 'vector-effect': 'non-scaling-stroke',
+  }));
+  group.appendChild(vacuum);
 
   svg.appendChild(group);
 }
