@@ -34,6 +34,21 @@ function addKitchenFurniture(svg) {
   group.appendChild(svgEl('rect', { x: 0, y: 0, width: 224, height: 58, rx: 3, ...common }));
   group.appendChild(svgEl('rect', { x: 224, y: 0, width: 58, height: 188, rx: 3, ...common }));
 
+  // Veiniriiul ülemises vasakus nurgas seinal, aknast vasakul.
+  const wineRack = svgEl('g', { 'aria-label': 'Veiniriiul' });
+  wineRack.appendChild(svgEl('rect', {
+    x: 8, y: 6, width: 38, height: 46, rx: 2,
+    fill: 'rgba(255,255,255,.025)', stroke: 'rgba(226,234,242,.5)',
+    'stroke-width': 1.6, 'vector-effect': 'non-scaling-stroke',
+  }));
+  [[18,17],[36,17],[18,29],[36,29],[18,41],[36,41]].forEach(([cx,cy]) => {
+    wineRack.appendChild(svgEl('circle', {
+      cx, cy, r: 4.5, fill: 'none', stroke: 'rgba(226,234,242,.4)',
+      'stroke-width': 1.1, 'vector-effect': 'non-scaling-stroke',
+    }));
+  });
+  group.appendChild(wineRack);
+
   // Valamu akna all.
   group.appendChild(svgEl('rect', {
     x: 82, y: 10, width: 66, height: 38, rx: 8,
