@@ -33,7 +33,10 @@ installFirstFloorSaunaOverlay();
 installFirstFloorWashroomOverlay();
 installFirstFloorUtilityRoomOverlay();
 
-// 3D UI only needs one initial setup. Stop its broad DOM observer immediately
-// afterwards so it cannot loop with the other imperative room overlays.
-const stopFloor3DOverlayWatch = installFloor3DOverlay();
-queueMicrotask(() => stopFloor3DOverlayWatch?.());
+// Wait until React has committed the Home OS panel to the DOM before adding
+// the 2D/3D controls. Then stop the broad observer so it cannot loop with the
+// other imperative overlays; the created button handlers remain active.
+requestAnimationFrame(() => {
+  const stopFloor3DOverlayWatch = installFloor3DOverlay();
+  queueMicrotask(() => stopFloor3DOverlayWatch?.());
+});
