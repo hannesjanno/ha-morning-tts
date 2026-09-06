@@ -85,12 +85,12 @@ function addKitchenFurniture(svg) {
   }));
   addLabel(group, 253, 252, 'KÕRGE KAPP', 6.5);
 
-  // Pikk kapp vahetult kõrge kapi all, kasutaja märgitud asukohas.
+  // Pikk kapp vahetult kõrge kapi all, vähendatud sügavusega.
   group.appendChild(svgEl('rect', {
-    x: 224, y: 269.1, width: 58, height: 52, rx: 2,
+    x: 224, y: 269.1, width: 58, height: 26, rx: 2,
     ...common,
   }));
-  addLabel(group, 253, 300, 'KAPP', 6.5);
+  addLabel(group, 253, 286, 'KAPP', 6.5);
 
   // Alumine sein jääb kõrge kapi juures alles. Kapi järel on vahekäik kööki.
   group.appendChild(svgEl('line', {
