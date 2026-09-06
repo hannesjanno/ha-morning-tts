@@ -30,9 +30,9 @@ function addKitchenFurniture(svg) {
     'vector-effect': 'non-scaling-stroke',
   };
 
-  // L-kujuline köögimööbel: aknaalune rida ja parema seina rida.
+  // L-kujuline köögimööbel: aknaalune rida ja parema seina rida kuni kõrge kapini.
   group.appendChild(svgEl('rect', { x: 0, y: 0, width: 224, height: 58, rx: 3, ...common }));
-  group.appendChild(svgEl('rect', { x: 224, y: 0, width: 58, height: 218, rx: 3, ...common }));
+  group.appendChild(svgEl('rect', { x: 224, y: 0, width: 58, height: 188, rx: 3, ...common }));
 
   // Valamu akna all.
   group.appendChild(svgEl('rect', {
