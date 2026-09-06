@@ -13,7 +13,7 @@ import { installFirstFloorWcOverlay } from './wcOverlay.js';
 import { installFirstFloorSaunaOverlay } from './saunaOverlay.js';
 import { installFirstFloorWashroomOverlay } from './washroomOverlay.js';
 import { installFirstFloorUtilityRoomOverlay } from './utilityRoomOverlay.js';
-import { installFloor3DOverlay } from './floor3DOverlay.js';
+import { installFloor3DViewer } from './floor3DViewer.js';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -33,10 +33,7 @@ installFirstFloorSaunaOverlay();
 installFirstFloorWashroomOverlay();
 installFirstFloorUtilityRoomOverlay();
 
-// Wait until React has committed the Home OS panel to the DOM before adding
-// the 2D/3D controls. Then stop the broad observer so it cannot loop with the
-// other imperative overlays; the created button handlers remain active.
+// Add the stable 3D viewer after React has mounted the Home OS panel.
 requestAnimationFrame(() => {
-  const stopFloor3DOverlayWatch = installFloor3DOverlay();
-  queueMicrotask(() => stopFloor3DOverlayWatch?.());
+  installFloor3DViewer();
 });
