@@ -9,6 +9,7 @@ import { installBedroomOverlay } from './bedroomOverlay.js';
 import { installFloorGeometryFixOverlay } from './floorGeometryFixOverlay.js';
 import { installKitchenOverlay } from './kitchenOverlay.js';
 import { installLivingRoomOverlay } from './livingRoomOverlay.js';
+import { installFirstFloorWcOverlay } from './wcOverlay.js';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -23,3 +24,4 @@ installBedroomOverlay();
 installFloorGeometryFixOverlay();
 installKitchenOverlay();
 installLivingRoomOverlay();
+installFirstFloorWcOverlay();
