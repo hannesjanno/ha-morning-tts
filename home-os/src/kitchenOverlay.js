@@ -70,9 +70,9 @@ function addKitchenFurniture(svg) {
   }));
   addLabel(group, 253, 252, 'KÕRGE KAPP', 6.5);
 
-  // Peida alumise seina osa, mis jääb kõrge kapi taha. Alles jääb sein x=170...224.14.
+  // Alumine sein jääb kõrge kapi juures alles. Kapi järel on vahekäik kööki.
   group.appendChild(svgEl('line', {
-    x1: 224.14, y1: 269.1, x2: 290.25, y2: 269.1,
+    x1: 170, y1: 269.1, x2: 224.14, y2: 269.1,
     stroke: '#151a20', 'stroke-width': 8,
     'stroke-linecap': 'butt', 'vector-effect': 'non-scaling-stroke',
   }));
