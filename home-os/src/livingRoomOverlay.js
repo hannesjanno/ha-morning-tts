@@ -31,15 +31,15 @@ function addLivingRoomFurniture(svg) {
     ...common,
   }));
 
-  // Ümmargune söögilaud kamina lähedal.
+  // Ümmargune laud kamina all, parempoolse seina vastas.
   group.appendChild(svgEl('circle', {
-    cx: 388, cy: 820, r: 48,
+    cx: 432, cy: 875, r: 44,
     fill: 'rgba(255,255,255,.025)', stroke: 'rgba(226,234,242,.5)',
     'stroke-width': 2, 'vector-effect': 'non-scaling-stroke',
   }));
 
-  // Kolm tooli laua ümber.
-  [[332,820],[356,758],[446,782]].forEach(([cx, cy]) => {
+  // Kolm tooli laua ümber, samuti kamina all parempoolses osas.
+  [[372,875],[400,932],[456,935]].forEach(([cx, cy]) => {
     group.appendChild(svgEl('circle', {
       cx, cy, r: 18,
       fill: 'rgba(255,255,255,.025)', stroke: 'rgba(226,234,242,.42)',
