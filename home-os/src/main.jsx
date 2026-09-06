@@ -32,4 +32,8 @@ installFirstFloorWcOverlay();
 installFirstFloorSaunaOverlay();
 installFirstFloorWashroomOverlay();
 installFirstFloorUtilityRoomOverlay();
-installFloor3DOverlay();
+
+// 3D UI only needs one initial setup. Stop its broad DOM observer immediately
+// afterwards so it cannot loop with the other imperative room overlays.
+const stopFloor3DOverlayWatch = installFloor3DOverlay();
+queueMicrotask(() => stopFloor3DOverlayWatch?.());
