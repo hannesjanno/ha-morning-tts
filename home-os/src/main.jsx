@@ -7,6 +7,7 @@ import { installVacuumOverlay } from './vacuumOverlay.js';
 import { installMarekiRoomOverlay } from './marekiRoomOverlay.js';
 import { installBedroomOverlay } from './bedroomOverlay.js';
 import { installFloorGeometryFixOverlay } from './floorGeometryFixOverlay.js';
+import { installKitchenOverlay } from './kitchenOverlay.js';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -19,3 +20,4 @@ installVacuumOverlay();
 installMarekiRoomOverlay();
 installBedroomOverlay();
 installFloorGeometryFixOverlay();
+installKitchenOverlay();
