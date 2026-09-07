@@ -29,15 +29,15 @@ function getOakFloorMaterial(){
   canvas.height = 768;
   const ctx = canvas.getContext('2d');
   const plankH = 128;
-  const plankColors = ['#ead8bf','#e2cbaa','#edddc6','#e6d1b2','#efe1cd','#dfc7a7'];
+  const plankColors = ['#c9a275','#bd9468','#d0aa7a','#c49b6e','#d4b184','#b98f65'];
 
   for(let row=0; row<6; row++){
     const y = row * plankH;
     ctx.fillStyle = plankColors[row];
     ctx.fillRect(0,y,1024,plankH);
 
-    ctx.strokeStyle = 'rgba(103,77,49,.22)';
-    ctx.lineWidth = 1.25;
+    ctx.strokeStyle = 'rgba(88,60,35,.30)';
+    ctx.lineWidth = 1.35;
     ctx.beginPath();
     ctx.moveTo(0,y+1);
     ctx.lineTo(1024,y+1);
@@ -45,7 +45,7 @@ function getOakFloorMaterial(){
 
     for(let g=0; g<9; g++){
       const gy = y + 13 + g*12 + (row%2)*3;
-      ctx.strokeStyle = g%3 === 0 ? 'rgba(119,88,54,.10)' : 'rgba(126,95,61,.055)';
+      ctx.strokeStyle = g%3 === 0 ? 'rgba(93,62,36,.18)' : 'rgba(106,73,44,.10)';
       ctx.lineWidth = g%3 === 0 ? 1.2 : .8;
       ctx.beginPath();
       ctx.moveTo(0,gy);
@@ -56,8 +56,8 @@ function getOakFloorMaterial(){
 
     const joints = row%2 === 0 ? [290,720] : [150,560,930];
     joints.forEach(x=>{
-      ctx.strokeStyle = 'rgba(95,71,46,.16)';
-      ctx.lineWidth = 1.25;
+      ctx.strokeStyle = 'rgba(78,54,34,.24)';
+      ctx.lineWidth = 1.3;
       ctx.beginPath();
       ctx.moveTo(x,y+2);
       ctx.lineTo(x,y+plankH-2);
@@ -65,8 +65,8 @@ function getOakFloorMaterial(){
     });
 
     const knotX = [205,470,815][row%3];
-    ctx.strokeStyle = 'rgba(112,79,45,.11)';
-    ctx.lineWidth = 1.2;
+    ctx.strokeStyle = 'rgba(86,58,34,.20)';
+    ctx.lineWidth = 1.3;
     ctx.beginPath();
     ctx.ellipse(knotX,y+58,18,6,0,0,Math.PI*2);
     ctx.stroke();
@@ -81,12 +81,10 @@ function getOakFloorMaterial(){
   texture.magFilter = THREE.LinearFilter;
 
   oakFloorMaterial = new THREE.MeshStandardMaterial({
-    color:0xfffbf4,
+    color:0xf2e2cc,
     map:texture,
-    roughness:.82,
+    roughness:.78,
     metalness:0,
-    emissive:0x4a3827,
-    emissiveIntensity:.055,
     side:THREE.DoubleSide,
   });
   return oakFloorMaterial;
