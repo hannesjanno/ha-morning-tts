@@ -229,40 +229,33 @@ function addDetailedSofa(g){
 function addDetailedFireplace(g){
   const white = 0xf2f0eb;
   const black = 0x101214;
-  const glass = new THREE.MeshPhysicalMaterial({
-    color:0x17191c,
-    roughness:.14,
-    metalness:.04,
-    transparent:true,
-    opacity:.58,
-    transmission:.18,
-  });
-  const darkGlass = new THREE.MeshStandardMaterial({color:0x101214,roughness:.28,metalness:.08});
+  const blackGlass = new THREE.MeshStandardMaterial({color:0x030405,roughness:.12,metalness:.12});
+  const darkInside = new THREE.MeshStandardMaterial({color:0x08090a,roughness:.35,metalness:.03});
   const log = 0x57402f;
 
+  // Tall white body. No projecting base or hearth block in front.
   addBox(g,386,705,84,74,2.42,white,0);
-  addBox(g,381,792,95,33,.30,white,0);
 
-  // The real fireplace has a flush black glass door, not a projecting black firebox.
-  // Keep the dark combustion chamber inside the white body and put the glass at the face.
-  addBox(g,389,718,78,56,.43,0x08090a,.42,darkGlass);
-  addBox(g,389,776,78,2,.53,0x17191c,.42,glass);
-  addBox(g,467,718,2,60,.53,0x17191c,.42,glass);
+  // Recessed dark chamber stays inside the body.
+  addBox(g,391,716,74,59,.43,0x08090a,.42,darkInside);
 
-  // Slim frame around the flush front glass.
-  addBox(g,386,775,84,3,.05,black,.36);
-  addBox(g,386,775,3,3,.62,black,.36);
-  addBox(g,467,775,3,3,.62,black,.36);
+  // Opaque black glass door, exactly flush with the front plane of the white body.
+  addBox(g,391,777,74,2,.53,0x030405,.42,blackGlass);
+  addBox(g,468,718,2,59,.53,0x030405,.42,blackGlass);
 
-  // Upper vent remains flush with the same front plane.
-  addBox(g,395,775,66,3,.075,black,1.78);
+  // Thin black frame around the glass, also flush.
+  addBox(g,388,776,80,3,.04,black,.39);
+  addBox(g,388,776,80,3,.04,black,.92);
+  addBox(g,388,776,3,3,.57,black,.39);
+  addBox(g,465,776,3,3,.57,black,.39);
 
-  // Keep the lower hearth/base detail shallow instead of creating another deep black block.
-  addBox(g,384,774,88,5,.06,black,.27);
-  addBox(g,394,819,68,4,.075,black,.11);
+  // Slim upper and lower ventilation slots set into the face.
+  addBox(g,395,777,66,2,.07,black,1.78);
+  addBox(g,396,777,64,2,.07,black,.12);
 
-  [[399,770,-.20],[420,770,.16],[441,771,-.10]].forEach(([x,y,rot])=>{
-    addRoundedBox(g,x,y,28,7,.065,log,.46,.018,{y:rot});
+  // Subtle logs remain inside the chamber only.
+  [[400,767,-.20],[420,767,.16],[441,768,-.10]].forEach(([x,y,rot])=>{
+    addRoundedBox(g,x,y,26,7,.06,log,.46,.018,{y:rot});
   });
 }
 
@@ -292,7 +285,7 @@ function buildHouse(scene){
 
   addDetailedStairs(g);
 
-  // Rotate the fireplace 180 degrees from the previous orientation.
+  // Fireplace orientation stays unchanged from the confirmed direction.
   const fireplace = new THREE.Group();
   g.add(fireplace);
   addDetailedFireplace(fireplace);
