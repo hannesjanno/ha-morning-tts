@@ -8,7 +8,7 @@ const WALL_T = 0.1;
 const WALL_COLOR = 0xd8d3ca;
 
 const roomPolygons = [
-  { points:[[0,1049.9],[480.8,1049.9],[480.8,892.73],[480.8,700],[480.8,536.22],[480.8,325.28],[480.8,269.1],[290.25,269.1],[224.14,269.1],[0,269.1]], color:0x41372d },
+  { points:[[0,1049.9],[480.8,1049.9],[480.8,892.73],[480.8,700],[480.8,536.22],[480.8,325.28],[480.8,269.1],[290.25,269.1],[224.14,269.1],[0,269.1]], color:0x41372d, floor:'living-oak' },
   { points:[[224.14,269.1],[290.25,269.1],[290.25,0],[0,0],[0,269.1]], color:0x4b4034 },
   { points:[[480.8,269.1],[480.8,157.47],[480.8,0],[290.25,0],[290.25,269.1]], color:0x453b31 },
   { points:[[790.31,325.28],[790.31,157.47],[480.8,157.47],[480.8,269.1],[480.8,325.28],[599.74,325.28]], color:0x33383d },
@@ -131,12 +131,13 @@ function getOakFloorMaterial(){
   return oakFloorMaterial;
 }
 
-function setOakFloorUVs(geo){
+function setLivingRoomOakUVs(geo){
   const pos = geo.getAttribute('position');
   const uv = new Float32Array(pos.count * 2);
   for(let i=0;i<pos.count;i++){
-    uv[i*2] = pos.getX(i) / 2.2;
-    uv[i*2+1] = pos.getY(i) / 1.08;
+    // Swap plan X/Y for the living room so board grain runs vertically on the floor plan.
+    uv[i*2] = pos.getY(i) / 2.2;
+    uv[i*2+1] = pos.getX(i) / 1.08;
   }
   geo.setAttribute('uv',new THREE.BufferAttribute(uv,2));
 }
@@ -186,12 +187,12 @@ function addRod(group,x1,y1,h1,x2,y2,h2,r,color){
   group.add(mesh);
 }
 
-function addFloor(group,points,color){
+function addFloor(group,points,color,useLivingOak=false){
   const shape = new THREE.Shape();
   points.forEach(([x,y],i)=> i ? shape.lineTo(px(x),px(y)) : shape.moveTo(px(x),px(y)));
   shape.closePath();
   const geo = new THREE.ShapeGeometry(shape);
-  setOakFloorUVs(geo);
+  if(useLivingOak) setLivingRoomOakUVs(geo);
 
   // Keep the same positive plan Y direction as the walls and furniture (world +Z).
   geo.rotateX(Math.PI/2);
@@ -210,7 +211,8 @@ function addFloor(group,points,color){
   }
   geo.computeVertexNormals();
 
-  const mesh = new THREE.Mesh(geo,getOakFloorMaterial());
+  const floorMaterial = useLivingOak ? getOakFloorMaterial() : material(color,.9,0);
+  const mesh = new THREE.Mesh(geo,floorMaterial);
   mesh.position.y = 0.012;
   mesh.receiveShadow = true;
   group.add(mesh);
@@ -390,7 +392,7 @@ function addDetailedFireplace(g){
 function buildHouse(scene){
   const g = new THREE.Group();
   scene.add(g);
-  roomPolygons.forEach(r=>addFloor(g,r.points,r.color));
+  roomPolygons.forEach(r=>addFloor(g,r.points,r.color,r.floor === 'living-oak'));
 
   addWall(g,0,0,64,0); addWall(g,184,0,350,0); addWall(g,424,0,480.8,0);
   addWall(g,0,0,0,1049.9); addWall(g,0,1049.9,90,1049.9); addWall(g,195,1049.9,480.8,1049.9);
