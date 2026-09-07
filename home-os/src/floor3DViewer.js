@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 
 const SCALE = 0.01;
 const WALL_H = 2.45;
@@ -21,6 +22,20 @@ const material = (color, roughness=.82, metalness=.03) => new THREE.MeshStandard
 function addBox(group,x,y,w,d,h,color,z=0,matOverride=null){
   const mesh = new THREE.Mesh(new THREE.BoxGeometry(px(w),h,px(d)),matOverride || material(color));
   mesh.position.set(px(x+w/2),z+h/2,px(y+d/2));
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  group.add(mesh);
+  return mesh;
+}
+
+function addRoundedBox(group,x,y,w,d,h,color,z=0,radius=.05,rotation={},matOverride=null){
+  const maxRadius = Math.max(.006, Math.min(px(w), h, px(d)) * .48);
+  const mesh = new THREE.Mesh(
+    new RoundedBoxGeometry(px(w),h,px(d),5,Math.min(radius,maxRadius)),
+    matOverride || material(color,.94,0)
+  );
+  mesh.position.set(px(x+w/2),z+h/2,px(y+d/2));
+  mesh.rotation.set(rotation.x || 0,rotation.y || 0,rotation.z || 0);
   mesh.castShadow = true;
   mesh.receiveShadow = true;
   group.add(mesh);
@@ -88,13 +103,9 @@ function addDetailedStairs(g){
   const white = 0xf0eee8;
   const runner = 0xc8bba9;
   const treadW = 30;
-
-  // 2D plan direction: enter the lower flight from the RIGHT, rise to the LEFT,
-  // turn on the LEFT, then return on the upper flight rising LEFT -> RIGHT.
   const upperY = 414;
   const lowerY = 550;
 
-  // Lower flight, visible in the foreground of the reference photos.
   for(let i=0;i<8;i++){
     const x = 8 + i*treadW;
     const h = .16 + (7-i)*.13;
@@ -102,10 +113,8 @@ function addDetailedStairs(g){
     addBox(g,x+3,lowerY+16,treadW-8,60,.025,runner,h+.056);
   }
 
-  // Left-side turning platform between the two flights.
   addBox(g,4,upperY,38,228,.07,wood,1.14);
 
-  // Upper return flight, rising from the left turn toward the right / second floor.
   for(let i=0;i<8;i++){
     const x = 8 + i*treadW;
     const h = 1.22 + i*.16;
@@ -113,13 +122,11 @@ function addDetailedStairs(g){
     addBox(g,x+3,upperY+16,treadW-8,60,.025,runner,h+.056);
   }
 
-  // White side stringers follow the same real-world rise directions.
   addRod(g,246,lowerY,.10,8,lowerY,1.08,.055,white);
   addRod(g,246,lowerY+92,.10,8,lowerY+92,1.08,.055,white);
   addRod(g,8,upperY,1.16,246,upperY,2.34,.055,white);
   addRod(g,8,upperY+92,1.16,246,upperY+92,2.34,.055,white);
 
-  // Lower-flight balusters + oak handrail on the exposed side.
   const lowerRailY = lowerY+92;
   for(let i=0;i<=8;i++){
     const x = 8 + i*treadW;
@@ -128,7 +135,6 @@ function addDetailedStairs(g){
   }
   addRod(g,248,lowerRailY,.98,10,lowerRailY,1.96,.035,wood);
 
-  // Upper-flight balusters + oak handrail on the opposite exposed side.
   const upperRailY = upperY;
   for(let i=0;i<=8;i++){
     const x = 8 + i*treadW;
@@ -137,8 +143,6 @@ function addDetailedStairs(g){
   }
   addRod(g,10,upperRailY,2.10,248,upperRailY,3.22,.035,wood);
 
-  // Newel posts like the photos: right at the lower entrance, left at the turn,
-  // and at the upper return.
   addBox(g,246,lowerRailY-2,8,8,1.04,white,0);
   addBox(g,4,lowerRailY-2,8,8,1.90,white,.10);
   addBox(g,4,upperRailY-2,8,8,1.18,white,1.10);
@@ -184,52 +188,42 @@ function addDetailedKitchen(g){
 }
 
 function addDetailedSofa(g){
-  const base = 0xcfcac2;
-  const fabric = 0xdedbd5;
-  const cushion = 0xe9e6e0;
-  const seam = 0xbdb7ae;
-  const darkPillow = 0x25272b;
-  const floralPillow = 0x3b2f31;
+  const baseColor = 0xd0cbc4;
+  const fabricColor = 0xe0ddd7;
+  const seatColor = 0xe9e6e1;
+  const seamColor = 0xbab4ac;
+  const darkPillow = 0x26282c;
+  const floralPillow = 0x3b3032;
+  const sofaMaterial = material(fabricColor,.97,0);
+  const seatMaterial = material(seatColor,.98,0);
 
-  // Keep the established 2D footprint, but shape it like the real sectional:
-  // a long three-seat run to the right and a deep two-module return on the left.
-  addBox(g,5,670,285,64,.20,base,.05);
-  addBox(g,5,670,68,194,.20,base,.05);
+  addRoundedBox(g,4,660,286,62,.18,baseColor,.05,.06);
+  addRoundedBox(g,4,660,58,190,.18,baseColor,.05,.06);
 
-  // Corner module plus three distinct seat cushions across the long run.
-  addBox(g,14,679,53,49,.18,cushion,.28);
-  [[69,679,64,49],[136,679,64,49],[203,679,65,49]].forEach(([x,y,w,d])=>{
-    addBox(g,x,y,w,d,.18,cushion,.28);
-    addBox(g,x+3,y+d-2,w-6,2,.018,seam,.46);
+  addRoundedBox(g,14,676,70,49,.19,seatColor,.27,.055,{},seatMaterial);
+  addRoundedBox(g,88,676,82,49,.19,seatColor,.27,.055,{},seatMaterial);
+  addRoundedBox(g,174,676,84,49,.19,seatColor,.27,.055,{},seatMaterial);
+
+  addRoundedBox(g,14,730,45,108,.19,seatColor,.27,.055,{},seatMaterial);
+
+  addRoundedBox(g,14,657,70,19,.46,fabricColor,.39,.055,{x:-.11},sofaMaterial);
+  addRoundedBox(g,88,657,82,19,.46,fabricColor,.39,.055,{x:-.11},sofaMaterial);
+  addRoundedBox(g,174,657,84,19,.46,fabricColor,.39,.055,{x:-.11},sofaMaterial);
+
+  addRoundedBox(g,0,676,19,55,.46,fabricColor,.39,.055,{z:.11},sofaMaterial);
+  addRoundedBox(g,0,735,19,101,.46,fabricColor,.39,.055,{z:.11},sofaMaterial);
+
+  addRoundedBox(g,263,663,27,70,.53,fabricColor,.09,.075,{},sofaMaterial);
+  addRoundedBox(g,2,838,66,26,.53,fabricColor,.09,.075,{},sofaMaterial);
+
+  [[14,70],[88,82],[174,84]].forEach(([x,w])=>{
+    addRoundedBox(g,x+3,722,w-6,2,.018,seamColor,.455,.006);
   });
 
-  // Deep left return with two large cushions, matching the photo's long foreground leg.
-  [[14,731,53,56],[14,790,53,58]].forEach(([x,y,w,d])=>{
-    addBox(g,x,y,w,d,.18,cushion,.28);
-    addBox(g,x+w-2,y+3,2,d-6,.018,seam,.46);
-  });
+  addRoundedBox(g,25,682,31,10,.34,floralPillow,.47,.035,{x:-.08,y:.12,z:.10});
+  addRoundedBox(g,49,683,25,9,.30,darkPillow,.46,.032,{x:-.06,y:-.08,z:-.08});
 
-  // Three broad, slightly lower back cushions on the main run.
-  [[69,663,63,18],[136,663,63,18],[203,663,64,18]].forEach(([x,y,w,d])=>{
-    addBox(g,x,y,w,d,.46,fabric,.41);
-    addBox(g,x+4,y+d-1,w-8,1.5,.018,seam,.62);
-  });
-
-  // Matching back cushions on the return, including the corner.
-  [[2,679,18,49],[2,731,18,56],[2,790,18,57]].forEach(([x,y,w,d])=>{
-    addBox(g,x,y,w,d,.46,fabric,.41);
-  });
-
-  // Low, wide upholstered arms like the real sofa.
-  addBox(g,271,667,23,69,.52,fabric,.09);
-  addBox(g,2,846,72,21,.52,fabric,.09);
-
-  // Rounded visual mass at the front of the return so it doesn't read as a hard box.
-  addCylinder(g,38,856,30,.42,fabric,.12);
-
-  // Decorative pillows visible in the user's photo, placed in the inside corner.
-  addBox(g,25,686,25,8,.32,floralPillow,.49);
-  addBox(g,48,687,22,7,.29,darkPillow,.47);
+  addRoundedBox(g,128,700,8,17,.025,0x17191b,.47,.01,{y:.25});
 }
 
 function buildHouse(scene){
@@ -385,6 +379,7 @@ export function installFloor3DViewer(){
     b2.style.background = '#313b46';
     b3.style.background = '#1c232b';
   };
+
   const show3D = () => {
     if(activeFloor() !== 1) return;
     floorPlan.style.display = 'none';
@@ -392,10 +387,12 @@ export function installFloor3DViewer(){
     b2.style.background = '#1c232b';
     b3.style.background = '#313b46';
     if(destroyViewer) return;
+
     const status = document.createElement('div');
     status.textContent = '3D laadimine…';
     status.style.cssText = 'position:absolute;inset:0;display:grid;place-items:center;color:#9ba8b4;font:500 14px system-ui;';
     view.appendChild(status);
+
     requestAnimationFrame(() => {
       try {
         destroyViewer = createViewer(view);
@@ -414,6 +411,7 @@ export function installFloor3DViewer(){
 
   b2.addEventListener('click',show2D);
   b3.addEventListener('click',show3D);
+
   const floorButtons = [...document.querySelectorAll('.floor-switch button')];
   const onFloorClick = () => requestAnimationFrame(() => {
     const floor = activeFloor();
