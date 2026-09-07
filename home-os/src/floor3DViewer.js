@@ -229,34 +229,27 @@ function addDetailedSofa(g){
 function addDetailedFireplace(g){
   const white = 0xf2f0eb;
   const black = 0x101214;
-  const blackGlass = new THREE.MeshStandardMaterial({color:0x030405,roughness:.12,metalness:.12});
-  const darkInside = new THREE.MeshStandardMaterial({color:0x08090a,roughness:.35,metalness:.03});
-  const log = 0x57402f;
+  const blackGlass = new THREE.MeshStandardMaterial({
+    color:0x030405,
+    roughness:.10,
+    metalness:.16,
+    polygonOffset:true,
+    polygonOffsetFactor:-2,
+    polygonOffsetUnits:-2,
+  });
 
-  // Tall white body. No projecting base or hearth block in front.
+  // Tall white body. Keep the confirmed proportions and orientation.
   addBox(g,386,705,84,74,2.42,white,0);
 
-  // Recessed dark chamber stays inside the body.
-  addBox(g,391,716,74,59,.43,0x08090a,.42,darkInside);
+  // U-shaped black glass: front pane plus both side panes.
+  // The panes sit only a few millimetres outside the body to avoid coplanar z-fighting.
+  addBox(g,388,779.05,80,.30,.53,0x030405,.42,blackGlass);
+  addBox(g,385.70,718,.30,61,.53,0x030405,.42,blackGlass);
+  addBox(g,470,718,.30,61,.53,0x030405,.42,blackGlass);
 
-  // Opaque black glass door, exactly flush with the front plane of the white body.
-  addBox(g,391,777,74,2,.53,0x030405,.42,blackGlass);
-  addBox(g,468,718,2,59,.53,0x030405,.42,blackGlass);
-
-  // Thin black frame around the glass, also flush.
-  addBox(g,388,776,80,3,.04,black,.39);
-  addBox(g,388,776,80,3,.04,black,.92);
-  addBox(g,388,776,3,3,.57,black,.39);
-  addBox(g,465,776,3,3,.57,black,.39);
-
-  // Slim upper and lower ventilation slots set into the face.
-  addBox(g,395,777,66,2,.07,black,1.78);
-  addBox(g,396,777,64,2,.07,black,.12);
-
-  // Subtle logs remain inside the chamber only.
-  [[400,767,-.20],[420,767,.16],[441,768,-.10]].forEach(([x,y,rot])=>{
-    addRoundedBox(g,x,y,26,7,.06,log,.46,.018,{y:rot});
-  });
+  // Slim vents are also slightly proud of the body so they do not flicker against it.
+  addBox(g,395,779.05,66,.30,.07,black,1.78);
+  addBox(g,396,779.05,64,.30,.07,black,.12);
 }
 
 function buildHouse(scene){
