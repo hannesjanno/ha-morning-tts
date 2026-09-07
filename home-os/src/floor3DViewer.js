@@ -36,7 +36,6 @@ function getOakFloorMaterial(){
     ctx.fillStyle = plankColors[row];
     ctx.fillRect(0,y,1024,plankH);
 
-    // Soft seams between the light oak boards, matching the subtle joints in the photos.
     ctx.strokeStyle = 'rgba(103,77,49,.22)';
     ctx.lineWidth = 1.25;
     ctx.beginPath();
@@ -44,7 +43,6 @@ function getOakFloorMaterial(){
     ctx.lineTo(1024,y+1);
     ctx.stroke();
 
-    // Fine warm oak grain along the board direction.
     for(let g=0; g<9; g++){
       const gy = y + 13 + g*12 + (row%2)*3;
       ctx.strokeStyle = g%3 === 0 ? 'rgba(119,88,54,.10)' : 'rgba(126,95,61,.055)';
@@ -56,7 +54,6 @@ function getOakFloorMaterial(){
       ctx.stroke();
     }
 
-    // Staggered board ends, kept subtle so the floor remains light and calm.
     const joints = row%2 === 0 ? [290,720] : [150,560,930];
     joints.forEach(x=>{
       ctx.strokeStyle = 'rgba(95,71,46,.16)';
@@ -98,8 +95,6 @@ function getOakFloorMaterial(){
 function setOakFloorUVs(geo){
   const pos = geo.getAttribute('position');
   const uv = new Float32Array(pos.count * 2);
-
-  // Physical texture scale: one tile = 2.2 m long x 1.08 m wide (6 x 18 cm planks).
   for(let i=0;i<pos.count;i++){
     uv[i*2] = pos.getX(i) / 2.2;
     uv[i*2+1] = pos.getY(i) / 1.08;
@@ -158,11 +153,8 @@ function addFloor(group,points,color){
   shape.closePath();
   const geo = new THREE.ShapeGeometry(shape);
   setOakFloorUVs(geo);
-
-  // ShapeGeometry faces +Z. Rotate -90 degrees so the floor normal faces upward (+Y).
   geo.rotateX(-Math.PI/2);
   geo.computeVertexNormals();
-
   const mesh = new THREE.Mesh(geo,getOakFloorMaterial());
   mesh.position.y = 0.012;
   mesh.receiveShadow = true;
@@ -262,9 +254,6 @@ function addDetailedKitchen(g){
   addBox(g,224,0,58,188,.86,mint);
   addBox(g,0,0,224,58,.055,wood,.86);
   addBox(g,224,0,58,188,.055,wood,.86);
-
-  // Cabinet face details are slightly proud of the cabinet surface instead of coplanar.
-  // This removes the visible WebGL z-fighting when the camera moves.
   [8,58,108,158].forEach(x=>addBox(g,x,58.2,42,.30,.62,mintDark,.12,mintPanelMaterial));
   [12,58,104,150].forEach(y=>addBox(g,223.5,y,.30,34,.62,mintDark,.12,mintPanelMaterial));
 
@@ -276,7 +265,7 @@ function addDetailedKitchen(g){
   addBox(g,224,20,58,58,.95,white,1.25);
   addBox(g,224,82,58,66,.95,mint,1.25);
   addBox(g,82,10,66,38,.035,black,.92);
-  addBox(g,90,16,50,25,.02,0x24282b,.935);
+  addBox(g,90,16,50,25,.02,0x24282b,1.03);
   addRod(g,145,30,.95,145,30,1.22,.018,0x303336);
   addRod(g,145,30,1.22,132,30,1.22,.018,0x303336);
   addBox(g,234,133,38,55,.035,black,.92);
@@ -304,30 +293,22 @@ function addDetailedSofa(g){
 
   addRoundedBox(g,4,660,286,62,.18,baseColor,.05,.06);
   addRoundedBox(g,4,660,58,190,.18,baseColor,.05,.06);
-
   addRoundedBox(g,14,676,70,49,.19,seatColor,.27,.055,{},seatMaterial);
   addRoundedBox(g,88,676,82,49,.19,seatColor,.27,.055,{},seatMaterial);
   addRoundedBox(g,174,676,84,49,.19,seatColor,.27,.055,{},seatMaterial);
-
   addRoundedBox(g,14,730,45,108,.19,seatColor,.27,.055,{},seatMaterial);
-
   addRoundedBox(g,14,657,70,19,.46,fabricColor,.39,.055,{x:-.11},sofaMaterial);
   addRoundedBox(g,88,657,82,19,.46,fabricColor,.39,.055,{x:-.11},sofaMaterial);
   addRoundedBox(g,174,657,84,19,.46,fabricColor,.39,.055,{x:-.11},sofaMaterial);
-
   addRoundedBox(g,0,676,19,55,.46,fabricColor,.39,.055,{z:.11},sofaMaterial);
   addRoundedBox(g,0,735,19,101,.46,fabricColor,.39,.055,{z:.11},sofaMaterial);
-
   addRoundedBox(g,263,663,27,70,.53,fabricColor,.09,.075,{},sofaMaterial);
   addRoundedBox(g,2,838,66,26,.53,fabricColor,.09,.075,{},sofaMaterial);
-
   [[14,70],[88,82],[174,84]].forEach(([x,w])=>{
     addRoundedBox(g,x+3,722,w-6,2,.018,seamColor,.455,.006);
   });
-
   addRoundedBox(g,25,682,31,10,.34,floralPillow,.47,.035,{x:-.08,y:.12,z:.10});
   addRoundedBox(g,49,683,25,9,.30,darkPillow,.46,.032,{x:-.06,y:-.08,z:-.08});
-
   addRoundedBox(g,128,700,8,17,.025,0x17191b,.47,.01,{y:.25});
 }
 
@@ -343,16 +324,10 @@ function addDetailedFireplace(g){
     polygonOffsetUnits:-2,
   });
 
-  // Tall white body. Keep the confirmed proportions and orientation.
   addBox(g,386,705,84,74,2.42,white,0);
-
-  // U-shaped black glass: front pane plus both side panes.
-  // The panes sit only a few millimetres outside the body to avoid coplanar z-fighting.
   addBox(g,388,779.05,80,.30,.53,0x030405,.42,blackGlass);
   addBox(g,385.70,718,.30,61,.53,0x030405,.42,blackGlass);
   addBox(g,470,718,.30,61,.53,0x030405,.42,blackGlass);
-
-  // Slim vents are also slightly proud of the body so they do not flicker against it.
   addBox(g,395,779.05,66,.30,.07,black,1.78);
   addBox(g,396,779.05,64,.30,.07,black,.12);
 }
@@ -383,7 +358,6 @@ function buildHouse(scene){
 
   addDetailedStairs(g);
 
-  // Fireplace orientation stays unchanged from the confirmed direction.
   const fireplace = new THREE.Group();
   g.add(fireplace);
   addDetailedFireplace(fireplace);
@@ -443,11 +417,7 @@ function createViewer(host){
   sun.position.set(-8,15,-6);
   sun.castShadow = true;
   scene.add(sun);
-  const ground = new THREE.Mesh(new THREE.PlaneGeometry(26,26),material(0x20252b,.98,0));
-  ground.rotation.x = -Math.PI/2;
-  ground.position.y = -.025;
-  ground.receiveShadow = true;
-  scene.add(ground);
+  // No outdoor ground plane: only actual interior floors and the modeled terrace are rendered.
   buildHouse(scene);
   const controls = new OrbitControls(camera,renderer.domElement);
   controls.target.set(4.1,.45,5.15);
