@@ -242,18 +242,26 @@ function addDetailedFireplace(g){
 
   addBox(g,386,705,84,74,2.42,white,0);
   addBox(g,381,792,95,33,.30,white,0);
-  addBox(g,381,750,95,63,.68,black,.34);
-  addBox(g,385,808,86,4,.53,0x17191c,.42,glass);
-  addBox(g,471,755,4,57,.53,0x17191c,.42,glass);
-  addBox(g,381,807,94,5,.055,black,.36);
-  addBox(g,381,807,94,5,.055,black,.93);
-  addBox(g,381,807,5,5,.62,black,.36);
-  addBox(g,470,807,5,5,.62,black,.36);
-  addBox(g,395,775,66,5,.095,black,1.78);
-  addBox(g,378,806,101,20,.075,black,.27);
+
+  // The real fireplace has a flush black glass door, not a projecting black firebox.
+  // Keep the dark combustion chamber inside the white body and put the glass at the face.
+  addBox(g,389,718,78,56,.43,0x08090a,.42,darkGlass);
+  addBox(g,389,776,78,2,.53,0x17191c,.42,glass);
+  addBox(g,467,718,2,60,.53,0x17191c,.42,glass);
+
+  // Slim frame around the flush front glass.
+  addBox(g,386,775,84,3,.05,black,.36);
+  addBox(g,386,775,3,3,.62,black,.36);
+  addBox(g,467,775,3,3,.62,black,.36);
+
+  // Upper vent remains flush with the same front plane.
+  addBox(g,395,775,66,3,.075,black,1.78);
+
+  // Keep the lower hearth/base detail shallow instead of creating another deep black block.
+  addBox(g,384,774,88,5,.06,black,.27);
   addBox(g,394,819,68,4,.075,black,.11);
-  addBox(g,389,758,78,46,.43,0x08090a,.42,darkGlass);
-  [[399,781,-.20],[420,780,.16],[441,782,-.10]].forEach(([x,y,rot])=>{
+
+  [[399,770,-.20],[420,770,.16],[441,771,-.10]].forEach(([x,y,rot])=>{
     addRoundedBox(g,x,y,28,7,.065,log,.46,.018,{y:rot});
   });
 }
