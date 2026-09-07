@@ -5,6 +5,7 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 const SCALE = 0.01;
 const WALL_H = 2.45;
 const WALL_T = 0.1;
+const WALL_COLOR = 0xd8d3ca;
 
 const roomPolygons = [
   { points:[[0,1049.9],[480.8,1049.9],[480.8,892.73],[480.8,700],[480.8,536.22],[480.8,325.28],[480.8,269.1],[290.25,269.1],[224.14,269.1],[0,269.1]], color:0x41372d },
@@ -18,6 +19,68 @@ const roomPolygons = [
 
 const px = (v) => v * SCALE;
 const material = (color, roughness=.82, metalness=.03) => new THREE.MeshStandardMaterial({color, roughness, metalness});
+
+let oakFloorMaterial = null;
+function getOakFloorMaterial(){
+  if(oakFloorMaterial) return oakFloorMaterial;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 512;
+  canvas.height = 512;
+  const ctx = canvas.getContext('2d');
+  const plankH = 64;
+  const plankColors = ['#d8c5aa','#d1b99a','#dcc9ad','#cfb697','#dac5a6','#d3bc9d','#ddc9ad','#ceb596'];
+
+  for(let row=0; row<8; row++){
+    const y = row * plankH;
+    ctx.fillStyle = plankColors[row];
+    ctx.fillRect(0,y,512,plankH);
+
+    // Fine longitudinal grain, based on the light matte oak visible in the photos.
+    ctx.strokeStyle = 'rgba(111,82,52,.12)';
+    ctx.lineWidth = 1;
+    for(let g=0; g<7; g++){
+      const gy = y + 8 + g*8 + (row%2)*2;
+      ctx.beginPath();
+      ctx.moveTo(0,gy);
+      ctx.bezierCurveTo(130,gy-4,300,gy+5,512,gy-2);
+      ctx.stroke();
+    }
+
+    ctx.strokeStyle = 'rgba(103,79,54,.24)';
+    ctx.beginPath();
+    ctx.moveTo(0,y+.5);
+    ctx.lineTo(512,y+.5);
+    ctx.stroke();
+
+    // Staggered board ends keep the texture from looking like simple stripes.
+    const offset = row % 2 ? 118 : 34;
+    [offset, offset+220, offset+440].forEach(x=>{
+      if(x > 0 && x < 512){
+        ctx.strokeStyle = 'rgba(103,79,54,.20)';
+        ctx.beginPath();
+        ctx.moveTo(x,y+1);
+        ctx.lineTo(x,y+plankH-1);
+        ctx.stroke();
+      }
+    });
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(1.15,1.15);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 8;
+
+  oakFloorMaterial = new THREE.MeshStandardMaterial({
+    color:0xf3ece1,
+    map:texture,
+    roughness:.78,
+    metalness:0,
+  });
+  return oakFloorMaterial;
+}
 
 function addBox(group,x,y,w,d,h,color,z=0,matOverride=null){
   const mesh = new THREE.Mesh(new THREE.BoxGeometry(px(w),h,px(d)),matOverride || material(color));
@@ -70,16 +133,16 @@ function addFloor(group,points,color){
   shape.closePath();
   const geo = new THREE.ShapeGeometry(shape);
   geo.rotateX(Math.PI/2);
-  const mesh = new THREE.Mesh(geo,material(color,.96,0));
+  const mesh = new THREE.Mesh(geo,getOakFloorMaterial());
   mesh.position.y = 0.01;
   mesh.receiveShadow = true;
   group.add(mesh);
 }
 
-function addWall(group,x1,y1,x2,y2,h=WALL_H,color=0x8d949b){
+function addWall(group,x1,y1,x2,y2,h=WALL_H,color=WALL_COLOR){
   const dx=px(x2-x1), dz=px(y2-y1), len=Math.hypot(dx,dz);
   if(len < 0.01) return;
-  const mesh = new THREE.Mesh(new THREE.BoxGeometry(len,h,WALL_T),material(color,.94,0));
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(len,h,WALL_T),material(color,.92,0));
   mesh.position.set(px((x1+x2)/2),h/2,px((y1+y2)/2));
   mesh.rotation.y = -Math.atan2(dz,dx);
   mesh.castShadow = true;
@@ -320,7 +383,7 @@ function buildHouse(scene){
   addBox(g,724,338,54,178,.64,0x8b6845);
   addBox(g,614,338,48,48,.76,0x35383b);
   addBox(g,690,548,88,72,.05,0x7e969e);
-  addWall(g,685,630,785,630,1.85,0xa8adb2);
+  addWall(g,685,630,785,630,1.85,WALL_COLOR);
   addBox(g,690,640,88,86,.72,0x848d91);
   addBox(g,705,817,72,68,.86,0xc8cbcd);
   addCylinder(g,741,851,22,.04,0x454b50,.87);
