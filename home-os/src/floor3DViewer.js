@@ -156,13 +156,25 @@ function addDetailedKitchen(g){
   const wood = 0x9a704c;
   const darkWood = 0x6f432b;
   const black = 0x17191b;
+  const mintPanelMaterial = new THREE.MeshStandardMaterial({
+    color:mintDark,
+    roughness:.82,
+    metalness:.03,
+    polygonOffset:true,
+    polygonOffsetFactor:-2,
+    polygonOffsetUnits:-2,
+  });
 
   addBox(g,0,0,224,58,.86,mint);
   addBox(g,224,0,58,188,.86,mint);
   addBox(g,0,0,224,58,.055,wood,.86);
   addBox(g,224,0,58,188,.055,wood,.86);
-  [8,58,108,158].forEach(x=>addBox(g,x,56,42,2,.62,mintDark,.12));
-  [12,58,104,150].forEach(y=>addBox(g,224,y,2,34,.62,mintDark,.12));
+
+  // Cabinet face details are slightly proud of the cabinet surface instead of coplanar.
+  // This removes the visible WebGL z-fighting when the camera moves.
+  [8,58,108,158].forEach(x=>addBox(g,x,58.2,42,.30,.62,mintDark,.12,mintPanelMaterial));
+  [12,58,104,150].forEach(y=>addBox(g,223.5,y,.30,34,.62,mintDark,.12,mintPanelMaterial));
+
   addBox(g,224,188,58,81,2.2,mint);
   addBox(g,233,199,40,36,.58,black,.92);
   addBox(g,236,204,34,28,.02,0x262a2d,1.03);
