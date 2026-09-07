@@ -352,10 +352,6 @@ function buildHouse(scene){
 
   [[64,0,184,0],[350,0,424,0],[790.31,205,790.31,273],[790.31,378,790.31,444],[188,1049.9,400,1049.9]].forEach(w=>addWindow(g,...w));
 
-  addBox(g,0,1070,480.8,92,.07,0x76583d);
-  addBox(g,480.8,892.73,499.2,177.27,.07,0x76583d);
-  addBox(g,480.8,1162,499.2,98,.07,0x76583d);
-
   addDetailedStairs(g);
 
   const fireplace = new THREE.Group();
@@ -417,7 +413,7 @@ function createViewer(host){
   sun.position.set(-8,15,-6);
   sun.castShadow = true;
   scene.add(sun);
-  // No outdoor ground plane: only actual interior floors and the modeled terrace are rendered.
+  // No outdoor floor surfaces: only actual interior floors are rendered.
   buildHouse(scene);
   const controls = new OrbitControls(camera,renderer.domElement);
   controls.target.set(4.1,.45,5.15);
