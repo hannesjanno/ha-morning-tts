@@ -285,7 +285,7 @@ function buildHouse(scene){
   addDetailedStairs(g);
 
   // Build the fireplace at its existing plan coordinates, then rotate the whole
-  // object 180 degrees around its own footprint so the firebox faces the living room.
+  // object 90 degrees right from the previous position so the firebox faces the living room.
   const fireplace = new THREE.Group();
   g.add(fireplace);
   addDetailedFireplace(fireplace);
@@ -295,7 +295,7 @@ function buildHouse(scene){
     child.position.z -= fireplacePivot.z;
   });
   fireplace.position.copy(fireplacePivot);
-  fireplace.rotation.y = Math.PI;
+  fireplace.rotation.y = Math.PI / 2;
 
   addDetailedKitchen(g);
   addBox(g,300,8,112,32,.48,0x72593f);
