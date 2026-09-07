@@ -29,26 +29,26 @@ function getOakFloorMaterial(){
   canvas.height = 768;
   const ctx = canvas.getContext('2d');
   const plankH = 128;
-  const plankColors = ['#d9bea0','#ceb08b','#ddc5a7','#d2b691','#e0c9ab','#d5b996'];
+  const plankColors = ['#ead8bf','#e2cbaa','#edddc6','#e6d1b2','#efe1cd','#dfc7a7'];
 
   for(let row=0; row<6; row++){
     const y = row * plankH;
     ctx.fillStyle = plankColors[row];
     ctx.fillRect(0,y,1024,plankH);
 
-    // Clearly visible seams between the ~18 cm oak boards.
-    ctx.strokeStyle = 'rgba(91,67,43,.38)';
-    ctx.lineWidth = 2;
+    // Soft seams between the light oak boards, matching the subtle joints in the photos.
+    ctx.strokeStyle = 'rgba(103,77,49,.22)';
+    ctx.lineWidth = 1.25;
     ctx.beginPath();
     ctx.moveTo(0,y+1);
     ctx.lineTo(1024,y+1);
     ctx.stroke();
 
-    // Long, soft oak grain following the board direction.
+    // Fine warm oak grain along the board direction.
     for(let g=0; g<9; g++){
       const gy = y + 13 + g*12 + (row%2)*3;
-      ctx.strokeStyle = g%3 === 0 ? 'rgba(104,76,47,.19)' : 'rgba(114,84,52,.11)';
-      ctx.lineWidth = g%3 === 0 ? 1.5 : 1;
+      ctx.strokeStyle = g%3 === 0 ? 'rgba(119,88,54,.10)' : 'rgba(126,95,61,.055)';
+      ctx.lineWidth = g%3 === 0 ? 1.2 : .8;
       ctx.beginPath();
       ctx.moveTo(0,gy);
       ctx.bezierCurveTo(210,gy-7,460,gy+8,690,gy-3);
@@ -56,26 +56,22 @@ function getOakFloorMaterial(){
       ctx.stroke();
     }
 
-    // Staggered board ends make this read as real plank flooring, not stripes.
+    // Staggered board ends, kept subtle so the floor remains light and calm.
     const joints = row%2 === 0 ? [290,720] : [150,560,930];
     joints.forEach(x=>{
-      ctx.strokeStyle = 'rgba(87,64,42,.34)';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = 'rgba(95,71,46,.16)';
+      ctx.lineWidth = 1.25;
       ctx.beginPath();
       ctx.moveTo(x,y+2);
       ctx.lineTo(x,y+plankH-2);
       ctx.stroke();
     });
 
-    // A few subtle deterministic knots / darker grain marks.
     const knotX = [205,470,815][row%3];
-    ctx.strokeStyle = 'rgba(101,70,40,.24)';
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'rgba(112,79,45,.11)';
+    ctx.lineWidth = 1.2;
     ctx.beginPath();
-    ctx.ellipse(knotX,y+58,20,7,0,0,Math.PI*2);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.ellipse(knotX+4,y+58,9,3,0,0,Math.PI*2);
+    ctx.ellipse(knotX,y+58,18,6,0,0,Math.PI*2);
     ctx.stroke();
   }
 
@@ -88,10 +84,13 @@ function getOakFloorMaterial(){
   texture.magFilter = THREE.LinearFilter;
 
   oakFloorMaterial = new THREE.MeshStandardMaterial({
-    color:0xffffff,
+    color:0xfffbf4,
     map:texture,
-    roughness:.74,
+    roughness:.82,
     metalness:0,
+    emissive:0x4a3827,
+    emissiveIntensity:.055,
+    side:THREE.DoubleSide,
   });
   return oakFloorMaterial;
 }
@@ -101,7 +100,6 @@ function setOakFloorUVs(geo){
   const uv = new Float32Array(pos.count * 2);
 
   // Physical texture scale: one tile = 2.2 m long x 1.08 m wide (6 x 18 cm planks).
-  // This keeps the board width consistent in every room instead of stretching per polygon.
   for(let i=0;i<pos.count;i++){
     uv[i*2] = pos.getX(i) / 2.2;
     uv[i*2+1] = pos.getY(i) / 1.08;
@@ -160,7 +158,11 @@ function addFloor(group,points,color){
   shape.closePath();
   const geo = new THREE.ShapeGeometry(shape);
   setOakFloorUVs(geo);
-  geo.rotateX(Math.PI/2);
+
+  // ShapeGeometry faces +Z. Rotate -90 degrees so the floor normal faces upward (+Y).
+  geo.rotateX(-Math.PI/2);
+  geo.computeVertexNormals();
+
   const mesh = new THREE.Mesh(geo,getOakFloorMaterial());
   mesh.position.y = 0.012;
   mesh.receiveShadow = true;
