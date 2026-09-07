@@ -226,6 +226,47 @@ function addDetailedSofa(g){
   addRoundedBox(g,128,700,8,17,.025,0x17191b,.47,.01,{y:.25});
 }
 
+function addDetailedFireplace(g){
+  const white = 0xf0eee8;
+  const black = 0x111315;
+  const glass = new THREE.MeshPhysicalMaterial({color:0x1b1d20,roughness:.16,metalness:.04,transparent:true,opacity:.68,transmission:.12});
+  const ember = 0x8d4c22;
+  const log = 0x6b4b34;
+
+  // Main white floor-to-ceiling body, kept inside the existing 2D fireplace footprint.
+  addBox(g,375.8,705,105,120,2.42,white,0);
+
+  // Slightly deeper black firebox at the lower front.
+  addBox(g,382,715,92,94,.76,black,.34);
+  addBox(g,382,713,92,8,.62,0x090a0b,.40,glass);
+
+  // Right-hand glass side from the reference photo.
+  addBox(g,469,722,6,82,.60,0x101214,.41,glass);
+
+  // White framing beneath and above the glass opening.
+  addBox(g,380,808,96,14,.12,white,.28);
+  addBox(g,380,706,96,10,.10,white,1.12);
+
+  // Large black horizontal vent near the top of the body.
+  addBox(g,389,710,78,7,.10,black,1.86);
+  for(let i=0;i<5;i++) addBox(g,394+i*14,708.5,10,3,.018,0x30343a,1.895);
+
+  // Lower black vent/plinth visible under the fireplace.
+  addBox(g,386,815,82,16,.11,black,.15);
+  for(let i=0;i<5;i++) addBox(g,392+i*14,813.5,10,3,.018,0x30343a,.188);
+
+  // Hearth ledge projecting into the room.
+  addBox(g,378,810,100,24,.08,black,.26);
+
+  // A few logs and embers inside the firebox so it reads as a fireplace in 3D.
+  [[407,771,-.28],[430,774,.20],[447,770,-.12]].forEach(([x,y,rot])=>{
+    const m = addRoundedBox(g,x,y,35,8,.09,log,.43,.025,{y:rot});
+    m.rotation.y += rot;
+  });
+  addCylinder(g,418,782,5,.035,ember,.42);
+  addCylinder(g,439,781,4,.03,ember,.42);
+}
+
 function buildHouse(scene){
   const g = new THREE.Group();
   scene.add(g);
@@ -251,7 +292,7 @@ function buildHouse(scene){
   addBox(g,480.8,1162,499.2,98,.07,0x76583d);
 
   addDetailedStairs(g);
-  addBox(g,375.8,705,105,120,1.25,0x292d31);
+  addDetailedFireplace(g);
   addDetailedKitchen(g);
   addBox(g,300,8,112,32,.48,0x72593f);
   addDetailedSofa(g);
