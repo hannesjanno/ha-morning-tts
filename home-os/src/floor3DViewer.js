@@ -227,44 +227,50 @@ function addDetailedSofa(g){
 }
 
 function addDetailedFireplace(g){
-  const white = 0xf0eee8;
-  const black = 0x111315;
-  const glass = new THREE.MeshPhysicalMaterial({color:0x1b1d20,roughness:.16,metalness:.04,transparent:true,opacity:.68,transmission:.12});
-  const ember = 0x8d4c22;
-  const log = 0x6b4b34;
-
-  // Main white floor-to-ceiling body, kept inside the existing 2D fireplace footprint.
-  addBox(g,375.8,705,105,120,2.42,white,0);
-
-  // Slightly deeper black firebox at the lower front.
-  addBox(g,382,715,92,94,.76,black,.34);
-  addBox(g,382,713,92,8,.62,0x090a0b,.40,glass);
-
-  // Right-hand glass side from the reference photo.
-  addBox(g,469,722,6,82,.60,0x101214,.41,glass);
-
-  // White framing beneath and above the glass opening.
-  addBox(g,380,808,96,14,.12,white,.28);
-  addBox(g,380,706,96,10,.10,white,1.12);
-
-  // Large black horizontal vent near the top of the body.
-  addBox(g,389,710,78,7,.10,black,1.86);
-  for(let i=0;i<5;i++) addBox(g,394+i*14,708.5,10,3,.018,0x30343a,1.895);
-
-  // Lower black vent/plinth visible under the fireplace.
-  addBox(g,386,815,82,16,.11,black,.15);
-  for(let i=0;i<5;i++) addBox(g,392+i*14,813.5,10,3,.018,0x30343a,.188);
-
-  // Hearth ledge projecting into the room.
-  addBox(g,378,810,100,24,.08,black,.26);
-
-  // A few logs and embers inside the firebox so it reads as a fireplace in 3D.
-  [[407,771,-.28],[430,774,.20],[447,770,-.12]].forEach(([x,y,rot])=>{
-    const m = addRoundedBox(g,x,y,35,8,.09,log,.43,.025,{y:rot});
-    m.rotation.y += rot;
+  const white = 0xf2f0eb;
+  const black = 0x101214;
+  const glass = new THREE.MeshPhysicalMaterial({
+    color:0x17191c,
+    roughness:.14,
+    metalness:.04,
+    transparent:true,
+    opacity:.58,
+    transmission:.18,
   });
-  addCylinder(g,418,782,5,.035,ember,.42);
-  addCylinder(g,439,781,4,.03,ember,.42);
+  const darkGlass = new THREE.MeshStandardMaterial({color:0x101214,roughness:.28,metalness:.08});
+  const log = 0x57402f;
+
+  // Photo proportions: a slim, tall white chimney core rather than a full 105x120 block.
+  addBox(g,386,705,84,74,2.42,white,0);
+
+  // Low white plinth below the firebox, slightly wider than the chimney core.
+  addBox(g,381,792,95,33,.30,white,0);
+
+  // Compact black firebox projects forward from the white body.
+  addBox(g,381,750,95,63,.68,black,.34);
+
+  // Large front pane and the narrow right-hand glass side visible in the photo.
+  addBox(g,385,808,86,4,.53,0x17191c,.42,glass);
+  addBox(g,471,755,4,57,.53,0x17191c,.42,glass);
+
+  // Thin black frame around the front pane.
+  addBox(g,381,807,94,5,.055,black,.36);
+  addBox(g,381,807,94,5,.055,black,.93);
+  addBox(g,381,807,5,5,.62,black,.36);
+  addBox(g,470,807,5,5,.62,black,.36);
+
+  // Clean, thin upper vent set into the white face — no decorative slat blocks.
+  addBox(g,395,775,66,5,.095,black,1.78);
+
+  // Black hearth ledge and the slim lower vent in the white base.
+  addBox(g,378,806,101,20,.075,black,.27);
+  addBox(g,394,819,68,4,.075,black,.11);
+
+  // Dark, unlit interior like the reference photo, with only subtle logs visible.
+  addBox(g,389,758,78,46,.43,0x08090a,.42,darkGlass);
+  [[399,781,-.20],[420,780,.16],[441,782,-.10]].forEach(([x,y,rot])=>{
+    addRoundedBox(g,x,y,28,7,.065,log,.46,.018,{y:rot});
+  });
 }
 
 function buildHouse(scene){
