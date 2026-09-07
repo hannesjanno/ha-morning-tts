@@ -25,61 +25,88 @@ function getOakFloorMaterial(){
   if(oakFloorMaterial) return oakFloorMaterial;
 
   const canvas = document.createElement('canvas');
-  canvas.width = 512;
-  canvas.height = 512;
+  canvas.width = 1024;
+  canvas.height = 768;
   const ctx = canvas.getContext('2d');
-  const plankH = 64;
-  const plankColors = ['#d8c5aa','#d1b99a','#dcc9ad','#cfb697','#dac5a6','#d3bc9d','#ddc9ad','#ceb596'];
+  const plankH = 128;
+  const plankColors = ['#d9bea0','#ceb08b','#ddc5a7','#d2b691','#e0c9ab','#d5b996'];
 
-  for(let row=0; row<8; row++){
+  for(let row=0; row<6; row++){
     const y = row * plankH;
     ctx.fillStyle = plankColors[row];
-    ctx.fillRect(0,y,512,plankH);
+    ctx.fillRect(0,y,1024,plankH);
 
-    // Fine longitudinal grain, based on the light matte oak visible in the photos.
-    ctx.strokeStyle = 'rgba(111,82,52,.12)';
-    ctx.lineWidth = 1;
-    for(let g=0; g<7; g++){
-      const gy = y + 8 + g*8 + (row%2)*2;
+    // Clearly visible seams between the ~18 cm oak boards.
+    ctx.strokeStyle = 'rgba(91,67,43,.38)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0,y+1);
+    ctx.lineTo(1024,y+1);
+    ctx.stroke();
+
+    // Long, soft oak grain following the board direction.
+    for(let g=0; g<9; g++){
+      const gy = y + 13 + g*12 + (row%2)*3;
+      ctx.strokeStyle = g%3 === 0 ? 'rgba(104,76,47,.19)' : 'rgba(114,84,52,.11)';
+      ctx.lineWidth = g%3 === 0 ? 1.5 : 1;
       ctx.beginPath();
       ctx.moveTo(0,gy);
-      ctx.bezierCurveTo(130,gy-4,300,gy+5,512,gy-2);
+      ctx.bezierCurveTo(210,gy-7,460,gy+8,690,gy-3);
+      ctx.bezierCurveTo(820,gy-7,920,gy+5,1024,gy-2);
       ctx.stroke();
     }
 
-    ctx.strokeStyle = 'rgba(103,79,54,.24)';
-    ctx.beginPath();
-    ctx.moveTo(0,y+.5);
-    ctx.lineTo(512,y+.5);
-    ctx.stroke();
-
-    // Staggered board ends keep the texture from looking like simple stripes.
-    const offset = row % 2 ? 118 : 34;
-    [offset, offset+220, offset+440].forEach(x=>{
-      if(x > 0 && x < 512){
-        ctx.strokeStyle = 'rgba(103,79,54,.20)';
-        ctx.beginPath();
-        ctx.moveTo(x,y+1);
-        ctx.lineTo(x,y+plankH-1);
-        ctx.stroke();
-      }
+    // Staggered board ends make this read as real plank flooring, not stripes.
+    const joints = row%2 === 0 ? [290,720] : [150,560,930];
+    joints.forEach(x=>{
+      ctx.strokeStyle = 'rgba(87,64,42,.34)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x,y+2);
+      ctx.lineTo(x,y+plankH-2);
+      ctx.stroke();
     });
+
+    // A few subtle deterministic knots / darker grain marks.
+    const knotX = [205,470,815][row%3];
+    ctx.strokeStyle = 'rgba(101,70,40,.24)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(knotX,y+58,20,7,0,0,Math.PI*2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.ellipse(knotX+4,y+58,9,3,0,0,Math.PI*2);
+    ctx.stroke();
   }
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
-  texture.repeat.set(1.15,1.15);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 8;
+  texture.minFilter = THREE.LinearMipmapLinearFilter;
+  texture.magFilter = THREE.LinearFilter;
 
   oakFloorMaterial = new THREE.MeshStandardMaterial({
-    color:0xf3ece1,
+    color:0xffffff,
     map:texture,
-    roughness:.78,
+    roughness:.74,
     metalness:0,
   });
   return oakFloorMaterial;
+}
+
+function setOakFloorUVs(geo){
+  const pos = geo.getAttribute('position');
+  const uv = new Float32Array(pos.count * 2);
+
+  // Physical texture scale: one tile = 2.2 m long x 1.08 m wide (6 x 18 cm planks).
+  // This keeps the board width consistent in every room instead of stretching per polygon.
+  for(let i=0;i<pos.count;i++){
+    uv[i*2] = pos.getX(i) / 2.2;
+    uv[i*2+1] = pos.getY(i) / 1.08;
+  }
+  geo.setAttribute('uv',new THREE.BufferAttribute(uv,2));
 }
 
 function addBox(group,x,y,w,d,h,color,z=0,matOverride=null){
@@ -132,9 +159,10 @@ function addFloor(group,points,color){
   points.forEach(([x,y],i)=> i ? shape.lineTo(px(x),px(y)) : shape.moveTo(px(x),px(y)));
   shape.closePath();
   const geo = new THREE.ShapeGeometry(shape);
+  setOakFloorUVs(geo);
   geo.rotateX(Math.PI/2);
   const mesh = new THREE.Mesh(geo,getOakFloorMaterial());
-  mesh.position.y = 0.01;
+  mesh.position.y = 0.012;
   mesh.receiveShadow = true;
   group.add(mesh);
 }
