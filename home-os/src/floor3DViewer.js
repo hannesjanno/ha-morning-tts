@@ -153,8 +153,24 @@ function addFloor(group,points,color){
   shape.closePath();
   const geo = new THREE.ShapeGeometry(shape);
   setOakFloorUVs(geo);
-  geo.rotateX(-Math.PI/2);
+
+  // Keep the same positive plan Y direction as the walls and furniture (world +Z).
+  geo.rotateX(Math.PI/2);
+
+  // A +90° rotation puts the generated face normal downward. Reverse triangle winding
+  // so the visible top surface faces +Y and receives light correctly.
+  const index = geo.getIndex();
+  if(index){
+    for(let i=0;i<index.count;i+=3){
+      const b = index.getX(i+1);
+      const c = index.getX(i+2);
+      index.setX(i+1,c);
+      index.setX(i+2,b);
+    }
+    index.needsUpdate = true;
+  }
   geo.computeVertexNormals();
+
   const mesh = new THREE.Mesh(geo,getOakFloorMaterial());
   mesh.position.y = 0.012;
   mesh.receiveShadow = true;
