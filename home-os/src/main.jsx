@@ -33,7 +33,19 @@ installFirstFloorSaunaOverlay();
 installFirstFloorWashroomOverlay();
 installFirstFloorUtilityRoomOverlay();
 
-// Add the stable 3D viewer after React has mounted the Home OS panel.
-requestAnimationFrame(() => {
-  installFloor3DViewer();
-});
+// React may not have committed the floor panel on the first animation frame.
+// Retry briefly and install the 3D controls exactly once when the panel exists.
+let floor3DInstallAttempts = 0;
+const install3DWhenReady = () => {
+  if (document.querySelector('.floor-panel .floor-plan')) {
+    installFloor3DViewer();
+    return;
+  }
+
+  floor3DInstallAttempts += 1;
+  if (floor3DInstallAttempts < 40) {
+    setTimeout(install3DWhenReady, 50);
+  }
+};
+
+install3DWhenReady();
