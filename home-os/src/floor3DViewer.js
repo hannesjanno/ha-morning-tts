@@ -18,8 +18,8 @@ const roomPolygons = [
 const px = (v) => v * SCALE;
 const material = (color, roughness=.82, metalness=.03) => new THREE.MeshStandardMaterial({color, roughness, metalness});
 
-function addBox(group,x,y,w,d,h,color,z=0){
-  const mesh = new THREE.Mesh(new THREE.BoxGeometry(px(w),h,px(d)),material(color));
+function addBox(group,x,y,w,d,h,color,z=0,matOverride=null){
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(px(w),h,px(d)),matOverride || material(color));
   mesh.position.set(px(x+w/2),z+h/2,px(y+d/2));
   mesh.castShadow = true;
   mesh.receiveShadow = true;
@@ -34,6 +34,19 @@ function addCylinder(group,x,y,r,h,color,z=0){
   mesh.receiveShadow = true;
   group.add(mesh);
   return mesh;
+}
+
+function addRod(group,x1,y1,h1,x2,y2,h2,r,color){
+  const a = new THREE.Vector3(px(x1),h1,px(y1));
+  const b = new THREE.Vector3(px(x2),h2,px(y2));
+  const dir = new THREE.Vector3().subVectors(b,a);
+  const len = dir.length();
+  if(len < .001) return;
+  const mesh = new THREE.Mesh(new THREE.CylinderGeometry(r,r,len,12),material(color,.7,0));
+  mesh.position.copy(a).add(b).multiplyScalar(.5);
+  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.clone().normalize());
+  mesh.castShadow = true;
+  group.add(mesh);
 }
 
 function addFloor(group,points,color){
@@ -70,6 +83,144 @@ function addWindow(group,x1,y1,x2,y2){
   group.add(mesh);
 }
 
+function addDetailedStairs(g){
+  const wood = 0x9b6b3f;
+  const white = 0xf0eee8;
+  const runner = 0xc8bba9;
+  const treadW = 30;
+  const flightDepth = 92;
+
+  // Lower flight: open oak treads rising toward the turn.
+  for(let i=0;i<8;i++){
+    const x = 8 + i*treadW;
+    const h = .16 + i*.13;
+    addBox(g,x,414,treadW-2,flightDepth,.055,wood,h);
+    addBox(g,x+3,430,treadW-8,60,.025,runner,h+.056);
+  }
+
+  // Turning platform and upper return flight.
+  addBox(g,246,414,38,228,.07,wood,1.12);
+  for(let i=0;i<8;i++){
+    const x = 246 - i*treadW;
+    const h = 1.22 + i*.16;
+    addBox(g,x,550,treadW-2,92,.055,wood,h);
+    addBox(g,x+3,566,treadW-8,60,.025,runner,h+.056);
+  }
+
+  // White stringers beneath both runs.
+  addRod(g,8,414,.05,246,414,1.05,.055,white);
+  addRod(g,8,506,.05,246,506,1.05,.055,white);
+  addRod(g,246,550,1.08,8,550,2.35,.055,white);
+  addRod(g,246,642,1.08,8,642,2.35,.055,white);
+
+  // Newel posts, balusters and oak handrails on exposed edges.
+  const lowerRailY = 506;
+  for(let i=0;i<=8;i++){
+    const x = 8 + i*treadW;
+    const base = .16 + Math.min(i,7)*.13;
+    addBox(g,x,lowerRailY,5,5,.88,white,base);
+  }
+  addRod(g,10,lowerRailY,1.02,248,lowerRailY,2.02,.035,wood);
+
+  const upperRailY = 642;
+  for(let i=0;i<=8;i++){
+    const x = 246 - i*treadW;
+    const base = 1.22 + Math.min(i,7)*.16;
+    addBox(g,x,upperRailY,5,5,.88,white,base);
+  }
+  addRod(g,248,upperRailY,2.08,10,upperRailY,3.32,.035,wood);
+
+  addBox(g,4,lowerRailY-2,8,8,1.02,white,0);
+  addBox(g,244,lowerRailY-2,8,8,1.95,white,.08);
+  addBox(g,244,upperRailY-2,8,8,1.25,white,1.05);
+}
+
+function addDetailedKitchen(g){
+  const mint = 0x7fa991;
+  const mintDark = 0x658b78;
+  const white = 0xf2f0ea;
+  const wood = 0x9a704c;
+  const darkWood = 0x6f432b;
+  const black = 0x17191b;
+
+  // Base cabinets keep the exact 2D L footprint.
+  addBox(g,0,0,224,58,.86,mint);
+  addBox(g,224,0,58,188,.86,mint);
+
+  // Light natural-wood worktops.
+  addBox(g,0,0,224,58,.055,wood,.86);
+  addBox(g,224,0,58,188,.055,wood,.86);
+
+  // Panel lines on the mint doors/drawers.
+  [8,58,108,158].forEach(x=>addBox(g,x,56,42,2,.62,mintDark,.12));
+  [12,58,104,150].forEach(y=>addBox(g,224,y,2,34,.62,mintDark,.12));
+
+  // Tall right-hand cabinet tower with black oven.
+  addBox(g,224,188,58,81,2.2,mint);
+  addBox(g,233,199,40,36,.58,black,.92);
+  addBox(g,236,204,34,28,.02,0x262a2d,1.03);
+  addBox(g,224,269.1,58,26,1.68,mint);
+
+  // Upper cabinets visible in the reference photo.
+  addBox(g,212,10,12,72,1.02,white,1.26);
+  addBox(g,224,20,58,58,.95,white,1.25);
+  addBox(g,224,82,58,66,.95,mint,1.25);
+
+  // Black inset sink and faucet under the window.
+  addBox(g,82,10,66,38,.035,black,.92);
+  addBox(g,90,16,50,25,.02,0x24282b,.935);
+  addRod(g,145,30,.95,145,30,1.22,.018,0x303336);
+  addRod(g,145,30,1.22,132,30,1.22,.018,0x303336);
+
+  // Hob on the right-hand worktop.
+  addBox(g,234,133,38,55,.035,black,.92);
+  [[244,146],[261,146],[244,173],[261,173]].forEach(([x,y])=>addCylinder(g,x,y,7,.015,0x313539,.955));
+
+  // Wall wine rack from the real kitchen.
+  addBox(g,8,6,38,46,1.55,white,.92);
+  for(let i=0;i<4;i++) addRod(g,10,10+i*11,1.02,44,44-i*11,1.42,.018,0x8d8d88);
+
+  // High dining table: dark natural timber top, black steel legs.
+  addBox(g,22,145,150,62,.09,darkWood,.84);
+  [[28,151],[158,151],[28,195],[158,195]].forEach(([x,y])=>addBox(g,x,y,5,5,.82,black,.02));
+
+  // Three black chairs with light wooden legs.
+  [[38,228],[94,228],[150,228]].forEach(([x,y])=>{
+    addBox(g,x-17,y-17,34,34,.08,black,.46);
+    addBox(g,x-17,y+13,34,5,.44,black,.48);
+    [[x-13,y-13],[x+13,y-13],[x-13,y+13],[x+13,y+13]].forEach(([lx,ly])=>addRod(g,lx,ly,.05,lx,ly,.46,.014,0x8c6541));
+  });
+}
+
+function addDetailedSofa(g){
+  const fabric = 0xd8d4cd;
+  const cushion = 0xe5e2dc;
+  const seam = 0xc4beb5;
+
+  // Low L-shaped base matching the established 2D footprint.
+  addBox(g,5,670,285,58,.28,fabric,.05);
+  addBox(g,5,670,58,190,.28,fabric,.05);
+
+  // Three separate seat cushions on the long section.
+  [[64,674,68,50],[134,674,68,50],[204,674,68,50]].forEach(([x,y,w,d])=>{
+    addBox(g,x,y,w,d,.16,cushion,.31);
+    addBox(g,x+2,y+d-2,w-4,2,.02,seam,.47);
+  });
+
+  // Chaise/left section cushions.
+  [[9,730,50,58],[9,790,50,58]].forEach(([x,y,w,d])=>addBox(g,x,y,w,d,.16,cushion,.31));
+
+  // Back cushions along the rear edge of the long section.
+  [[65,666,65,14],[134,666,65,14],[203,666,65,14]].forEach(([x,y,w,d])=>addBox(g,x,y,w,d,.52,cushion,.45));
+
+  // Back cushions on the return section.
+  [[1,724,14,58],[1,784,14,58]].forEach(([x,y,w,d])=>addBox(g,x,y,w,d,.52,cushion,.45));
+
+  // Broad rounded-looking arms approximated with low blocks.
+  addBox(g,274,668,18,62,.58,fabric,.10);
+  addBox(g,3,846,62,18,.58,fabric,.10);
+}
+
 function buildHouse(scene){
   const g = new THREE.Group();
   scene.add(g);
@@ -98,36 +249,23 @@ function buildHouse(scene){
   addBox(g,480.8,892.73,499.2,177.27,.07,0x76583d);
   addBox(g,480.8,1162,499.2,98,.07,0x76583d);
 
-  // Stairs.
-  for(let i=0;i<8;i++){
-    addBox(g,10+i*31,414,31,92,.09+i*.055,0x6e5945);
-    addBox(g,10+(7-i)*31,550,31,92,.09+i*.055,0x6e5945);
-  }
+  addDetailedStairs(g);
 
   // Fireplace.
   addBox(g,375.8,705,105,120,1.25,0x292d31);
 
-  // Kitchen.
-  addBox(g,0,0,224,58,.9,0x9ba792);
-  addBox(g,224,0,58,188,.9,0x9ba792);
-  addBox(g,224,188,58,81,2.15,0x899583);
-  addBox(g,224,269.1,58,26,1.65,0x899583);
-  addBox(g,82,10,66,38,.05,0xb8c1c5,.91);
-  addBox(g,234,133,38,55,.04,0x202326,.91);
-  addBox(g,22,145,150,62,.82,0x8b6a48);
-  [[38,228],[94,228],[150,228]].forEach(([x,y])=>addCylinder(g,x,y,18,.46,0x25282c));
-  addBox(g,8,6,38,46,1.55,0x594638,.92);
+  addDetailedKitchen(g);
 
-  // Entry hall.
+  // Entry hall bench.
   addBox(g,300,8,112,32,.48,0x72593f);
 
-  // Living room.
-  addBox(g,4,660,286,62,.72,0xc1b7a8);
-  addBox(g,4,660,58,190,.72,0xc1b7a8);
-  addCylinder(g,432,875,44,.72,0x76573c);
-  [[372,875],[400,932],[456,935]].forEach(([x,y])=>addCylinder(g,x,y,18,.48,0x3f5145));
-  addBox(g,8,990,88,28,.48,0x49392e);
-  addBox(g,6,1027,92,10,.72,0x111315,.82);
+  addDetailedSofa(g);
+
+  // Living room dining table + three chairs, TV cabinet and vacuum stay in their 2D positions.
+  addCylinder(g,430,870,43,.72,0x76573c);
+  [[369,870],[404,934],[454,935]].forEach(([x,y])=>addCylinder(g,x,y,18,.48,0x3f5145));
+  addBox(g,4,985,92,28,.48,0x49392e);
+  addBox(g,6,1018,86,10,.72,0x111315,.82);
   addBox(g,4,348,20,48,.42,0x30343a);
   addCylinder(g,45,374,19,.12,0x24272b);
 
