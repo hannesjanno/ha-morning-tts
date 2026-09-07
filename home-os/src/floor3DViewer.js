@@ -184,46 +184,52 @@ function addDetailedKitchen(g){
 }
 
 function addDetailedSofa(g){
-  const base = 0xd1ccc4;
-  const fabric = 0xdcd8d1;
-  const cushion = 0xe7e4df;
-  const seam = 0xc3bdb4;
+  const base = 0xcfcac2;
+  const fabric = 0xdedbd5;
+  const cushion = 0xe9e6e0;
+  const seam = 0xbdb7ae;
+  const darkPillow = 0x25272b;
+  const floralPillow = 0x3b2f31;
 
-  // Real sofa footprint from the 2D plan: long 3-seat section to the right,
-  // deep return/chaise on the LEFT as seen in the user's photos.
-  addBox(g,5,670,285,62,.22,base,.05);
-  addBox(g,5,670,66,190,.22,base,.05);
+  // Keep the established 2D footprint, but shape it like the real sectional:
+  // a long three-seat run to the right and a deep two-module return on the left.
+  addBox(g,5,670,285,64,.20,base,.05);
+  addBox(g,5,670,68,194,.20,base,.05);
 
-  // Corner seat plus three soft seat modules across the long section.
-  addBox(g,14,680,50,48,.17,cushion,.29);
-  [[68,680,66,48],[136,680,66,48],[204,680,66,48]].forEach(([x,y,w,d])=>{
-    addBox(g,x,y,w,d,.17,cushion,.29);
+  // Corner module plus three distinct seat cushions across the long run.
+  addBox(g,14,679,53,49,.18,cushion,.28);
+  [[69,679,64,49],[136,679,64,49],[203,679,65,49]].forEach(([x,y,w,d])=>{
+    addBox(g,x,y,w,d,.18,cushion,.28);
     addBox(g,x+3,y+d-2,w-6,2,.018,seam,.46);
   });
 
-  // Deep left return: two large cushions continuing toward the room/front.
-  [[14,732,50,55],[14,789,50,55]].forEach(([x,y,w,d])=>{
-    addBox(g,x,y,w,d,.17,cushion,.29);
+  // Deep left return with two large cushions, matching the photo's long foreground leg.
+  [[14,731,53,56],[14,790,53,58]].forEach(([x,y,w,d])=>{
+    addBox(g,x,y,w,d,.18,cushion,.28);
     addBox(g,x+w-2,y+3,2,d-6,.018,seam,.46);
   });
 
-  // Three plump back cushions visible in the photo on the long section.
-  [[70,666,62,17],[137,666,62,17],[204,666,62,17]].forEach(([x,y,w,d])=>{
-    addBox(g,x,y,w,d,.50,fabric,.42);
-    addBox(g,x+3,y+d-1,w-6,1.5,.02,seam,.65);
+  // Three broad, slightly lower back cushions on the main run.
+  [[69,663,63,18],[136,663,63,18],[203,663,64,18]].forEach(([x,y,w,d])=>{
+    addBox(g,x,y,w,d,.46,fabric,.41);
+    addBox(g,x+4,y+d-1,w-8,1.5,.018,seam,.62);
   });
 
-  // Back cushions along the left return, including the corner cushion.
-  [[2,680,17,48],[2,731,17,54],[2,788,17,54]].forEach(([x,y,w,d])=>{
-    addBox(g,x,y,w,d,.50,fabric,.42);
+  // Matching back cushions on the return, including the corner.
+  [[2,679,18,49],[2,731,18,56],[2,790,18,57]].forEach(([x,y,w,d])=>{
+    addBox(g,x,y,w,d,.46,fabric,.41);
   });
 
-  // Wide low arms matching the upholstered arms in the reference photo.
-  addBox(g,273,668,20,66,.55,fabric,.10);
-  addBox(g,3,844,68,20,.55,fabric,.10);
+  // Low, wide upholstered arms like the real sofa.
+  addBox(g,271,667,23,69,.52,fabric,.09);
+  addBox(g,2,846,72,21,.52,fabric,.09);
 
-  // Rounded front impression on the left arm/return using upholstered cylinders.
-  addCylinder(g,37,854,28,.48,fabric,.12);
+  // Rounded visual mass at the front of the return so it doesn't read as a hard box.
+  addCylinder(g,38,856,30,.42,fabric,.12);
+
+  // Decorative pillows visible in the user's photo, placed in the inside corner.
+  addBox(g,25,686,25,8,.32,floralPillow,.49);
+  addBox(g,48,687,22,7,.29,darkPillow,.47);
 }
 
 function buildHouse(scene){
