@@ -100,8 +100,8 @@ function getOakTileMaterial(){
   canvas.height = 1024;
   const ctx = canvas.getContext('2d');
   const tileW = 128;
-  // Cooler light beige oak-look ceramic tile, matched to the kitchen/entry photo.
-  const tileColors = ['#c8b9a6','#d1c3b0','#c3b39f','#ccbea9','#bfae9b','#d3c5b2'];
+  // Subtle warm beige oak-look ceramic tile: close plank tones avoid a striped floor.
+  const tileColors = ['#c9bdad','#cbbfaf','#c7bbab','#cabdad','#c6baaa','#ccbfaf'];
   const offsets = [0,180,70,310,145,245];
 
   for(let col=0; col<6; col++){
@@ -110,7 +110,7 @@ function getOakTileMaterial(){
     ctx.fillRect(x,0,tileW,1024);
     for(let g=0; g<22; g++){
       const gx = x + 8 + g*5.1 + (col%2)*1.4;
-      ctx.strokeStyle = g%5 === 0 ? 'rgba(96,83,69,.11)' : 'rgba(103,89,75,.055)';
+      ctx.strokeStyle = g%5 === 0 ? 'rgba(91,78,65,.14)' : 'rgba(101,87,73,.075)';
       ctx.lineWidth = g%5 === 0 ? .75 : .45;
       ctx.beginPath();
       ctx.moveTo(gx,0);
@@ -118,27 +118,27 @@ function getOakTileMaterial(){
       ctx.stroke();
     }
     for(let y=offsets[col]; y<1024; y+=420){
-      ctx.strokeStyle = 'rgba(92,80,68,.16)';
-      ctx.lineWidth = .9;
+      ctx.strokeStyle = 'rgba(88,76,64,.24)';
+      ctx.lineWidth = 1.05;
       ctx.beginPath(); ctx.moveTo(x+1,y); ctx.lineTo(x+tileW-1,y); ctx.stroke();
     }
     [[.31,.22],[.72,.62]].forEach(([fx,fy],idx)=>{
       if((col+idx)%2) return;
       const kx=x+tileW*fx, ky=1024*fy+col*19;
-      ctx.strokeStyle='rgba(84,72,61,.10)';
-      ctx.lineWidth=.7;
+      ctx.strokeStyle='rgba(80,68,57,.14)';
+      ctx.lineWidth=.75;
       ctx.beginPath(); ctx.ellipse(kx,ky,7,18,.05,0,Math.PI*2); ctx.stroke();
     });
   }
-  ctx.strokeStyle = 'rgba(96,84,72,.18)';
-  ctx.lineWidth = .9;
+  ctx.strokeStyle = 'rgba(91,79,67,.24)';
+  ctx.lineWidth = 1.05;
   for(let x=0;x<=768;x+=tileW){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,1024);ctx.stroke();}
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.wrapS = THREE.RepeatWrapping; texture.wrapT = THREE.RepeatWrapping;
   texture.colorSpace = THREE.SRGBColorSpace; texture.anisotropy = 8;
   texture.minFilter = THREE.LinearMipmapLinearFilter; texture.magFilter = THREE.LinearFilter;
-  oakTileMaterial = new THREE.MeshStandardMaterial({color:0xf1ebe2,map:texture,roughness:.82,metalness:0,side:THREE.DoubleSide});
+  oakTileMaterial = new THREE.MeshStandardMaterial({color:0xf3ede4,map:texture,roughness:.86,metalness:0,side:THREE.DoubleSide});
   return oakTileMaterial;
 }
 
