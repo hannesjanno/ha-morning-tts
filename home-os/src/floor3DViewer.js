@@ -286,10 +286,10 @@ function addDetailedKitchen(g){
   addBox(g,236,204,34,28,.02,0x262a2d,1.03);
   addBox(g,224,269.1,58,26,1.68,mint);
 
-  // Photo-matched upper cabinetry: white cupboards continue from the corner,
-  // with a dedicated white hood cabinet directly over the hob before the tall mint unit.
+  // Photo-matched upper cabinetry: continuous white cupboards lead into the hood cabinet.
   addBox(g,212,10,12,72,1.02,white,1.26);
   addBox(g,224,20,58,58,.95,white,1.25);
+  addBox(g,224,78,58,42,.95,white,1.25);
   addBox(g,224,120,58,68,.95,white,1.25);
   addBox(g,223.5,123,.30,29,.76,white,1.34,whitePanelMaterial);
   addBox(g,223.5,156,.30,29,.76,white,1.34,whitePanelMaterial);
