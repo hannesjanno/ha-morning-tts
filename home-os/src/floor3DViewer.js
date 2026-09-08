@@ -313,29 +313,108 @@ function addLivingRoomTv(g){
 }
 
 function addDetailedStairs(g){
-  const wood = 0x9b6b3f, white = 0xf0eee8, runner = 0xc8bba9;
-  const treadW = 30, upperY = 414, lowerY = 550;
-  for(let i=0;i<8;i++){
-    const x=8+i*treadW,h=.16+(7-i)*.13;
-    addBox(g,x,lowerY,treadW-2,92,.055,wood,h); addBox(g,x+3,lowerY+16,treadW-8,60,.025,runner,h+.056);
-  }
-  addBox(g,4,upperY,38,228,.07,wood,1.14);
-  for(let i=0;i<8;i++){
-    const x=8+i*treadW,h=1.22+i*.16;
-    addBox(g,x,upperY,treadW-2,92,.055,wood,h); addBox(g,x+3,upperY+16,treadW-8,60,.025,runner,h+.056);
-  }
-  addRod(g,246,lowerY,.10,8,lowerY,1.08,.055,white); addRod(g,246,lowerY+92,.10,8,lowerY+92,1.08,.055,white);
-  addRod(g,8,upperY,1.16,246,upperY,2.34,.055,white); addRod(g,8,upperY+92,1.16,246,upperY+92,2.34,.055,white);
-  const lowerRailY=lowerY+92;
-  for(let i=0;i<=8;i++){const x=8+i*treadW,base=.16+(7-Math.min(i,7))*.13;addBox(g,x,lowerRailY,5,5,.88,white,base);}
-  addRod(g,248,lowerRailY,.98,10,lowerRailY,1.96,.035,wood);
-  const upperRailY=upperY;
-  for(let i=0;i<=8;i++){const x=8+i*treadW,base=1.22+Math.min(i,7)*.16;addBox(g,x,upperRailY,5,5,.88,white,base);}
-  addRod(g,10,upperRailY,2.10,248,upperRailY,3.22,.035,wood);
-  addBox(g,246,lowerRailY-2,8,8,1.04,white,0); addBox(g,4,lowerRailY-2,8,8,1.90,white,.10);
-  addBox(g,4,upperRailY-2,8,8,1.18,white,1.10); addBox(g,246,upperRailY-2,8,8,1.15,white,2.20);
-}
+  const wood=0xb9824e,white=0xf0eee8,runner=0xb9ad99;
+  const woodMaterial=material(wood,.78,0);
+  const runnerMaterial=material(runner,.99,0);
+  const turnX=42,turnY=528,innerR=11,outerR=108;
+  const lowerY=550,upperY=414,treadD=92,treadW=28;
 
+  const addHalfMoonMat=(x,y,w,d,z,rotation=0)=>{
+    const shape=new THREE.Shape();
+    shape.moveTo(-px(w/2),px(d*.42));
+    shape.lineTo(px(w/2),px(d*.42));
+    shape.quadraticCurveTo(px(w/2),-px(d*.30),0,-px(d*.58));
+    shape.quadraticCurveTo(-px(w/2),-px(d*.30),-px(w/2),px(d*.42));
+    const geo=new THREE.ShapeGeometry(shape);
+    geo.rotateX(Math.PI/2);
+    const mesh=new THREE.Mesh(geo,runnerMaterial);
+    mesh.position.set(px(x),z,px(y));
+    mesh.rotation.y=rotation;
+    mesh.receiveShadow=true;
+    g.add(mesh);
+  };
+
+  const sectorShape=(r0,r1,a0,a1)=>{
+    const shape=new THREE.Shape();
+    shape.absarc(0,0,px(r1),a0,a1,false);
+    shape.lineTo(px(r0*Math.cos(a1)),px(r0*Math.sin(a1)));
+    shape.absarc(0,0,px(r0),a1,a0,true);
+    shape.closePath();
+    return shape;
+  };
+
+  const addTurnStep=(a0,a1,z)=>{
+    const geo=new THREE.ExtrudeGeometry(sectorShape(innerR,outerR,a0,a1),{depth:.06,bevelEnabled:false,curveSegments:18});
+    geo.rotateX(Math.PI/2);
+    const step=new THREE.Mesh(geo,woodMaterial);
+    step.position.set(px(turnX),z+.06,px(turnY));
+    step.castShadow=true; step.receiveShadow=true; g.add(step);
+
+    const matGeo=new THREE.ShapeGeometry(sectorShape(innerR+8,outerR-17,a0+.025,a1-.025));
+    matGeo.rotateX(Math.PI/2);
+    const matMesh=new THREE.Mesh(matGeo,runnerMaterial);
+    matMesh.position.set(px(turnX),z+.064,px(turnY));
+    matMesh.receiveShadow=true; g.add(matMesh);
+  };
+
+  const lowerSteps=[];
+  for(let i=0;i<6;i++){
+    const x=92+i*treadW,z=1.04-i*.148;
+    lowerSteps.push({x,z});
+    addBox(g,x,lowerY,treadW-2,treadD,.06,wood,z,woodMaterial);
+    addHalfMoonMat(x+(treadW-2)/2,lowerY+treadD/2,58,54,z+.064,Math.PI/2);
+  }
+
+  for(let i=0;i<5;i++){
+    const a0=Math.PI/2-(i+1)*Math.PI/5;
+    const a1=Math.PI/2-i*Math.PI/5;
+    addTurnStep(a0,a1,1.15+i*.14);
+  }
+
+  const upperSteps=[];
+  for(let i=0;i<6;i++){
+    const x=92+i*treadW,z=1.87+i*.12;
+    upperSteps.push({x,z});
+    addBox(g,x,upperY,treadW-2,treadD,.06,wood,z,woodMaterial);
+    addHalfMoonMat(x+(treadW-2)/2,upperY+treadD/2,58,54,z+.064,-Math.PI/2);
+  }
+
+  const addFlightRailing=(steps,y)=>{
+    steps.forEach(({x,z},i)=>{
+      if(i===steps.length-1||i%1===0){
+        addBox(g,x+4,y-2,5,5,.84,white,z+.02);
+      }
+    });
+    for(let i=0;i<steps.length-1;i++){
+      const a=steps[i],b=steps[i+1];
+      addRod(g,a.x+6,y,a.z+.86,b.x+6,y,b.z+.86,.032,wood);
+    }
+  };
+
+  addFlightRailing(lowerSteps,lowerY);
+  addFlightRailing(lowerSteps,lowerY+treadD);
+  addFlightRailing(upperSteps,upperY);
+  addFlightRailing(upperSteps,upperY+treadD);
+
+  const curvePosts=[];
+  for(let i=0;i<=6;i++){
+    const a=Math.PI/2-i*Math.PI/6;
+    const x=turnX+outerR*Math.cos(a),y=turnY+outerR*Math.sin(a);
+    const base=1.13+i*(.72/6);
+    curvePosts.push({x,y,h:base+.88});
+    addBox(g,x-2.5,y-2.5,5,5,.86,white,base);
+  }
+  for(let i=0;i<curvePosts.length-1;i++){
+    const a=curvePosts[i],b=curvePosts[i+1];
+    addRod(g,a.x,a.y,a.h,b.x,b.y,b.h,.032,wood);
+  }
+
+  [[247,lowerY],[247,lowerY+treadD],[247,upperY],[247,upperY+treadD]].forEach(([x,y],idx)=>{
+    const upper=idx>1;
+    const z=upper?2.43:.28;
+    addBox(g,x-4,y-4,8,8,.98,white,z);
+  });
+}
 function addDetailedKitchen(g){
   const mint=0x7fa991,mintDark=0x658b78,white=0xf2f0ea,wood=0x9a704c,darkWood=0x6f432b,black=0x17191b;
   const mintPanelMaterial = new THREE.MeshStandardMaterial({color:mintDark,roughness:.82,metalness:.03,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
