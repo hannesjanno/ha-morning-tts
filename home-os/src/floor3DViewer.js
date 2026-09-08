@@ -198,14 +198,14 @@ function getLivingRoomRugMaterial(){
 }
 
 function addLivingRoomRug(g){
-  // Rotate the rug 90 degrees: the long edge now runs from the sofa wall toward the TV.
+  // Keep the current orientation: the long edge runs from the sofa wall toward the TV.
   const rug = new THREE.Mesh(
-    new RoundedBoxGeometry(px(210),.032,px(290),5,.035),
+    new RoundedBoxGeometry(px(286),.032,px(290),5,.035),
     getLivingRoomRugMaterial()
   );
-  // Keep the rug against the left wall where the sofa sits and extend it toward the TV wall.
-  // Extents are approximately x=0..210 and y=700..990.
-  rug.position.set(px(105),.012+.016,px(845));
+  // Match the sofa width and keep the rug against the same left wall.
+  // Extents are approximately x=0..286 and y=700..990.
+  rug.position.set(px(143),.012+.016,px(845));
   rug.receiveShadow = true;
   g.add(rug);
 }
