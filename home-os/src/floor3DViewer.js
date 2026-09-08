@@ -30,38 +30,21 @@ function getOakFloorMaterial(){
   const ctx = canvas.getContext('2d');
   const plankH = 128;
 
-  // Matched to the latest close-up living-room floor photo: pale natural oak,
-  // softly beige with low saturation, calm grain and scattered darker knots.
   const plankColors = ['#c9c0b4','#beb5a9','#d0c8bd','#c4bbb0','#cbc2b7','#b9b0a5'];
-  const jointSets = [
-    [320,760],
-    [170,585,930],
-    [420,835],
-    [245,690],
-    [120,530,875],
-    [360,810],
-  ];
+  const jointSets = [[320,760],[170,585,930],[420,835],[245,690],[120,530,875],[360,810]];
   const knotSets = [
-    [[165,45,10,4],[705,82,6,3]],
-    [[440,74,8,3],[820,42,5,2]],
-    [[280,39,7,3],[900,80,9,4]],
-    [[605,52,9,4]],
-    [[215,85,7,3],[775,36,5,2]],
-    [[490,70,10,4],[910,46,6,3]],
+    [[165,45,10,4],[705,82,6,3]],[[440,74,8,3],[820,42,5,2]],
+    [[280,39,7,3],[900,80,9,4]],[[605,52,9,4]],
+    [[215,85,7,3],[775,36,5,2]],[[490,70,10,4],[910,46,6,3]],
   ];
 
   for(let row=0; row<6; row++){
     const y = row * plankH;
     ctx.fillStyle = plankColors[row];
     ctx.fillRect(0,y,1024,plankH);
-
     ctx.strokeStyle = 'rgba(82,76,70,.16)';
     ctx.lineWidth = .9;
-    ctx.beginPath();
-    ctx.moveTo(0,y+1);
-    ctx.lineTo(1024,y+1);
-    ctx.stroke();
-
+    ctx.beginPath(); ctx.moveTo(0,y+1); ctx.lineTo(1024,y+1); ctx.stroke();
     for(let g=0; g<24; g++){
       const gy = y + 5 + g*4.9 + (row%3)*1.2;
       const bend = (((g+row)%7)-3) * 1.25;
@@ -72,60 +55,34 @@ function getOakFloorMaterial(){
       ctx.bezierCurveTo(250,gy+bend,480,gy-bend*.8,720,gy+bend*.45);
       ctx.bezierCurveTo(840,gy-bend*.5,940,gy+bend*.25,1024,gy);
       ctx.stroke();
-
       if(g%8 === 3){
         ctx.strokeStyle = 'rgba(235,231,224,.07)';
         ctx.lineWidth = .55;
-        ctx.beginPath();
-        ctx.moveTo(20,gy+1.8);
-        ctx.bezierCurveTo(310,gy-.7,610,gy+2.6,1000,gy+.7);
-        ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(20,gy+1.8);
+        ctx.bezierCurveTo(310,gy-.7,610,gy+2.6,1000,gy+.7); ctx.stroke();
       }
     }
-
     jointSets[row].forEach(x=>{
-      ctx.strokeStyle = 'rgba(74,68,62,.14)';
-      ctx.lineWidth = .9;
-      ctx.beginPath();
-      ctx.moveTo(x,y+2);
-      ctx.lineTo(x,y+plankH-2);
-      ctx.stroke();
+      ctx.strokeStyle = 'rgba(74,68,62,.14)'; ctx.lineWidth = .9;
+      ctx.beginPath(); ctx.moveTo(x,y+2); ctx.lineTo(x,y+plankH-2); ctx.stroke();
     });
-
     knotSets[row].forEach(([x,ky,rx,ry])=>{
       const cy = y + ky;
       ctx.fillStyle = 'rgba(60,55,50,.18)';
-      ctx.beginPath();
-      ctx.ellipse(x,cy,rx,ry,0,0,Math.PI*2);
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(70,64,58,.22)';
-      ctx.lineWidth = .8;
-      ctx.beginPath();
-      ctx.ellipse(x,cy,rx+3,ry+1.5,0,0,Math.PI*2);
-      ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(x,cy,rx,ry,0,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle = 'rgba(70,64,58,.22)'; ctx.lineWidth = .8;
+      ctx.beginPath(); ctx.ellipse(x,cy,rx+3,ry+1.5,0,0,Math.PI*2); ctx.stroke();
       ctx.strokeStyle = 'rgba(76,69,62,.10)';
-      ctx.beginPath();
-      ctx.moveTo(x-rx-24,cy-.5);
-      ctx.bezierCurveTo(x-rx-8,cy-3,x+rx+12,cy+3.5,x+rx+30,cy+.8);
-      ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x-rx-24,cy-.5);
+      ctx.bezierCurveTo(x-rx-8,cy-3,x+rx+12,cy+3.5,x+rx+30,cy+.8); ctx.stroke();
     });
   }
 
   const texture = new THREE.CanvasTexture(canvas);
-  texture.wrapS = THREE.RepeatWrapping;
-  texture.wrapT = THREE.RepeatWrapping;
-  texture.colorSpace = THREE.SRGBColorSpace;
-  texture.anisotropy = 8;
-  texture.minFilter = THREE.LinearMipmapLinearFilter;
-  texture.magFilter = THREE.LinearFilter;
-
-  oakFloorMaterial = new THREE.MeshStandardMaterial({
-    color:0xf7f3ed,
-    map:texture,
-    roughness:.88,
-    metalness:0,
-    side:THREE.DoubleSide,
-  });
+  texture.wrapS = THREE.RepeatWrapping; texture.wrapT = THREE.RepeatWrapping;
+  texture.colorSpace = THREE.SRGBColorSpace; texture.anisotropy = 8;
+  texture.minFilter = THREE.LinearMipmapLinearFilter; texture.magFilter = THREE.LinearFilter;
+  oakFloorMaterial = new THREE.MeshStandardMaterial({color:0xf7f3ed,map:texture,roughness:.88,metalness:0,side:THREE.DoubleSide});
   return oakFloorMaterial;
 }
 
@@ -142,137 +99,65 @@ function setLivingRoomOakUVs(geo){
 let livingRoomRugMaterial = null;
 function getLivingRoomRugMaterial(){
   if(livingRoomRugMaterial) return livingRoomRugMaterial;
-
   const canvas = document.createElement('canvas');
-  canvas.width = 768;
-  canvas.height = 512;
+  canvas.width = 768; canvas.height = 512;
   const ctx = canvas.getContext('2d');
-
-  // Warm ivory shag base, matching the photo rather than a flat white surface.
-  ctx.fillStyle = '#dfd8cc';
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-
-  // Dense low-contrast fibres create a soft high-pile appearance from above.
+  ctx.fillStyle = '#dfd8cc'; ctx.fillRect(0,0,canvas.width,canvas.height);
   for(let i=0;i<2600;i++){
     const x = (i*73 + (i%11)*19) % canvas.width;
     const y = (i*151 + (i%7)*23) % canvas.height;
     const light = i%3 === 0;
     ctx.strokeStyle = light ? 'rgba(248,244,236,.15)' : 'rgba(111,102,91,.08)';
     ctx.lineWidth = .7 + (i%4)*.18;
-    ctx.beginPath();
-    ctx.moveTo(x,y);
-    ctx.lineTo(x + ((i%5)-2)*1.8, y + 3 + (i%4));
-    ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x + ((i%5)-2)*1.8, y + 3 + (i%4)); ctx.stroke();
   }
-
-  // The real rug has an irregular black diamond lattice.
-  ctx.strokeStyle = 'rgba(28,27,25,.88)';
-  ctx.lineWidth = 7;
-  ctx.lineCap = 'round';
-  for(let x=-520;x<1250;x+=170){
-    ctx.beginPath();
-    ctx.moveTo(x,0);
-    ctx.lineTo(x+520,512);
-    ctx.stroke();
-  }
-  for(let x=-250;x<1300;x+=170){
-    ctx.beginPath();
-    ctx.moveTo(x,0);
-    ctx.lineTo(x-520,512);
-    ctx.stroke();
-  }
-
+  ctx.strokeStyle = 'rgba(28,27,25,.88)'; ctx.lineWidth = 7; ctx.lineCap = 'round';
+  for(let x=-520;x<1250;x+=170){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x+520,512);ctx.stroke();}
+  for(let x=-250;x<1300;x+=170){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x-520,512);ctx.stroke();}
   const texture = new THREE.CanvasTexture(canvas);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  texture.anisotropy = 8;
-  texture.minFilter = THREE.LinearMipmapLinearFilter;
-  texture.magFilter = THREE.LinearFilter;
-
-  livingRoomRugMaterial = new THREE.MeshStandardMaterial({
-    color:0xf3eee5,
-    map:texture,
-    roughness:.99,
-    metalness:0,
-  });
+  texture.colorSpace = THREE.SRGBColorSpace; texture.anisotropy = 8;
+  texture.minFilter = THREE.LinearMipmapLinearFilter; texture.magFilter = THREE.LinearFilter;
+  livingRoomRugMaterial = new THREE.MeshStandardMaterial({color:0xf3eee5,map:texture,roughness:.99,metalness:0});
   return livingRoomRugMaterial;
 }
 
 function addLivingRoomRug(g){
-  // Keep the current orientation: the long edge runs from the sofa wall toward the TV.
-  const rug = new THREE.Mesh(
-    new RoundedBoxGeometry(px(286),.032,px(290),5,.035),
-    getLivingRoomRugMaterial()
-  );
-  // Match the sofa width and keep the rug against the same left wall.
-  // Extents are approximately x=0..286 and y=700..990.
-  rug.position.set(px(143),.012+.016,px(845));
+  const rug = new THREE.Mesh(new RoundedBoxGeometry(px(286),.032,px(290),5,.035),getLivingRoomRugMaterial());
+  rug.position.set(px(143),.028,px(845));
   rug.receiveShadow = true;
   g.add(rug);
 }
 
 function addPhotoDiningTable(g){
-  const x = 430;
+  const x = 400;
   const y = 870;
-  const whiteTop = new THREE.MeshPhysicalMaterial({
-    color:0xf4f2ed,
-    roughness:.17,
-    metalness:0,
-    clearcoat:.4,
-    clearcoatRoughness:.14,
-  });
+  const whiteTop = new THREE.MeshPhysicalMaterial({color:0xf4f2ed,roughness:.17,metalness:0,clearcoat:.4,clearcoatRoughness:.14});
   const whiteBase = material(0xeeeae3,.38,0);
-
-  // Broad sculptural white pedestal with a wider foot and slimmer neck.
   const foot = new THREE.Mesh(new THREE.CylinderGeometry(.31,.31,.055,48),whiteBase);
-  foot.position.set(px(x),.055/2+.018,px(y));
-  foot.castShadow = true;
-  foot.receiveShadow = true;
-  g.add(foot);
-
+  foot.position.set(px(x),.045,px(y)); foot.castShadow = true; foot.receiveShadow = true; g.add(foot);
   const pedestal = new THREE.Mesh(new THREE.CylinderGeometry(.15,.29,.63,48),whiteBase);
-  pedestal.position.set(px(x),.055+.315+.018,px(y));
-  pedestal.castShadow = true;
-  pedestal.receiveShadow = true;
-  g.add(pedestal);
-
-  // Thin white circular tabletop, about 110 cm across like the photo.
+  pedestal.position.set(px(x),.388,px(y)); pedestal.castShadow = true; pedestal.receiveShadow = true; g.add(pedestal);
   const top = new THREE.Mesh(new THREE.CylinderGeometry(.55,.55,.052,64),whiteTop);
-  top.position.set(px(x),.72,px(y));
-  top.castShadow = true;
-  top.receiveShadow = true;
-  g.add(top);
+  top.position.set(px(x),.72,px(y)); top.castShadow = true; top.receiveShadow = true; g.add(top);
 }
 
 function addBox(group,x,y,w,d,h,color,z=0,matOverride=null){
   const mesh = new THREE.Mesh(new THREE.BoxGeometry(px(w),h,px(d)),matOverride || material(color));
   mesh.position.set(px(x+w/2),z+h/2,px(y+d/2));
-  mesh.castShadow = true;
-  mesh.receiveShadow = true;
-  group.add(mesh);
-  return mesh;
+  mesh.castShadow = true; mesh.receiveShadow = true; group.add(mesh); return mesh;
 }
 
 function addRoundedBox(group,x,y,w,d,h,color,z=0,radius=.05,rotation={},matOverride=null){
   const maxRadius = Math.max(.006, Math.min(px(w), h, px(d)) * .48);
-  const mesh = new THREE.Mesh(
-    new RoundedBoxGeometry(px(w),h,px(d),5,Math.min(radius,maxRadius)),
-    matOverride || material(color,.94,0)
-  );
+  const mesh = new THREE.Mesh(new RoundedBoxGeometry(px(w),h,px(d),5,Math.min(radius,maxRadius)),matOverride || material(color,.94,0));
   mesh.position.set(px(x+w/2),z+h/2,px(y+d/2));
   mesh.rotation.set(rotation.x || 0,rotation.y || 0,rotation.z || 0);
-  mesh.castShadow = true;
-  mesh.receiveShadow = true;
-  group.add(mesh);
-  return mesh;
+  mesh.castShadow = true; mesh.receiveShadow = true; group.add(mesh); return mesh;
 }
 
 function addCylinder(group,x,y,r,h,color,z=0){
   const mesh = new THREE.Mesh(new THREE.CylinderGeometry(px(r),px(r),h,32),material(color));
-  mesh.position.set(px(x),z+h/2,px(y));
-  mesh.castShadow = true;
-  mesh.receiveShadow = true;
-  group.add(mesh);
-  return mesh;
+  mesh.position.set(px(x),z+h/2,px(y)); mesh.castShadow = true; mesh.receiveShadow = true; group.add(mesh); return mesh;
 }
 
 function addRod(group,x1,y1,h1,x2,y2,h2,r,color){
@@ -284,8 +169,21 @@ function addRod(group,x1,y1,h1,x2,y2,h2,r,color){
   const mesh = new THREE.Mesh(new THREE.CylinderGeometry(r,r,len,12),material(color,.7,0));
   mesh.position.copy(a).add(b).multiplyScalar(.5);
   mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.clone().normalize());
-  mesh.castShadow = true;
-  group.add(mesh);
+  mesh.castShadow = true; group.add(mesh);
+}
+
+function addPhotoDiningChair(g,x,y,rotation=0){
+  const chair = new THREE.Group();
+  chair.position.set(px(x),0,px(y));
+  chair.rotation.y = rotation;
+  g.add(chair);
+  const upholstery = material(0xb8aea3,.97,0);
+  addRoundedBox(chair,-22,-20,44,40,.14,0xb8aea3,.43,.045,{},upholstery);
+  addRoundedBox(chair,-23,15,46,9,.48,0xb8aea3,.51,.055,{x:-.10},upholstery);
+  addRod(chair,-17,-14,.03,-17,-14,.43,.018,0x242629);
+  addRod(chair,17,-14,.03,17,-14,.43,.018,0x242629);
+  addRod(chair,-17,14,.03,-17,14,.43,.018,0x242629);
+  addRod(chair,17,14,.03,17,14,.43,.018,0x242629);
 }
 
 function addFloor(group,points,color,useLivingOak=false){
@@ -294,405 +192,235 @@ function addFloor(group,points,color,useLivingOak=false){
   shape.closePath();
   const geo = new THREE.ShapeGeometry(shape);
   if(useLivingOak) setLivingRoomOakUVs(geo);
-
   geo.rotateX(Math.PI/2);
-
   const index = geo.getIndex();
   if(index){
-    for(let i=0;i<index.count;i+=3){
-      const b = index.getX(i+1);
-      const c = index.getX(i+2);
-      index.setX(i+1,c);
-      index.setX(i+2,b);
-    }
+    for(let i=0;i<index.count;i+=3){const b=index.getX(i+1),c=index.getX(i+2);index.setX(i+1,c);index.setX(i+2,b);}
     index.needsUpdate = true;
   }
   geo.computeVertexNormals();
-
-  const floorMaterial = useLivingOak ? getOakFloorMaterial() : material(color,.9,0);
-  const mesh = new THREE.Mesh(geo,floorMaterial);
-  mesh.position.y = 0.012;
-  mesh.receiveShadow = true;
-  group.add(mesh);
+  const mesh = new THREE.Mesh(geo,useLivingOak ? getOakFloorMaterial() : material(color,.9,0));
+  mesh.position.y = .012; mesh.receiveShadow = true; group.add(mesh);
 }
 
 function addWall(group,x1,y1,x2,y2,h=WALL_H,color=WALL_COLOR){
   const dx=px(x2-x1), dz=px(y2-y1), len=Math.hypot(dx,dz);
-  if(len < 0.01) return;
+  if(len < .01) return;
   const mesh = new THREE.Mesh(new THREE.BoxGeometry(len,h,WALL_T),material(color,.92,0));
   mesh.position.set(px((x1+x2)/2),h/2,px((y1+y2)/2));
   mesh.rotation.y = -Math.atan2(dz,dx);
-  mesh.castShadow = true;
-  mesh.receiveShadow = true;
-  group.add(mesh);
+  mesh.castShadow = true; mesh.receiveShadow = true; group.add(mesh);
 }
 
 function addWindow(group,x1,y1,x2,y2){
   const dx=px(x2-x1), dz=px(y2-y1), len=Math.hypot(dx,dz);
-  const mesh = new THREE.Mesh(
-    new THREE.BoxGeometry(len,1.05,.035),
-    new THREE.MeshPhysicalMaterial({color:0x9fc6d7,transparent:true,opacity:.48,roughness:.12,transmission:.25})
-  );
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(len,1.05,.035),new THREE.MeshPhysicalMaterial({color:0x9fc6d7,transparent:true,opacity:.48,roughness:.12,transmission:.25}));
   mesh.position.set(px((x1+x2)/2),1.35,px((y1+y2)/2));
-  mesh.rotation.y = -Math.atan2(dz,dx);
-  group.add(mesh);
+  mesh.rotation.y = -Math.atan2(dz,dx); group.add(mesh);
+}
+
+function addLivingRoomGlazing(g){
+  const glass = new THREE.MeshPhysicalMaterial({color:0xc7e0e8,transparent:true,opacity:.30,roughness:.06,transmission:.68,metalness:0});
+  const frame = material(0xf4f3ef,.7,0);
+  const y = 1049.9;
+  const pane = new THREE.Mesh(new THREE.BoxGeometry(px(310),2.18,.028),glass);
+  pane.position.set(px(245),1.19,px(y));
+  g.add(pane);
+  [90,194,297,400].forEach(x=>{
+    const post = new THREE.Mesh(new THREE.BoxGeometry(px(4),2.28,.065),frame);
+    post.position.set(px(x),1.19,px(y)); post.castShadow = true; g.add(post);
+  });
+  [0.08,2.30].forEach(z=>{
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(px(314),.055,.065),frame);
+    rail.position.set(px(245),z,px(y)); rail.castShadow = true; g.add(rail);
+  });
+}
+
+function addLivingRoomTv(g){
+  const oak = 0x9a744f;
+  const black = 0x17191b;
+  // Tall narrow oak cabinet with black metal frame, matching the photo beside the glazing.
+  addBox(g,37,995,78,31,.88,black,.06);
+  addBox(g,41,997,70,27,.78,oak,.13);
+  addBox(g,42,998,33,25,.36,0xa57c54,.16);
+  addBox(g,77,998,33,25,.36,0x8f6847,.16);
+  addBox(g,42,998,33,25,.36,0x97704e,.54);
+  addBox(g,77,998,33,25,.36,0xa77c53,.54);
+  [[40,1000],[112,1000],[40,1023],[112,1023]].forEach(([x,y])=>addRod(g,x,y,.02,x,y,.13,.014,black));
+
+  // 65-inch 16:9 Sony Bravia: approximately 145 x 83 cm.
+  const tv = new THREE.Mesh(new RoundedBoxGeometry(px(145),.83,.055,4,.014),material(0x090b0d,.25,.04));
+  tv.position.set(px(77),1.47,px(1037));
+  tv.castShadow = true; g.add(tv);
+  const screen = new THREE.Mesh(new THREE.PlaneGeometry(px(140),.78),new THREE.MeshStandardMaterial({color:0x11161b,roughness:.24,metalness:.08}));
+  screen.position.set(px(77),1.47,px(1034));
+  screen.rotation.x = 0;
+  g.add(screen);
+  addBox(g,72,1028,10,8,.18,black,.93);
 }
 
 function addDetailedStairs(g){
-  const wood = 0x9b6b3f;
-  const white = 0xf0eee8;
-  const runner = 0xc8bba9;
-  const treadW = 30;
-  const upperY = 414;
-  const lowerY = 550;
-
+  const wood = 0x9b6b3f, white = 0xf0eee8, runner = 0xc8bba9;
+  const treadW = 30, upperY = 414, lowerY = 550;
   for(let i=0;i<8;i++){
-    const x = 8 + i*treadW;
-    const h = .16 + (7-i)*.13;
-    addBox(g,x,lowerY,treadW-2,92,.055,wood,h);
-    addBox(g,x+3,lowerY+16,treadW-8,60,.025,runner,h+.056);
+    const x=8+i*treadW,h=.16+(7-i)*.13;
+    addBox(g,x,lowerY,treadW-2,92,.055,wood,h); addBox(g,x+3,lowerY+16,treadW-8,60,.025,runner,h+.056);
   }
-
   addBox(g,4,upperY,38,228,.07,wood,1.14);
-
   for(let i=0;i<8;i++){
-    const x = 8 + i*treadW;
-    const h = 1.22 + i*.16;
-    addBox(g,x,upperY,treadW-2,92,.055,wood,h);
-    addBox(g,x+3,upperY+16,treadW-8,60,.025,runner,h+.056);
+    const x=8+i*treadW,h=1.22+i*.16;
+    addBox(g,x,upperY,treadW-2,92,.055,wood,h); addBox(g,x+3,upperY+16,treadW-8,60,.025,runner,h+.056);
   }
-
-  addRod(g,246,lowerY,.10,8,lowerY,1.08,.055,white);
-  addRod(g,246,lowerY+92,.10,8,lowerY+92,1.08,.055,white);
-  addRod(g,8,upperY,1.16,246,upperY,2.34,.055,white);
-  addRod(g,8,upperY+92,1.16,246,upperY+92,2.34,.055,white);
-
-  const lowerRailY = lowerY+92;
-  for(let i=0;i<=8;i++){
-    const x = 8 + i*treadW;
-    const base = .16 + (7-Math.min(i,7))*.13;
-    addBox(g,x,lowerRailY,5,5,.88,white,base);
-  }
+  addRod(g,246,lowerY,.10,8,lowerY,1.08,.055,white); addRod(g,246,lowerY+92,.10,8,lowerY+92,1.08,.055,white);
+  addRod(g,8,upperY,1.16,246,upperY,2.34,.055,white); addRod(g,8,upperY+92,1.16,246,upperY+92,2.34,.055,white);
+  const lowerRailY=lowerY+92;
+  for(let i=0;i<=8;i++){const x=8+i*treadW,base=.16+(7-Math.min(i,7))*.13;addBox(g,x,lowerRailY,5,5,.88,white,base);}
   addRod(g,248,lowerRailY,.98,10,lowerRailY,1.96,.035,wood);
-
-  const upperRailY = upperY;
-  for(let i=0;i<=8;i++){
-    const x = 8 + i*treadW;
-    const base = 1.22 + Math.min(i,7)*.16;
-    addBox(g,x,upperRailY,5,5,.88,white,base);
-  }
+  const upperRailY=upperY;
+  for(let i=0;i<=8;i++){const x=8+i*treadW,base=1.22+Math.min(i,7)*.16;addBox(g,x,upperRailY,5,5,.88,white,base);}
   addRod(g,10,upperRailY,2.10,248,upperRailY,3.22,.035,wood);
-
-  addBox(g,246,lowerRailY-2,8,8,1.04,white,0);
-  addBox(g,4,lowerRailY-2,8,8,1.90,white,.10);
-  addBox(g,4,upperRailY-2,8,8,1.18,white,1.10);
-  addBox(g,246,upperRailY-2,8,8,1.15,white,2.20);
+  addBox(g,246,lowerRailY-2,8,8,1.04,white,0); addBox(g,4,lowerRailY-2,8,8,1.90,white,.10);
+  addBox(g,4,upperRailY-2,8,8,1.18,white,1.10); addBox(g,246,upperRailY-2,8,8,1.15,white,2.20);
 }
 
 function addDetailedKitchen(g){
-  const mint = 0x7fa991;
-  const mintDark = 0x658b78;
-  const white = 0xf2f0ea;
-  const wood = 0x9a704c;
-  const darkWood = 0x6f432b;
-  const black = 0x17191b;
-  const mintPanelMaterial = new THREE.MeshStandardMaterial({
-    color:mintDark,
-    roughness:.82,
-    metalness:.03,
-    polygonOffset:true,
-    polygonOffsetFactor:-2,
-    polygonOffsetUnits:-2,
-  });
-
-  addBox(g,0,0,224,58,.86,mint);
-  addBox(g,224,0,58,188,.86,mint);
-  addBox(g,0,0,224,58,.055,wood,.86);
-  addBox(g,224,0,58,188,.055,wood,.86);
+  const mint=0x7fa991,mintDark=0x658b78,white=0xf2f0ea,wood=0x9a704c,darkWood=0x6f432b,black=0x17191b;
+  const mintPanelMaterial = new THREE.MeshStandardMaterial({color:mintDark,roughness:.82,metalness:.03,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
+  addBox(g,0,0,224,58,.86,mint); addBox(g,224,0,58,188,.86,mint);
+  addBox(g,0,0,224,58,.055,wood,.86); addBox(g,224,0,58,188,.055,wood,.86);
   [8,58,108,158].forEach(x=>addBox(g,x,58.2,42,.30,.62,mintDark,.12,mintPanelMaterial));
   [12,58,104,150].forEach(y=>addBox(g,223.5,y,.30,34,.62,mintDark,.12,mintPanelMaterial));
-
-  addBox(g,224,188,58,81,2.2,mint);
-  addBox(g,233,199,40,36,.58,black,.92);
-  addBox(g,236,204,34,28,.02,0x262a2d,1.03);
-  addBox(g,224,269.1,58,26,1.68,mint);
-  addBox(g,212,10,12,72,1.02,white,1.26);
-  addBox(g,224,20,58,58,.95,white,1.25);
-  addBox(g,224,82,58,66,.95,mint,1.25);
-  addBox(g,82,10,66,38,.035,black,.92);
-  addBox(g,90,16,50,25,.02,0x24282b,.935);
-  addRod(g,145,30,.95,145,30,1.22,.018,0x303336);
-  addRod(g,145,30,1.22,132,30,1.22,.018,0x303336);
-  addBox(g,234,133,38,55,.035,black,.92);
-  [[244,146],[261,146],[244,173],[261,173]].forEach(([x,y])=>addCylinder(g,x,y,7,.015,0x313539,.955));
-  addBox(g,8,6,38,46,1.55,white,.92);
-  for(let i=0;i<4;i++) addRod(g,10,10+i*11,1.02,44,44-i*11,1.42,.018,0x8d8d88);
-  addBox(g,22,145,150,62,.09,darkWood,.84);
-  [[28,151],[158,151],[28,195],[158,195]].forEach(([x,y])=>addBox(g,x,y,5,5,.82,black,.02));
+  addBox(g,224,188,58,81,2.2,mint); addBox(g,233,199,40,36,.58,black,.92); addBox(g,236,204,34,28,.02,0x262a2d,1.03);
+  addBox(g,224,269.1,58,26,1.68,mint); addBox(g,212,10,12,72,1.02,white,1.26); addBox(g,224,20,58,58,.95,white,1.25);
+  addBox(g,224,82,58,66,.95,mint,1.25); addBox(g,82,10,66,38,.035,black,.92); addBox(g,90,16,50,25,.02,0x24282b,.935);
+  addRod(g,145,30,.95,145,30,1.22,.018,0x303336); addRod(g,145,30,1.22,132,30,1.22,.018,0x303336);
+  addBox(g,234,133,38,55,.035,black,.92); [[244,146],[261,146],[244,173],[261,173]].forEach(([x,y])=>addCylinder(g,x,y,7,.015,0x313539,.955));
+  addBox(g,8,6,38,46,1.55,white,.92); for(let i=0;i<4;i++) addRod(g,10,10+i*11,1.02,44,44-i*11,1.42,.018,0x8d8d88);
+  addBox(g,22,145,150,62,.09,darkWood,.84); [[28,151],[158,151],[28,195],[158,195]].forEach(([x,y])=>addBox(g,x,y,5,5,.82,black,.02));
   [[38,228],[94,228],[150,228]].forEach(([x,y])=>{
-    addBox(g,x-17,y-17,34,34,.08,black,.46);
-    addBox(g,x-17,y+13,34,5,.44,black,.48);
+    addBox(g,x-17,y-17,34,34,.08,black,.46); addBox(g,x-17,y+13,34,5,.44,black,.48);
     [[x-13,y-13],[x+13,y-13],[x-13,y+13],[x+13,y+13]].forEach(([lx,ly])=>addRod(g,lx,ly,.05,lx,ly,.46,.014,0x8c6541));
   });
 }
 
 function addDetailedSofa(g){
-  const baseColor = 0xd0cbc4;
-  const fabricColor = 0xe0ddd7;
-  const seatColor = 0xe9e6e1;
-  const seamColor = 0xbab4ac;
-  const darkPillow = 0x26282c;
-  const floralPillow = 0x3b3032;
-  const sofaMaterial = material(fabricColor,.97,0);
-  const seatMaterial = material(seatColor,.98,0);
-
-  addRoundedBox(g,4,660,286,62,.18,baseColor,.05,.06);
-  addRoundedBox(g,4,660,58,190,.18,baseColor,.05,.06);
-  addRoundedBox(g,14,676,70,49,.19,seatColor,.27,.055,{},seatMaterial);
-  addRoundedBox(g,88,676,82,49,.19,seatColor,.27,.055,{},seatMaterial);
-  addRoundedBox(g,174,676,84,49,.19,seatColor,.27,.055,{},seatMaterial);
-  addRoundedBox(g,14,730,45,108,.19,seatColor,.27,.055,{},seatMaterial);
-  addRoundedBox(g,14,657,70,19,.46,fabricColor,.39,.055,{x:-.11},sofaMaterial);
-  addRoundedBox(g,88,657,82,19,.46,fabricColor,.39,.055,{x:-.11},sofaMaterial);
-  addRoundedBox(g,174,657,84,19,.46,fabricColor,.39,.055,{x:-.11},sofaMaterial);
-  addRoundedBox(g,0,676,19,55,.46,fabricColor,.39,.055,{z:.11},sofaMaterial);
-  addRoundedBox(g,0,735,19,101,.46,fabricColor,.39,.055,{z:.11},sofaMaterial);
-  addRoundedBox(g,263,663,27,70,.53,fabricColor,.09,.075,{},sofaMaterial);
+  const baseColor=0xd0cbc4,fabricColor=0xe0ddd7,seatColor=0xe9e6e1,seamColor=0xbab4ac,darkPillow=0x26282c,floralPillow=0x3b3032;
+  const sofaMaterial=material(fabricColor,.97,0),seatMaterial=material(seatColor,.98,0);
+  addRoundedBox(g,4,660,286,62,.18,baseColor,.05,.06); addRoundedBox(g,4,660,58,190,.18,baseColor,.05,.06);
+  addRoundedBox(g,14,676,70,49,.19,seatColor,.27,.055,{},seatMaterial); addRoundedBox(g,88,676,82,49,.19,seatColor,.27,.055,{},seatMaterial);
+  addRoundedBox(g,174,676,84,49,.19,seatColor,.27,.055,{},seatMaterial); addRoundedBox(g,14,730,45,108,.19,seatColor,.27,.055,{},seatMaterial);
+  addRoundedBox(g,14,657,70,19,.46,fabricColor,.39,.055,{x:-.11},sofaMaterial); addRoundedBox(g,88,657,82,19,.46,fabricColor,.39,.055,{x:-.11},sofaMaterial);
+  addRoundedBox(g,174,657,84,19,.46,fabricColor,.39,.055,{x:-.11},sofaMaterial); addRoundedBox(g,0,676,19,55,.46,fabricColor,.39,.055,{z:.11},sofaMaterial);
+  addRoundedBox(g,0,735,19,101,.46,fabricColor,.39,.055,{z:.11},sofaMaterial); addRoundedBox(g,263,663,27,70,.53,fabricColor,.09,.075,{},sofaMaterial);
   addRoundedBox(g,2,838,66,26,.53,fabricColor,.09,.075,{},sofaMaterial);
-  [[14,70],[88,82],[174,84]].forEach(([x,w])=>{
-    addRoundedBox(g,x+3,722,w-6,2,.018,seamColor,.455,.006);
-  });
+  [[14,70],[88,82],[174,84]].forEach(([x,w])=>addRoundedBox(g,x+3,722,w-6,2,.018,seamColor,.455,.006));
   addRoundedBox(g,25,682,31,10,.34,floralPillow,.47,.035,{x:-.08,y:.12,z:.10});
   addRoundedBox(g,49,683,25,9,.30,darkPillow,.46,.032,{x:-.06,y:-.08,z:-.08});
   addRoundedBox(g,128,700,8,17,.025,0x17191b,.47,.01,{y:.25});
 }
 
 function addDetailedFireplace(g){
-  const white = 0xf2f0eb;
-  const black = 0x101214;
-  const blackGlass = new THREE.MeshStandardMaterial({
-    color:0x030405,
-    roughness:.10,
-    metalness:.16,
-    polygonOffset:true,
-    polygonOffsetFactor:-2,
-    polygonOffsetUnits:-2,
-  });
-
-  addBox(g,386,705,84,74,2.42,white,0);
-  addBox(g,388,779.05,80,.30,.53,0x030405,.42,blackGlass);
-  addBox(g,385.70,718,.30,61,.53,0x030405,.42,blackGlass);
-  addBox(g,470,718,.30,61,.53,0x030405,.42,blackGlass);
-  addBox(g,395,779.05,66,.30,.07,black,1.78);
-  addBox(g,396,779.05,64,.30,.07,black,.12);
+  const white=0xf2f0eb,black=0x101214;
+  const blackGlass = new THREE.MeshStandardMaterial({color:0x030405,roughness:.10,metalness:.16,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
+  addBox(g,386,705,84,74,2.42,white,0); addBox(g,388,779.05,80,.30,.53,0x030405,.42,blackGlass);
+  addBox(g,385.70,718,.30,61,.53,0x030405,.42,blackGlass); addBox(g,470,718,.30,61,.53,0x030405,.42,blackGlass);
+  addBox(g,395,779.05,66,.30,.07,black,1.78); addBox(g,396,779.05,64,.30,.07,black,.12);
 }
 
 function buildHouse(scene){
-  const g = new THREE.Group();
-  scene.add(g);
+  const g = new THREE.Group(); scene.add(g);
   roomPolygons.forEach(r=>addFloor(g,r.points,r.color,r.floor === 'living-oak'));
 
   addWall(g,0,0,64,0); addWall(g,184,0,350,0); addWall(g,424,0,480.8,0);
-  addWall(g,0,0,0,1049.9); addWall(g,0,1049.9,90,1049.9); addWall(g,195,1049.9,480.8,1049.9);
+  addWall(g,0,0,0,1049.9);
+  addWall(g,0,1049.9,90,1049.9); addWall(g,400,1049.9,480.8,1049.9);
   addWall(g,480.8,0,480.8,42); addWall(g,480.8,128,480.8,157.47);
   addWall(g,480.8,157.47,790.31,157.47);
   addWall(g,790.31,157.47,790.31,205); addWall(g,790.31,273,790.31,378); addWall(g,790.31,444,790.31,892.73);
   addWall(g,480.8,892.73,620,892.73); addWall(g,715,892.73,790.31,892.73);
   addWall(g,480.8,892.73,480.8,930); addWall(g,480.8,1025,480.8,1049.9);
-  addWall(g,290.25,0,290.25,188);
-  addWall(g,170,269.1,290.25,269.1);
+  addWall(g,290.25,0,290.25,188); addWall(g,170,269.1,290.25,269.1);
   addWall(g,480.8,157.47,480.8,188); addWall(g,480.8,260,480.8,390); addWall(g,480.8,462,480.8,598); addWall(g,480.8,696,480.8,892.73);
-  addWall(g,599.74,325.28,599.74,530.64);
-  addWall(g,599.74,530.64,640,530.64); addWall(g,712,530.64,790.31,530.64);
+  addWall(g,599.74,325.28,599.74,530.64); addWall(g,599.74,530.64,640,530.64); addWall(g,712,530.64,790.31,530.64);
 
-  [[64,0,184,0],[350,0,424,0],[790.31,205,790.31,273],[790.31,378,790.31,444],[188,1049.9,400,1049.9]].forEach(w=>addWindow(g,...w));
-
+  [[64,0,184,0],[350,0,424,0],[790.31,205,790.31,273],[790.31,378,790.31,444]].forEach(w=>addWindow(g,...w));
+  addLivingRoomGlazing(g);
   addDetailedStairs(g);
 
-  const fireplace = new THREE.Group();
-  g.add(fireplace);
-  addDetailedFireplace(fireplace);
+  const fireplace = new THREE.Group(); g.add(fireplace); addDetailedFireplace(fireplace);
   const fireplacePivot = new THREE.Vector3(px(428.5),0,px(765));
-  fireplace.children.forEach(child => {
-    child.position.x -= fireplacePivot.x;
-    child.position.z -= fireplacePivot.z;
-  });
-  fireplace.position.copy(fireplacePivot);
-  fireplace.rotation.y = 3 * Math.PI / 2;
+  fireplace.children.forEach(child=>{child.position.x-=fireplacePivot.x;child.position.z-=fireplacePivot.z;});
+  fireplace.position.copy(fireplacePivot); fireplace.rotation.y = 3*Math.PI/2;
 
-  addDetailedKitchen(g);
-  addBox(g,300,8,112,32,.48,0x72593f);
-  addDetailedSofa(g);
-
+  addDetailedKitchen(g); addBox(g,300,8,112,32,.48,0x72593f); addDetailedSofa(g);
   addLivingRoomRug(g);
   addPhotoDiningTable(g);
-  [[369,870],[404,934],[454,935]].forEach(([x,y])=>addCylinder(g,x,y,18,.48,0x3f5145));
-  addBox(g,4,985,92,28,.48,0x49392e);
-  addBox(g,6,1018,86,10,.72,0x111315,.82);
-  addBox(g,4,348,20,48,.42,0x30343a);
-  addCylinder(g,45,374,19,.12,0x24272b);
+  addPhotoDiningChair(g,400,790,0);
+  addPhotoDiningChair(g,400,950,Math.PI);
+  addPhotoDiningChair(g,330,870,-Math.PI/2);
+  addPhotoDiningChair(g,465,870,Math.PI/2);
+  addLivingRoomTv(g);
 
-  addBox(g,497,338,86,46,.78,0x817565);
-  addCylinder(g,540,360,18,.10,0xd2d6d8,.79);
-  addBox(g,493,508,94,24,.95,0xb8bcc0);
-  addBox(g,519,470,42,38,.48,0xd3d6d8);
-  addBox(g,724,338,54,178,.64,0x8b6845);
-  addBox(g,614,338,48,48,.76,0x35383b);
-  addBox(g,690,548,88,72,.05,0x7e969e);
-  addWall(g,685,630,785,630,1.85,WALL_COLOR);
-  addBox(g,690,640,88,86,.72,0x848d91);
-  addBox(g,705,817,72,68,.86,0xc8cbcd);
-  addCylinder(g,741,851,22,.04,0x454b50,.87);
-  addBox(g,734,168,44,88,1.8,0x4a4e52);
-  addBox(g,734,267,44,49,1.35,0xb4b8ba);
-  addBox(g,565,236,154,69,.52,0xa4a8aa,1.72);
+  addBox(g,4,348,20,48,.42,0x30343a); addCylinder(g,45,374,19,.12,0x24272b);
+  addBox(g,497,338,86,46,.78,0x817565); addCylinder(g,540,360,18,.10,0xd2d6d8,.79);
+  addBox(g,493,508,94,24,.95,0xb8bcc0); addBox(g,519,470,42,38,.48,0xd3d6d8);
+  addBox(g,724,338,54,178,.64,0x8b6845); addBox(g,614,338,48,48,.76,0x35383b);
+  addBox(g,690,548,88,72,.05,0x7e969e); addWall(g,685,630,785,630,1.85,WALL_COLOR);
+  addBox(g,690,640,88,86,.72,0x848d91); addBox(g,705,817,72,68,.86,0xc8cbcd); addCylinder(g,741,851,22,.04,0x454b50,.87);
+  addBox(g,734,168,44,88,1.8,0x4a4e52); addBox(g,734,267,44,49,1.35,0xb4b8ba); addBox(g,565,236,154,69,.52,0xa4a8aa,1.72);
 }
 
 function createViewer(host){
-  const width = Math.max(320, host.clientWidth || 900);
-  const height = 560;
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x171b20);
-  const camera = new THREE.PerspectiveCamera(42,width/height,.1,100);
-  camera.position.set(10.5,13.5,14.5);
-  const renderer = new THREE.WebGLRenderer({antialias:true});
-  renderer.setSize(width,height,false);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1,2));
-  renderer.shadowMap.enabled = true;
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.domElement.style.display = 'block';
-  renderer.domElement.style.width = '100%';
-  renderer.domElement.style.height = `${height}px`;
-  host.appendChild(renderer.domElement);
+  const width=Math.max(320,host.clientWidth||900),height=560;
+  const scene=new THREE.Scene(); scene.background=new THREE.Color(0x171b20);
+  const camera=new THREE.PerspectiveCamera(42,width/height,.1,100); camera.position.set(10.5,13.5,14.5);
+  const renderer=new THREE.WebGLRenderer({antialias:true}); renderer.setSize(width,height,false); renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  renderer.shadowMap.enabled=true; renderer.outputColorSpace=THREE.SRGBColorSpace;
+  renderer.domElement.style.display='block'; renderer.domElement.style.width='100%'; renderer.domElement.style.height=`${height}px`; host.appendChild(renderer.domElement);
   scene.add(new THREE.HemisphereLight(0xe6edf3,0x25292d,2.2));
-  const sun = new THREE.DirectionalLight(0xffffff,3.0);
-  sun.position.set(-8,15,-6);
-  sun.castShadow = true;
-  scene.add(sun);
+  const sun=new THREE.DirectionalLight(0xffffff,3.0); sun.position.set(-8,15,-6); sun.castShadow=true; scene.add(sun);
   buildHouse(scene);
-  const controls = new OrbitControls(camera,renderer.domElement);
-  controls.target.set(4.1,.45,5.15);
-  controls.enableDamping = true;
-  controls.dampingFactor = .07;
-  controls.minDistance = 7;
-  controls.maxDistance = 28;
-  controls.update();
-  let raf = 0;
-  let disposed = false;
-  const loop = () => {
-    if(disposed) return;
-    controls.update();
-    renderer.render(scene,camera);
-    raf = requestAnimationFrame(loop);
-  };
-  loop();
-  const resize = () => {
-    const w = Math.max(320,host.clientWidth || width);
-    camera.aspect = w/height;
-    camera.updateProjectionMatrix();
-    renderer.setSize(w,height,false);
-  };
+  const controls=new OrbitControls(camera,renderer.domElement); controls.target.set(4.1,.45,5.15); controls.enableDamping=true; controls.dampingFactor=.07; controls.minDistance=7; controls.maxDistance=28; controls.update();
+  let raf=0,disposed=false;
+  const loop=()=>{if(disposed)return;controls.update();renderer.render(scene,camera);raf=requestAnimationFrame(loop);}; loop();
+  const resize=()=>{const w=Math.max(320,host.clientWidth||width);camera.aspect=w/height;camera.updateProjectionMatrix();renderer.setSize(w,height,false);};
   window.addEventListener('resize',resize);
-  return () => {
-    disposed = true;
-    cancelAnimationFrame(raf);
-    window.removeEventListener('resize',resize);
-    controls.dispose();
-    renderer.dispose();
-    renderer.domElement.remove();
-  };
+  return()=>{disposed=true;cancelAnimationFrame(raf);window.removeEventListener('resize',resize);controls.dispose();renderer.dispose();renderer.domElement.remove();};
 }
 
 function activeFloor(){
-  const active = document.querySelector('.floor-switch button.active');
-  return active?.textContent?.trim().startsWith('1') ? 1 : 2;
+  const active=document.querySelector('.floor-switch button.active');
+  return active?.textContent?.trim().startsWith('1')?1:2;
 }
 
 export function installFloor3DViewer(){
-  const panel = document.querySelector('.floor-panel');
-  const head = panel?.querySelector('.panel-head');
-  const floorPlan = panel?.querySelector('.floor-plan');
-  if(!panel || !head || !floorPlan) return () => {};
-
-  panel.querySelector('[data-view-toggle]')?.remove();
-  panel.querySelector('[data-floor-3d]')?.remove();
-
-  const toggle = document.createElement('div');
-  toggle.dataset.viewToggle = 'true';
-  toggle.style.cssText = 'display:flex;gap:6px;margin-left:auto;align-items:center;';
-  const b2 = document.createElement('button');
-  b2.type = 'button';
-  b2.textContent = '2D';
-  b2.style.cssText = 'border:1px solid rgba(226,234,242,.18);background:#313b46;color:#cbd4dc;border-radius:9px;padding:8px 11px;font:600 12px/1 system-ui;cursor:pointer;';
-  const b3 = document.createElement('button');
-  b3.type = 'button';
-  b3.textContent = '3D';
-  b3.style.cssText = 'border:1px solid rgba(226,234,242,.18);background:#1c232b;color:#cbd4dc;border-radius:9px;padding:8px 11px;font:600 12px/1 system-ui;cursor:pointer;';
-  toggle.append(b2,b3);
-  head.appendChild(toggle);
-
-  const view = document.createElement('div');
-  view.dataset.floor3d = 'true';
-  view.style.cssText = 'display:none;position:relative;width:100%;height:560px;overflow:hidden;border-radius:14px;background:#171b20;';
-  floorPlan.insertAdjacentElement('afterend',view);
-  let destroyViewer = null;
-
-  const show2D = () => {
-    view.style.display = 'none';
-    floorPlan.style.display = '';
-    b2.style.background = '#313b46';
-    b3.style.background = '#1c232b';
-  };
-
-  const show3D = () => {
-    if(activeFloor() !== 1) return;
-    floorPlan.style.display = 'none';
-    view.style.display = 'block';
-    b2.style.background = '#1c232b';
-    b3.style.background = '#313b46';
-    if(destroyViewer) return;
-
-    const status = document.createElement('div');
-    status.textContent = '3D laadimine…';
-    status.style.cssText = 'position:absolute;inset:0;display:grid;place-items:center;color:#9ba8b4;font:500 14px system-ui;';
-    view.appendChild(status);
-
-    requestAnimationFrame(() => {
-      try {
-        destroyViewer = createViewer(view);
-        status.remove();
-        const hint = document.createElement('div');
-        hint.textContent = 'Lohista: pööra · rullik/pinch: zoom';
-        hint.style.cssText = 'position:absolute;left:14px;bottom:12px;z-index:2;background:rgba(18,22,27,.78);border:1px solid rgba(226,234,242,.15);border-radius:9px;padding:7px 10px;color:#9ba8b4;font:500 11px/1.2 system-ui;pointer-events:none;';
-        view.appendChild(hint);
-      } catch (err) {
-        console.error('Home OS 3D viewer failed',err);
-        status.textContent = `3D viga: ${err?.message || err}`;
-        status.style.color = '#e3a6a6';
-      }
+  const panel=document.querySelector('.floor-panel');
+  const head=panel?.querySelector('.panel-head');
+  const floorPlan=panel?.querySelector('.floor-plan');
+  if(!panel||!head||!floorPlan)return()=>{};
+  panel.querySelector('[data-view-toggle]')?.remove(); panel.querySelector('[data-floor-3d]')?.remove();
+  const toggle=document.createElement('div'); toggle.dataset.viewToggle='true'; toggle.style.cssText='display:flex;gap:6px;margin-left:auto;align-items:center;';
+  const b2=document.createElement('button'); b2.type='button'; b2.textContent='2D'; b2.style.cssText='border:1px solid rgba(226,234,242,.18);background:#313b46;color:#cbd4dc;border-radius:9px;padding:8px 11px;font:600 12px/1 system-ui;cursor:pointer;';
+  const b3=document.createElement('button'); b3.type='button'; b3.textContent='3D'; b3.style.cssText='border:1px solid rgba(226,234,242,.18);background:#1c232b;color:#cbd4dc;border-radius:9px;padding:8px 11px;font:600 12px/1 system-ui;cursor:pointer;';
+  toggle.append(b2,b3); head.appendChild(toggle);
+  const view=document.createElement('div'); view.dataset.floor3d='true'; view.style.cssText='display:none;position:relative;width:100%;height:560px;overflow:hidden;border-radius:14px;background:#171b20;'; floorPlan.insertAdjacentElement('afterend',view);
+  let destroyViewer=null;
+  const show2D=()=>{view.style.display='none';floorPlan.style.display='';b2.style.background='#313b46';b3.style.background='#1c232b';};
+  const show3D=()=>{
+    if(activeFloor()!==1)return;
+    floorPlan.style.display='none';view.style.display='block';b2.style.background='#1c232b';b3.style.background='#313b46';
+    if(destroyViewer)return;
+    const status=document.createElement('div'); status.textContent='3D laadimine…'; status.style.cssText='position:absolute;inset:0;display:grid;place-items:center;color:#9ba8b4;font:500 14px system-ui;'; view.appendChild(status);
+    requestAnimationFrame(()=>{
+      try{
+        destroyViewer=createViewer(view); status.remove();
+        const hint=document.createElement('div'); hint.textContent='Lohista: pööra · rullik/pinch: zoom'; hint.style.cssText='position:absolute;left:14px;bottom:12px;z-index:2;background:rgba(18,22,27,.78);border:1px solid rgba(226,234,242,.15);border-radius:9px;padding:7px 10px;color:#9ba8b4;font:500 11px/1.2 system-ui;pointer-events:none;'; view.appendChild(hint);
+      }catch(err){console.error('Home OS 3D viewer failed',err);status.textContent=`3D viga: ${err?.message||err}`;status.style.color='#e3a6a6';}
     });
   };
-
-  b2.addEventListener('click',show2D);
-  b3.addEventListener('click',show3D);
-
-  const floorButtons = [...document.querySelectorAll('.floor-switch button')];
-  const onFloorClick = () => requestAnimationFrame(() => {
-    const floor = activeFloor();
-    b3.disabled = floor !== 1;
-    b3.style.opacity = floor === 1 ? '1' : '.45';
-    b3.style.cursor = floor === 1 ? 'pointer' : 'not-allowed';
-    if(floor !== 1) show2D();
-  });
-  floorButtons.forEach(btn=>btn.addEventListener('click',onFloorClick));
-  onFloorClick();
-
-  return () => {
-    destroyViewer?.();
-    b2.removeEventListener('click',show2D);
-    b3.removeEventListener('click',show3D);
-    floorButtons.forEach(btn=>btn.removeEventListener('click',onFloorClick));
-    toggle.remove();
-    view.remove();
-  };
+  b2.addEventListener('click',show2D); b3.addEventListener('click',show3D);
+  const floorButtons=[...document.querySelectorAll('.floor-switch button')];
+  const onFloorClick=()=>requestAnimationFrame(()=>{const floor=activeFloor();b3.disabled=floor!==1;b3.style.opacity=floor===1?'1':'.45';b3.style.cursor=floor===1?'pointer':'not-allowed';if(floor!==1)show2D();});
+  floorButtons.forEach(btn=>btn.addEventListener('click',onFloorClick)); onFloorClick();
+  return()=>{destroyViewer?.();b2.removeEventListener('click',show2D);b3.removeEventListener('click',show3D);floorButtons.forEach(btn=>btn.removeEventListener('click',onFloorClick));toggle.remove();view.remove();};
 }
