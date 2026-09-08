@@ -335,10 +335,12 @@ function addDetailedStairs(g){
   };
 
   const sectorShape=(r0,r1,a0,a1)=>{
+    // A convex four-corner wedge triangulates reliably in ShapeGeometry/ExtrudeGeometry.
     const shape=new THREE.Shape();
-    shape.absarc(0,0,px(r1),a0,a1,false);
+    shape.moveTo(px(r1*Math.cos(a0)),px(r1*Math.sin(a0)));
+    shape.lineTo(px(r1*Math.cos(a1)),px(r1*Math.sin(a1)));
     shape.lineTo(px(r0*Math.cos(a1)),px(r0*Math.sin(a1)));
-    shape.absarc(0,0,px(r0),a1,a0,true);
+    shape.lineTo(px(r0*Math.cos(a0)),px(r0*Math.sin(a0)));
     shape.closePath();
     return shape;
   };
