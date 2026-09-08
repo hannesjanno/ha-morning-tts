@@ -30,9 +30,9 @@ function getOakFloorMaterial(){
   const ctx = canvas.getContext('2d');
   const plankH = 128;
 
-  // Sampled from the user's room photos: cool greige oak, not golden/orange.
-  // The floor has muted board-to-board variation, fine longitudinal grain and small dark knots.
-  const plankColors = ['#a59a8e','#978d83','#aaa096','#9d9287','#a79c91','#91877d'];
+  // Matched to the latest close-up living-room floor photo: pale natural oak,
+  // softly beige with low saturation, calm grain and scattered darker knots.
+  const plankColors = ['#c9c0b4','#beb5a9','#d0c8bd','#c4bbb0','#cbc2b7','#b9b0a5'];
   const jointSets = [
     [320,760],
     [170,585,930],
@@ -42,12 +42,12 @@ function getOakFloorMaterial(){
     [360,810],
   ];
   const knotSets = [
-    [[170,48,13,4],[730,86,8,3]],
-    [[455,76,10,3]],
-    [[285,40,8,3],[905,82,12,4]],
-    [[610,54,11,4]],
-    [[215,88,9,3],[785,38,7,3]],
-    [[495,72,13,4]],
+    [[165,45,10,4],[705,82,6,3]],
+    [[440,74,8,3],[820,42,5,2]],
+    [[280,39,7,3],[900,80,9,4]],
+    [[605,52,9,4]],
+    [[215,85,7,3],[775,36,5,2]],
+    [[490,70,10,4],[910,46,6,3]],
   ];
 
   for(let row=0; row<6; row++){
@@ -55,60 +55,61 @@ function getOakFloorMaterial(){
     ctx.fillStyle = plankColors[row];
     ctx.fillRect(0,y,1024,plankH);
 
-    // Fine dark joint between the ~18 cm wide boards seen in the photos.
-    ctx.strokeStyle = 'rgba(58,53,48,.22)';
-    ctx.lineWidth = 1.15;
+    // Thin understated seams, like the real boards in the close-up photo.
+    ctx.strokeStyle = 'rgba(82,76,70,.16)';
+    ctx.lineWidth = .9;
     ctx.beginPath();
     ctx.moveTo(0,y+1);
     ctx.lineTo(1024,y+1);
     ctx.stroke();
 
-    // Long, subtle oak grain. Keep it desaturated and low contrast like the real floor.
-    for(let g=0; g<18; g++){
-      const gy = y + 7 + g*6.2 + (row%3)*1.4;
-      const bend = (((g+row*2)%5)-2) * 2.1;
-      ctx.strokeStyle = g%4 === 0 ? 'rgba(65,59,53,.13)' : 'rgba(73,67,61,.075)';
-      ctx.lineWidth = g%4 === 0 ? 1.0 : .7;
+    // Fine straight-ish longitudinal oak fibres with a few softly wavering lines.
+    for(let g=0; g<24; g++){
+      const gy = y + 5 + g*4.9 + (row%3)*1.2;
+      const bend = (((g+row)%7)-3) * 1.25;
+      ctx.strokeStyle = g%5 === 0 ? 'rgba(86,80,74,.12)' : 'rgba(96,89,82,.065)';
+      ctx.lineWidth = g%5 === 0 ? .85 : .55;
       ctx.beginPath();
       ctx.moveTo(0,gy);
-      ctx.bezierCurveTo(210,gy+bend,430,gy-bend*1.2,675,gy+bend*.55);
-      ctx.bezierCurveTo(815,gy-bend*.7,925,gy+bend*.45,1024,gy-bend*.2);
+      ctx.bezierCurveTo(250,gy+bend,480,gy-bend*.8,720,gy+bend*.45);
+      ctx.bezierCurveTo(840,gy-bend*.5,940,gy+bend*.25,1024,gy);
       ctx.stroke();
 
-      if(g%6 === 2){
-        ctx.strokeStyle = 'rgba(222,216,207,.075)';
-        ctx.lineWidth = .7;
+      if(g%8 === 3){
+        ctx.strokeStyle = 'rgba(235,231,224,.07)';
+        ctx.lineWidth = .55;
         ctx.beginPath();
-        ctx.moveTo(30,gy+2.4);
-        ctx.bezierCurveTo(280,gy-1.5,620,gy+4.5,995,gy+1.2);
+        ctx.moveTo(20,gy+1.8);
+        ctx.bezierCurveTo(310,gy-.7,610,gy+2.6,1000,gy+.7);
         ctx.stroke();
       }
     }
 
     jointSets[row].forEach(x=>{
-      ctx.strokeStyle = 'rgba(55,50,46,.19)';
-      ctx.lineWidth = 1.05;
+      ctx.strokeStyle = 'rgba(74,68,62,.14)';
+      ctx.lineWidth = .9;
       ctx.beginPath();
       ctx.moveTo(x,y+2);
       ctx.lineTo(x,y+plankH-2);
       ctx.stroke();
     });
 
+    // Small, irregular knot marks; present but not dominant.
     knotSets[row].forEach(([x,ky,rx,ry])=>{
       const cy = y + ky;
-      ctx.fillStyle = 'rgba(51,45,40,.20)';
+      ctx.fillStyle = 'rgba(60,55,50,.18)';
       ctx.beginPath();
       ctx.ellipse(x,cy,rx,ry,0,0,Math.PI*2);
       ctx.fill();
-      ctx.strokeStyle = 'rgba(55,48,42,.28)';
-      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'rgba(70,64,58,.22)';
+      ctx.lineWidth = .8;
       ctx.beginPath();
-      ctx.ellipse(x,cy,rx+4,ry+2,0,0,Math.PI*2);
+      ctx.ellipse(x,cy,rx+3,ry+1.5,0,0,Math.PI*2);
       ctx.stroke();
-      ctx.strokeStyle = 'rgba(65,57,49,.14)';
+      ctx.strokeStyle = 'rgba(76,69,62,.10)';
       ctx.beginPath();
-      ctx.moveTo(x-rx-34,cy-1);
-      ctx.bezierCurveTo(x-rx-12,cy-4,x+rx+18,cy+5,x+rx+42,cy+1);
+      ctx.moveTo(x-rx-24,cy-.5);
+      ctx.bezierCurveTo(x-rx-8,cy-3,x+rx+12,cy+3.5,x+rx+30,cy+.8);
       ctx.stroke();
     });
   }
@@ -122,9 +123,9 @@ function getOakFloorMaterial(){
   texture.magFilter = THREE.LinearFilter;
 
   oakFloorMaterial = new THREE.MeshStandardMaterial({
-    color:0xffffff,
+    color:0xf7f3ed,
     map:texture,
-    roughness:.91,
+    roughness:.88,
     metalness:0,
     side:THREE.DoubleSide,
   });
