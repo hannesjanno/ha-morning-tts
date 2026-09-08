@@ -100,8 +100,8 @@ function getOakTileMaterial(){
   canvas.height = 1024;
   const ctx = canvas.getContext('2d');
   const tileW = 128;
-  // Subtle warm beige oak-look ceramic tile: close plank tones avoid a striped floor.
-  const tileColors = ['#c9bdad','#cbbfaf','#c7bbab','#cabdad','#c6baaa','#ccbfaf'];
+  // Nearly uniform warm beige base; the photographed tiles vary subtly rather than forming stripes.
+  const tileColors = ['#c9bdad','#cabfae','#c8bdad','#c9beae','#c8bcac','#cabfae'];
   const offsets = [0,180,70,310,145,245];
 
   for(let col=0; col<6; col++){
@@ -110,7 +110,7 @@ function getOakTileMaterial(){
     ctx.fillRect(x,0,tileW,1024);
     for(let g=0; g<22; g++){
       const gx = x + 8 + g*5.1 + (col%2)*1.4;
-      ctx.strokeStyle = g%5 === 0 ? 'rgba(91,78,65,.14)' : 'rgba(101,87,73,.075)';
+      ctx.strokeStyle = g%5 === 0 ? 'rgba(91,78,65,.16)' : 'rgba(101,87,73,.085)';
       ctx.lineWidth = g%5 === 0 ? .75 : .45;
       ctx.beginPath();
       ctx.moveTo(gx,0);
