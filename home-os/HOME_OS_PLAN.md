@@ -212,7 +212,20 @@ Kõiki väikeseadmeid ei pea kohe modelleerima; prioriteet on ruumi ja suurte el
 
 ## 11. Trepp
 
-Trepp on fotode põhjal detailsemaks tehtud. Olemasolevat trepi lahendust ei muudeta ilma konkreetse vajaduseta. Trepi puidutoon ja konstruktsioon peavad jätkama päris fotode üldmuljet.
+Trepp on 2026-09-08 fotode põhjal detailsemaks tehtud. Olemasolevat trepi lahendust ei muudeta ilma konkreetse vajaduseta.
+
+Kinnitatud detailid:
+
+- trepp on U-kujuline ja koosneb kahest paralleelsest sirgest trepijooksust;
+- seina juures toimub pööre lehvik-/pöördastmetega, mitte ristkülikukujulise vaheplatvormiga;
+- astmed on avatud konstruktsiooniga heledast soojast naturaalsest puidust;
+- piirded, tugipostid ja balustrid on valged;
+- käsipuud on heledast naturaalsest puidust;
+- sirgetel astmetel on beežid poolümarad astmematid;
+- pöördastmetel järgivad beežid matid lehvikastmete kuju;
+- trepi asukohta ja varem kinnitatud U-kujulist põhisuunda ei muudeta ilma uue konkreetse infota.
+
+Aktiivne fotopõhine trepiversioon realiseeriti failis `floor3DViewer.js` commitidega `868d678c10555e230f96f80fc4f09629aa28b1ef` ja `c1880b15911c55e9edba9828fdef807e00a5eb3e`.
 
 ## 12. Laed — kavandatud lahendus
 
