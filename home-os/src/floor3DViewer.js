@@ -146,7 +146,6 @@ function addBox(group,x,y,w,d,h,color,z=0,matOverride=null){
   mesh.position.set(px(x+w/2),z+h/2,px(y+d/2));
   mesh.castShadow = true; mesh.receiveShadow = true; group.add(mesh); return mesh;
 }
-
 function addRoundedBox(group,x,y,w,d,h,color,z=0,radius=.05,rotation={},matOverride=null){
   const maxRadius = Math.max(.006, Math.min(px(w), h, px(d)) * .48);
   const mesh = new THREE.Mesh(new RoundedBoxGeometry(px(w),h,px(d),5,Math.min(radius,maxRadius)),matOverride || material(color,.94,0));
@@ -154,12 +153,10 @@ function addRoundedBox(group,x,y,w,d,h,color,z=0,radius=.05,rotation={},matOverr
   mesh.rotation.set(rotation.x || 0,rotation.y || 0,rotation.z || 0);
   mesh.castShadow = true; mesh.receiveShadow = true; group.add(mesh); return mesh;
 }
-
 function addCylinder(group,x,y,r,h,color,z=0){
   const mesh = new THREE.Mesh(new THREE.CylinderGeometry(px(r),px(r),h,32),material(color));
   mesh.position.set(px(x),z+h/2,px(y)); mesh.castShadow = true; mesh.receiveShadow = true; group.add(mesh); return mesh;
 }
-
 function addRod(group,x1,y1,h1,x2,y2,h2,r,color){
   const a = new THREE.Vector3(px(x1),h1,px(y1));
   const b = new THREE.Vector3(px(x2),h2,px(y2));
@@ -202,7 +199,6 @@ function addFloor(group,points,color,useLivingOak=false){
   const mesh = new THREE.Mesh(geo,useLivingOak ? getOakFloorMaterial() : material(color,.9,0));
   mesh.position.y = .012; mesh.receiveShadow = true; group.add(mesh);
 }
-
 function addWall(group,x1,y1,x2,y2,h=WALL_H,color=WALL_COLOR){
   const dx=px(x2-x1), dz=px(y2-y1), len=Math.hypot(dx,dz);
   if(len < .01) return;
@@ -211,7 +207,6 @@ function addWall(group,x1,y1,x2,y2,h=WALL_H,color=WALL_COLOR){
   mesh.rotation.y = -Math.atan2(dz,dx);
   mesh.castShadow = true; mesh.receiveShadow = true; group.add(mesh);
 }
-
 function addWindow(group,x1,y1,x2,y2){
   const dx=px(x2-x1), dz=px(y2-y1), len=Math.hypot(dx,dz);
   const mesh = new THREE.Mesh(new THREE.BoxGeometry(len,1.05,.035),new THREE.MeshPhysicalMaterial({color:0x9fc6d7,transparent:true,opacity:.48,roughness:.12,transmission:.25}));
@@ -220,7 +215,14 @@ function addWindow(group,x1,y1,x2,y2){
 }
 
 function addLivingRoomGlazing(g){
-  const glass = new THREE.MeshPhysicalMaterial({color:0xc7e0e8,transparent:true,opacity:.30,roughness:.06,transmission:.68,metalness:0});
+  const glass = new THREE.MeshPhysicalMaterial({
+    color:0x151719,
+    transparent:true,
+    opacity:.58,
+    roughness:.10,
+    transmission:.16,
+    metalness:.03
+  });
   const frame = material(0xf4f3ef,.7,0);
   const y = 1049.9;
   const pane = new THREE.Mesh(new THREE.BoxGeometry(px(310),2.18,.028),glass);
@@ -239,13 +241,14 @@ function addLivingRoomGlazing(g){
 function addLivingRoomTv(g){
   const oak = 0x9a744f;
   const black = 0x17191b;
-  // Tall narrow oak cabinet with black metal frame, matching the photo beside the glazing.
-  addBox(g,37,995,78,31,.88,black,.06);
+  // Oak cabinet body with only a slim black metal frame/legs, matching the photo.
   addBox(g,41,997,70,27,.78,oak,.13);
   addBox(g,42,998,33,25,.36,0xa57c54,.16);
   addBox(g,77,998,33,25,.36,0x8f6847,.16);
   addBox(g,42,998,33,25,.36,0x97704e,.54);
   addBox(g,77,998,33,25,.36,0xa77c53,.54);
+  addBox(g,39,995,74,2,.025,black,.11);
+  addBox(g,39,1024,74,2,.025,black,.11);
   [[40,1000],[112,1000],[40,1023],[112,1023]].forEach(([x,y])=>addRod(g,x,y,.02,x,y,.13,.014,black));
 
   // 65-inch 16:9 Sony Bravia: approximately 145 x 83 cm.
