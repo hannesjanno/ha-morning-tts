@@ -9,8 +9,8 @@ const WALL_COLOR = 0xd8d3ca;
 
 const roomPolygons = [
   { points:[[0,1049.9],[480.8,1049.9],[480.8,892.73],[480.8,700],[480.8,536.22],[480.8,325.28],[480.8,269.1],[290.25,269.1],[224.14,269.1],[0,269.1]], color:0x41372d, floor:'living-oak' },
-  { points:[[224.14,269.1],[290.25,269.1],[290.25,0],[0,0],[0,269.1]], color:0x4b4034 },
-  { points:[[480.8,269.1],[480.8,157.47],[480.8,0],[290.25,0],[290.25,269.1]], color:0x453b31 },
+  { points:[[224.14,269.1],[290.25,269.1],[290.25,0],[0,0],[0,269.1]], color:0x4b4034, floor:'oak-tile' },
+  { points:[[480.8,269.1],[480.8,157.47],[480.8,0],[290.25,0],[290.25,269.1]], color:0x453b31, floor:'oak-tile' },
   { points:[[790.31,325.28],[790.31,157.47],[480.8,157.47],[480.8,269.1],[480.8,325.28],[599.74,325.28]], color:0x33383d },
   { points:[[599.74,325.28],[480.8,325.28],[480.8,536.22],[599.74,536.22]], color:0x3d4246 },
   { points:[[599.74,530.64],[790.31,530.64],[790.31,325.28],[599.74,325.28]], color:0x4b3827 },
@@ -88,6 +88,73 @@ function setLivingRoomOakUVs(geo){
   for(let i=0;i<pos.count;i++){
     uv[i*2] = pos.getY(i) / 2.2;
     uv[i*2+1] = pos.getX(i) / 1.08;
+  }
+  geo.setAttribute('uv',new THREE.BufferAttribute(uv,2));
+}
+
+let oakTileMaterial = null;
+function getOakTileMaterial(){
+  if(oakTileMaterial) return oakTileMaterial;
+  const canvas = document.createElement('canvas');
+  canvas.width = 768;
+  canvas.height = 1024;
+  const ctx = canvas.getContext('2d');
+  const tileW = 128;
+  const tileColors = ['#cfc1ae','#d8cbb8','#c9baa7','#d4c6b3','#c5b6a4','#d9ccb9'];
+  const offsets = [0,180,70,310,145,245];
+
+  for(let col=0; col<6; col++){
+    const x = col * tileW;
+    ctx.fillStyle = tileColors[col];
+    ctx.fillRect(x,0,tileW,1024);
+
+    // Fine, mostly straight oak grain like the photographed wood-look ceramic tile.
+    for(let g=0; g<22; g++){
+      const gx = x + 8 + g*5.1 + (col%2)*1.4;
+      ctx.strokeStyle = g%5 === 0 ? 'rgba(105,89,72,.12)' : 'rgba(112,96,80,.065)';
+      ctx.lineWidth = g%5 === 0 ? .8 : .5;
+      ctx.beginPath();
+      ctx.moveTo(gx,0);
+      ctx.bezierCurveTo(gx+2,260,gx-2,520,gx+1,1024);
+      ctx.stroke();
+    }
+
+    // Staggered tile end joints; long plank proportions from the photo.
+    for(let y=offsets[col]; y<1024; y+=420){
+      ctx.strokeStyle = 'rgba(101,87,73,.20)';
+      ctx.lineWidth = 1.25;
+      ctx.beginPath(); ctx.moveTo(x+1,y); ctx.lineTo(x+tileW-1,y); ctx.stroke();
+    }
+
+    // Very subtle knots so the tile reads as oak without looking rustic.
+    [[.31,.22],[.72,.62]].forEach(([fx,fy],idx)=>{
+      if((col+idx)%2) return;
+      const kx=x+tileW*fx, ky=1024*fy+col*19;
+      ctx.strokeStyle='rgba(90,75,61,.12)';
+      ctx.lineWidth=.8;
+      ctx.beginPath(); ctx.ellipse(kx,ky,7,18,.05,0,Math.PI*2); ctx.stroke();
+    });
+  }
+
+  // Thin grout seams between the long tiles.
+  ctx.strokeStyle = 'rgba(112,98,83,.24)';
+  ctx.lineWidth = 1.2;
+  for(let x=0;x<=768;x+=tileW){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,1024);ctx.stroke();}
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = THREE.RepeatWrapping; texture.wrapT = THREE.RepeatWrapping;
+  texture.colorSpace = THREE.SRGBColorSpace; texture.anisotropy = 8;
+  texture.minFilter = THREE.LinearMipmapLinearFilter; texture.magFilter = THREE.LinearFilter;
+  oakTileMaterial = new THREE.MeshStandardMaterial({color:0xf5efe6,map:texture,roughness:.78,metalness:0,side:THREE.DoubleSide});
+  return oakTileMaterial;
+}
+
+function setOakTileUVs(geo){
+  const pos = geo.getAttribute('position');
+  const uv = new Float32Array(pos.count * 2);
+  for(let i=0;i<pos.count;i++){
+    uv[i*2] = pos.getX(i) / 1.18;
+    uv[i*2+1] = pos.getY(i) / 2.35;
   }
   geo.setAttribute('uv',new THREE.BufferAttribute(uv,2));
 }
@@ -179,12 +246,13 @@ function addPhotoDiningChair(g,x,y,rotation=0){
   addRod(chair,17,14,.03,17,14,.43,.018,0x242629);
 }
 
-function addFloor(group,points,color,useLivingOak=false){
+function addFloor(group,points,color,floorType=null){
   const shape = new THREE.Shape();
   points.forEach(([x,y],i)=> i ? shape.lineTo(px(x),px(y)) : shape.moveTo(px(x),px(y)));
   shape.closePath();
   const geo = new THREE.ShapeGeometry(shape);
-  if(useLivingOak) setLivingRoomOakUVs(geo);
+  if(floorType === 'living-oak') setLivingRoomOakUVs(geo);
+  if(floorType === 'oak-tile') setOakTileUVs(geo);
   geo.rotateX(Math.PI/2);
   const index = geo.getIndex();
   if(index){
@@ -192,7 +260,10 @@ function addFloor(group,points,color,useLivingOak=false){
     index.needsUpdate = true;
   }
   geo.computeVertexNormals();
-  const mesh = new THREE.Mesh(geo,useLivingOak ? getOakFloorMaterial() : material(color,.9,0));
+  let floorMaterial = material(color,.9,0);
+  if(floorType === 'living-oak') floorMaterial = getOakFloorMaterial();
+  if(floorType === 'oak-tile') floorMaterial = getOakTileMaterial();
+  const mesh = new THREE.Mesh(geo,floorMaterial);
   mesh.position.y = .012; mesh.receiveShadow = true; group.add(mesh);
 }
 function addWall(group,x1,y1,x2,y2,h=WALL_H,color=WALL_COLOR){
@@ -336,7 +407,7 @@ function addDetailedFireplace(g){
 
 function buildHouse(scene){
   const g = new THREE.Group(); scene.add(g);
-  roomPolygons.forEach(r=>addFloor(g,r.points,r.color,r.floor === 'living-oak'));
+  roomPolygons.forEach(r=>addFloor(g,r.points,r.color,r.floor));
   addWall(g,0,0,64,0); addWall(g,184,0,350,0); addWall(g,424,0,480.8,0);
   addWall(g,0,0,0,1049.9);
   addWall(g,0,1049.9,90,1049.9); addWall(g,400,1049.9,480.8,1049.9);
