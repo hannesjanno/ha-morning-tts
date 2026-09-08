@@ -362,7 +362,7 @@ function addDetailedStairs(g){
     const x=92+i*treadW,z=1.04-i*.148;
     lowerSteps.push({x,z});
     addBox(g,x,lowerY,treadW-2,treadD,.06,wood,z,woodMaterial);
-    addHalfMoonMat(x+(treadW-2)/2,lowerY+treadD/2,58,54,z+.064,Math.PI/2);
+    addHalfMoonMat(x+(treadW-2)/2,lowerY+treadD/2,58,20,z+.064,Math.PI/2);
   }
 
   for(let i=0;i<5;i++){
@@ -376,7 +376,7 @@ function addDetailedStairs(g){
     const x=92+i*treadW,z=1.87+i*.12;
     upperSteps.push({x,z});
     addBox(g,x,upperY,treadW-2,treadD,.06,wood,z,woodMaterial);
-    addHalfMoonMat(x+(treadW-2)/2,upperY+treadD/2,58,54,z+.064,-Math.PI/2);
+    addHalfMoonMat(x+(treadW-2)/2,upperY+treadD/2,58,20,z+.064,-Math.PI/2);
   }
 
   const addFlightRailing=(steps,y)=>{
