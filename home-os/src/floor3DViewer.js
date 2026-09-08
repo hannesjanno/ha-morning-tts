@@ -28,7 +28,7 @@ function getOakFloorMaterial(){
   canvas.height = 768;
   const ctx = canvas.getContext('2d');
   const plankH = 128;
-  const plankColors = ['#c9c0b4','#beb5a9','#d0c8bd','#c4bbb0','#cbc2b7','#b9b0a5'];
+  const plankColors = ['#c9c0b4','#c7beb2','#cbc3b8','#c8bfb4','#cac1b6','#c6bdb1'];
   const jointSets = [[320,760],[170,585,930],[420,835],[245,690],[120,530,875],[360,810]];
   const knotSets = [
     [[165,45,10,4],[705,82,6,3]],[[440,74,8,3],[820,42,5,2]],
