@@ -100,52 +100,45 @@ function getOakTileMaterial(){
   canvas.height = 1024;
   const ctx = canvas.getContext('2d');
   const tileW = 128;
-  const tileColors = ['#cfc1ae','#d8cbb8','#c9baa7','#d4c6b3','#c5b6a4','#d9ccb9'];
+  // Cooler light beige oak-look ceramic tile, matched to the kitchen/entry photo.
+  const tileColors = ['#c8b9a6','#d1c3b0','#c3b39f','#ccbea9','#bfae9b','#d3c5b2'];
   const offsets = [0,180,70,310,145,245];
 
   for(let col=0; col<6; col++){
     const x = col * tileW;
     ctx.fillStyle = tileColors[col];
     ctx.fillRect(x,0,tileW,1024);
-
-    // Fine, mostly straight oak grain like the photographed wood-look ceramic tile.
     for(let g=0; g<22; g++){
       const gx = x + 8 + g*5.1 + (col%2)*1.4;
-      ctx.strokeStyle = g%5 === 0 ? 'rgba(105,89,72,.12)' : 'rgba(112,96,80,.065)';
-      ctx.lineWidth = g%5 === 0 ? .8 : .5;
+      ctx.strokeStyle = g%5 === 0 ? 'rgba(96,83,69,.11)' : 'rgba(103,89,75,.055)';
+      ctx.lineWidth = g%5 === 0 ? .75 : .45;
       ctx.beginPath();
       ctx.moveTo(gx,0);
       ctx.bezierCurveTo(gx+2,260,gx-2,520,gx+1,1024);
       ctx.stroke();
     }
-
-    // Staggered tile end joints; long plank proportions from the photo.
     for(let y=offsets[col]; y<1024; y+=420){
-      ctx.strokeStyle = 'rgba(101,87,73,.20)';
-      ctx.lineWidth = 1.25;
+      ctx.strokeStyle = 'rgba(92,80,68,.16)';
+      ctx.lineWidth = .9;
       ctx.beginPath(); ctx.moveTo(x+1,y); ctx.lineTo(x+tileW-1,y); ctx.stroke();
     }
-
-    // Very subtle knots so the tile reads as oak without looking rustic.
     [[.31,.22],[.72,.62]].forEach(([fx,fy],idx)=>{
       if((col+idx)%2) return;
       const kx=x+tileW*fx, ky=1024*fy+col*19;
-      ctx.strokeStyle='rgba(90,75,61,.12)';
-      ctx.lineWidth=.8;
+      ctx.strokeStyle='rgba(84,72,61,.10)';
+      ctx.lineWidth=.7;
       ctx.beginPath(); ctx.ellipse(kx,ky,7,18,.05,0,Math.PI*2); ctx.stroke();
     });
   }
-
-  // Thin grout seams between the long tiles.
-  ctx.strokeStyle = 'rgba(112,98,83,.24)';
-  ctx.lineWidth = 1.2;
+  ctx.strokeStyle = 'rgba(96,84,72,.18)';
+  ctx.lineWidth = .9;
   for(let x=0;x<=768;x+=tileW){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,1024);ctx.stroke();}
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.wrapS = THREE.RepeatWrapping; texture.wrapT = THREE.RepeatWrapping;
   texture.colorSpace = THREE.SRGBColorSpace; texture.anisotropy = 8;
   texture.minFilter = THREE.LinearMipmapLinearFilter; texture.magFilter = THREE.LinearFilter;
-  oakTileMaterial = new THREE.MeshStandardMaterial({color:0xf5efe6,map:texture,roughness:.78,metalness:0,side:THREE.DoubleSide});
+  oakTileMaterial = new THREE.MeshStandardMaterial({color:0xf1ebe2,map:texture,roughness:.82,metalness:0,side:THREE.DoubleSide});
   return oakTileMaterial;
 }
 
@@ -357,18 +350,15 @@ function addDetailedKitchen(g){
   addBox(g,236,204,34,28,.02,0x262a2d,1.03);
   addBox(g,224,269.1,58,26,1.68,mint);
 
-  // Photo-matched upper cabinetry: continuous white cupboards lead into the hood cabinet.
   addBox(g,212,10,12,72,1.02,white,1.26);
   addBox(g,224,20,58,58,.95,white,1.25);
   addBox(g,224,78,58,42,.95,white,1.25);
   addBox(g,224,120,58,68,.95,white,1.25);
   addBox(g,223.5,123,.30,29,.76,white,1.34,whitePanelMaterial);
   addBox(g,223.5,156,.30,29,.76,white,1.34,whitePanelMaterial);
-  // Slim dark extractor intake under the white hood cabinet.
   addBox(g,228,126,50,56,.025,0x303235,1.22);
   addBox(g,231,130,44,48,.012,0x17191b,1.218);
 
-  // Sink, tap and induction hob.
   addBox(g,82,10,66,38,.035,black,.92); addBox(g,90,16,50,25,.02,0x24282b,.935);
   addRod(g,145,30,.95,145,30,1.22,.018,0x303336); addRod(g,145,30,1.22,132,30,1.22,.018,0x303336);
   addBox(g,234,133,38,55,.035,black,.92); [[244,146],[261,146],[244,173],[261,173]].forEach(([x,y])=>addCylinder(g,x,y,7,.015,0x313539,.955));
