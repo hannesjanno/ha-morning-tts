@@ -23,13 +23,11 @@ const material = (color, roughness=.82, metalness=.03) => new THREE.MeshStandard
 let oakFloorMaterial = null;
 function getOakFloorMaterial(){
   if(oakFloorMaterial) return oakFloorMaterial;
-
   const canvas = document.createElement('canvas');
   canvas.width = 1024;
   canvas.height = 768;
   const ctx = canvas.getContext('2d');
   const plankH = 128;
-
   const plankColors = ['#c9c0b4','#beb5a9','#d0c8bd','#c4bbb0','#cbc2b7','#b9b0a5'];
   const jointSets = [[320,760],[170,585,930],[420,835],[245,690],[120,530,875],[360,810]];
   const knotSets = [
@@ -37,7 +35,6 @@ function getOakFloorMaterial(){
     [[280,39,7,3],[900,80,9,4]],[[605,52,9,4]],
     [[215,85,7,3],[775,36,5,2]],[[490,70,10,4],[910,46,6,3]],
   ];
-
   for(let row=0; row<6; row++){
     const y = row * plankH;
     ctx.fillStyle = plankColors[row];
@@ -77,7 +74,6 @@ function getOakFloorMaterial(){
       ctx.bezierCurveTo(x-rx-8,cy-3,x+rx+12,cy+3.5,x+rx+30,cy+.8); ctx.stroke();
     });
   }
-
   const texture = new THREE.CanvasTexture(canvas);
   texture.wrapS = THREE.RepeatWrapping; texture.wrapT = THREE.RepeatWrapping;
   texture.colorSpace = THREE.SRGBColorSpace; texture.anisotropy = 8;
@@ -215,14 +211,7 @@ function addWindow(group,x1,y1,x2,y2){
 }
 
 function addLivingRoomGlazing(g){
-  const glass = new THREE.MeshPhysicalMaterial({
-    color:0x151719,
-    transparent:true,
-    opacity:.58,
-    roughness:.10,
-    transmission:.16,
-    metalness:.03
-  });
+  const glass = new THREE.MeshPhysicalMaterial({color:0x151719,transparent:true,opacity:.58,roughness:.10,transmission:.16,metalness:.03});
   const frame = material(0xf4f3ef,.7,0);
   const y = 1049.9;
   const pane = new THREE.Mesh(new THREE.BoxGeometry(px(310),2.18,.028),glass);
@@ -241,7 +230,6 @@ function addLivingRoomGlazing(g){
 function addLivingRoomTv(g){
   const oak = 0x9a744f;
   const black = 0x17191b;
-  // Oak cabinet body with only a slim black metal frame/legs, matching the photo.
   addBox(g,41,997,70,27,.78,oak,.13);
   addBox(g,42,998,33,25,.36,0xa57c54,.16);
   addBox(g,77,998,33,25,.36,0x8f6847,.16);
@@ -250,8 +238,6 @@ function addLivingRoomTv(g){
   addBox(g,39,995,74,2,.025,black,.11);
   addBox(g,39,1024,74,2,.025,black,.11);
   [[40,1000],[112,1000],[40,1023],[112,1023]].forEach(([x,y])=>addRod(g,x,y,.02,x,y,.13,.014,black));
-
-  // 65-inch 16:9 Sony Bravia: approximately 145 x 83 cm.
   const tv = new THREE.Mesh(new RoundedBoxGeometry(px(145),.83,.055,4,.014),material(0x090b0d,.25,.04));
   tv.position.set(px(77),1.47,px(1037));
   tv.castShadow = true; g.add(tv);
@@ -289,15 +275,33 @@ function addDetailedStairs(g){
 function addDetailedKitchen(g){
   const mint=0x7fa991,mintDark=0x658b78,white=0xf2f0ea,wood=0x9a704c,darkWood=0x6f432b,black=0x17191b;
   const mintPanelMaterial = new THREE.MeshStandardMaterial({color:mintDark,roughness:.82,metalness:.03,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
+  const whitePanelMaterial = new THREE.MeshStandardMaterial({color:white,roughness:.90,metalness:0,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
   addBox(g,0,0,224,58,.86,mint); addBox(g,224,0,58,188,.86,mint);
   addBox(g,0,0,224,58,.055,wood,.86); addBox(g,224,0,58,188,.055,wood,.86);
   [8,58,108,158].forEach(x=>addBox(g,x,58.2,42,.30,.62,mintDark,.12,mintPanelMaterial));
   [12,58,104,150].forEach(y=>addBox(g,223.5,y,.30,34,.62,mintDark,.12,mintPanelMaterial));
-  addBox(g,224,188,58,81,2.2,mint); addBox(g,233,199,40,36,.58,black,.92); addBox(g,236,204,34,28,.02,0x262a2d,1.03);
-  addBox(g,224,269.1,58,26,1.68,mint); addBox(g,212,10,12,72,1.02,white,1.26); addBox(g,224,20,58,58,.95,white,1.25);
-  addBox(g,224,82,58,66,.95,mint,1.25); addBox(g,82,10,66,38,.035,black,.92); addBox(g,90,16,50,25,.02,0x24282b,.935);
+
+  addBox(g,224,188,58,81,2.2,mint);
+  addBox(g,233,199,40,36,.58,black,.92);
+  addBox(g,236,204,34,28,.02,0x262a2d,1.03);
+  addBox(g,224,269.1,58,26,1.68,mint);
+
+  // Photo-matched upper cabinetry: white cupboards continue from the corner,
+  // with a dedicated white hood cabinet directly over the hob before the tall mint unit.
+  addBox(g,212,10,12,72,1.02,white,1.26);
+  addBox(g,224,20,58,58,.95,white,1.25);
+  addBox(g,224,120,58,68,.95,white,1.25);
+  addBox(g,223.5,123,.30,29,.76,white,1.34,whitePanelMaterial);
+  addBox(g,223.5,156,.30,29,.76,white,1.34,whitePanelMaterial);
+  // Slim dark extractor intake under the white hood cabinet.
+  addBox(g,228,126,50,56,.025,0x303235,1.22);
+  addBox(g,231,130,44,48,.012,0x17191b,1.218);
+
+  // Sink, tap and induction hob.
+  addBox(g,82,10,66,38,.035,black,.92); addBox(g,90,16,50,25,.02,0x24282b,.935);
   addRod(g,145,30,.95,145,30,1.22,.018,0x303336); addRod(g,145,30,1.22,132,30,1.22,.018,0x303336);
   addBox(g,234,133,38,55,.035,black,.92); [[244,146],[261,146],[244,173],[261,173]].forEach(([x,y])=>addCylinder(g,x,y,7,.015,0x313539,.955));
+
   addBox(g,8,6,38,46,1.55,white,.92); for(let i=0;i<4;i++) addRod(g,10,10+i*11,1.02,44,44-i*11,1.42,.018,0x8d8d88);
   addBox(g,22,145,150,62,.09,darkWood,.84); [[28,151],[158,151],[28,195],[158,195]].forEach(([x,y])=>addBox(g,x,y,5,5,.82,black,.02));
   [[38,228],[94,228],[150,228]].forEach(([x,y])=>{
@@ -333,7 +337,6 @@ function addDetailedFireplace(g){
 function buildHouse(scene){
   const g = new THREE.Group(); scene.add(g);
   roomPolygons.forEach(r=>addFloor(g,r.points,r.color,r.floor === 'living-oak'));
-
   addWall(g,0,0,64,0); addWall(g,184,0,350,0); addWall(g,424,0,480.8,0);
   addWall(g,0,0,0,1049.9);
   addWall(g,0,1049.9,90,1049.9); addWall(g,400,1049.9,480.8,1049.9);
@@ -345,16 +348,13 @@ function buildHouse(scene){
   addWall(g,290.25,0,290.25,188); addWall(g,170,269.1,290.25,269.1);
   addWall(g,480.8,157.47,480.8,188); addWall(g,480.8,260,480.8,390); addWall(g,480.8,462,480.8,598); addWall(g,480.8,696,480.8,892.73);
   addWall(g,599.74,325.28,599.74,530.64); addWall(g,599.74,530.64,640,530.64); addWall(g,712,530.64,790.31,530.64);
-
   [[64,0,184,0],[350,0,424,0],[790.31,205,790.31,273],[790.31,378,790.31,444]].forEach(w=>addWindow(g,...w));
   addLivingRoomGlazing(g);
   addDetailedStairs(g);
-
   const fireplace = new THREE.Group(); g.add(fireplace); addDetailedFireplace(fireplace);
   const fireplacePivot = new THREE.Vector3(px(428.5),0,px(765));
   fireplace.children.forEach(child=>{child.position.x-=fireplacePivot.x;child.position.z-=fireplacePivot.z;});
   fireplace.position.copy(fireplacePivot); fireplace.rotation.y = 3*Math.PI/2;
-
   addDetailedKitchen(g); addBox(g,300,8,112,32,.48,0x72593f); addDetailedSofa(g);
   addLivingRoomRug(g);
   addPhotoDiningTable(g);
@@ -363,7 +363,6 @@ function buildHouse(scene){
   addPhotoDiningChair(g,330,870,-Math.PI/2);
   addPhotoDiningChair(g,465,870,Math.PI/2);
   addLivingRoomTv(g);
-
   addBox(g,4,348,20,48,.42,0x30343a); addCylinder(g,45,374,19,.12,0x24272b);
   addBox(g,497,338,86,46,.78,0x817565); addCylinder(g,540,360,18,.10,0xd2d6d8,.79);
   addBox(g,493,508,94,24,.95,0xb8bcc0); addBox(g,519,470,42,38,.48,0xd3d6d8);
