@@ -55,7 +55,6 @@ function getOakFloorMaterial(){
     ctx.fillStyle = plankColors[row];
     ctx.fillRect(0,y,1024,plankH);
 
-    // Thin understated seams, like the real boards in the close-up photo.
     ctx.strokeStyle = 'rgba(82,76,70,.16)';
     ctx.lineWidth = .9;
     ctx.beginPath();
@@ -63,7 +62,6 @@ function getOakFloorMaterial(){
     ctx.lineTo(1024,y+1);
     ctx.stroke();
 
-    // Fine straight-ish longitudinal oak fibres with a few softly wavering lines.
     for(let g=0; g<24; g++){
       const gy = y + 5 + g*4.9 + (row%3)*1.2;
       const bend = (((g+row)%7)-3) * 1.25;
@@ -94,7 +92,6 @@ function getOakFloorMaterial(){
       ctx.stroke();
     });
 
-    // Small, irregular knot marks; present but not dominant.
     knotSets[row].forEach(([x,ky,rx,ry])=>{
       const cy = y + ky;
       ctx.fillStyle = 'rgba(60,55,50,.18)';
@@ -136,11 +133,112 @@ function setLivingRoomOakUVs(geo){
   const pos = geo.getAttribute('position');
   const uv = new Float32Array(pos.count * 2);
   for(let i=0;i<pos.count;i++){
-    // Swap plan X/Y for the living room so board grain runs vertically on the floor plan.
     uv[i*2] = pos.getY(i) / 2.2;
     uv[i*2+1] = pos.getX(i) / 1.08;
   }
   geo.setAttribute('uv',new THREE.BufferAttribute(uv,2));
+}
+
+let livingRoomRugMaterial = null;
+function getLivingRoomRugMaterial(){
+  if(livingRoomRugMaterial) return livingRoomRugMaterial;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 768;
+  canvas.height = 512;
+  const ctx = canvas.getContext('2d');
+
+  // Warm ivory shag base, matching the photo rather than a flat white surface.
+  ctx.fillStyle = '#dfd8cc';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // Dense low-contrast fibres create a soft high-pile appearance from above.
+  for(let i=0;i<2600;i++){
+    const x = (i*73 + (i%11)*19) % canvas.width;
+    const y = (i*151 + (i%7)*23) % canvas.height;
+    const light = i%3 === 0;
+    ctx.strokeStyle = light ? 'rgba(248,244,236,.15)' : 'rgba(111,102,91,.08)';
+    ctx.lineWidth = .7 + (i%4)*.18;
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+    ctx.lineTo(x + ((i%5)-2)*1.8, y + 3 + (i%4));
+    ctx.stroke();
+  }
+
+  // The real rug has an irregular black diamond lattice.
+  ctx.strokeStyle = 'rgba(28,27,25,.88)';
+  ctx.lineWidth = 7;
+  ctx.lineCap = 'round';
+  for(let x=-520;x<1250;x+=170){
+    ctx.beginPath();
+    ctx.moveTo(x,0);
+    ctx.lineTo(x+520,512);
+    ctx.stroke();
+  }
+  for(let x=-250;x<1300;x+=170){
+    ctx.beginPath();
+    ctx.moveTo(x,0);
+    ctx.lineTo(x-520,512);
+    ctx.stroke();
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 8;
+  texture.minFilter = THREE.LinearMipmapLinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+
+  livingRoomRugMaterial = new THREE.MeshStandardMaterial({
+    color:0xf3eee5,
+    map:texture,
+    roughness:.99,
+    metalness:0,
+  });
+  return livingRoomRugMaterial;
+}
+
+function addLivingRoomRug(g){
+  const rug = new THREE.Mesh(
+    new RoundedBoxGeometry(px(290),.032,px(210),5,.035),
+    getLivingRoomRugMaterial()
+  );
+  // Photo: rug occupies the dining-side foreground, with the table near its upper-right edge.
+  rug.position.set(px(185+145),.012+.016,px(830+105));
+  rug.receiveShadow = true;
+  g.add(rug);
+}
+
+function addPhotoDiningTable(g){
+  const x = 430;
+  const y = 870;
+  const whiteTop = new THREE.MeshPhysicalMaterial({
+    color:0xf4f2ed,
+    roughness:.17,
+    metalness:0,
+    clearcoat:.4,
+    clearcoatRoughness:.14,
+  });
+  const whiteBase = material(0xeeeae3,.38,0);
+
+  // Broad sculptural white pedestal with a wider foot and slimmer neck.
+  const foot = new THREE.Mesh(new THREE.CylinderGeometry(.31,.31,.055,48),whiteBase);
+  foot.position.set(px(x),.055/2+.018,px(y));
+  foot.castShadow = true;
+  foot.receiveShadow = true;
+  g.add(foot);
+
+  const pedestal = new THREE.Mesh(new THREE.CylinderGeometry(.15,.29,.63,48),whiteBase);
+  pedestal.position.set(px(x),.055+.315+.018,px(y));
+  pedestal.castShadow = true;
+  pedestal.receiveShadow = true;
+  g.add(pedestal);
+
+  // Thin white circular tabletop, about 110 cm across like the photo.
+  const top = new THREE.Mesh(new THREE.CylinderGeometry(.55,.55,.052,64),whiteTop);
+  top.position.set(px(x),.72,px(y));
+  top.castShadow = true;
+  top.receiveShadow = true;
+  g.add(top);
 }
 
 function addBox(group,x,y,w,d,h,color,z=0,matOverride=null){
@@ -195,11 +293,8 @@ function addFloor(group,points,color,useLivingOak=false){
   const geo = new THREE.ShapeGeometry(shape);
   if(useLivingOak) setLivingRoomOakUVs(geo);
 
-  // Keep the same positive plan Y direction as the walls and furniture (world +Z).
   geo.rotateX(Math.PI/2);
 
-  // A +90° rotation puts the generated face normal downward. Reverse triangle winding
-  // so the visible top surface faces +Y and receives light correctly.
   const index = geo.getIndex();
   if(index){
     for(let i=0;i<index.count;i+=3){
@@ -427,7 +522,8 @@ function buildHouse(scene){
   addBox(g,300,8,112,32,.48,0x72593f);
   addDetailedSofa(g);
 
-  addCylinder(g,430,870,43,.72,0x76573c);
+  addLivingRoomRug(g);
+  addPhotoDiningTable(g);
   [[369,870],[404,934],[454,935]].forEach(([x,y])=>addCylinder(g,x,y,18,.48,0x3f5145));
   addBox(g,4,985,92,28,.48,0x49392e);
   addBox(g,6,1018,86,10,.72,0x111315,.82);
@@ -471,7 +567,6 @@ function createViewer(host){
   sun.position.set(-8,15,-6);
   sun.castShadow = true;
   scene.add(sun);
-  // No outdoor floor surfaces: only actual interior floors are rendered.
   buildHouse(scene);
   const controls = new OrbitControls(camera,renderer.domElement);
   controls.target.set(4.1,.45,5.15);
