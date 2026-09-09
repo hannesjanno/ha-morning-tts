@@ -110,8 +110,8 @@ function buildPhotoStairs(){
     addHalfMoonRunner(g,x+(treadW-2)/2,lowerY+48,treadW-8,27,z+.054,true);
   }
 
-  // Five continuous winder treads.  The ellipse reproduces the photographed
-  // gradual 180-degree turn without a landing and keeps the whole turn inside the wall line.
+  // Five continuous winder treads. The ellipse reproduces the photographed
+  // gradual 180-degree turn without a landing while keeping it inside the wall line.
   const cx=72, cy=528;
   const outerRx=64, outerRy=114;
   const innerRx=14, innerRy=22;
@@ -139,7 +139,7 @@ function buildPhotoStairs(){
   addBeam(g,turnX,upperY+92,1.66,246,upperY+92,2.47,.12,.10,NEW_WHITE);
 
   // Lower-flight guards on both exposed edges.
-  [lowerY,lowerY+92].forEach((railY,sideIndex)=>{
+  [lowerY,lowerY+92].forEach(railY=>{
     for(let i=0;i<=lowerCount;i++){
       const x=turnX+i*treadW;
       const base=.14+(lowerCount-1-Math.min(i,lowerCount-1))*rise;
@@ -148,7 +148,7 @@ function buildPhotoStairs(){
     addRod(g,258,railY,.92,turnX,railY,1.83,.032,NEW_WOOD);
   });
 
-  // Upper-flight guards.  The inner line creates the photographed tall divider between flights.
+  // Upper-flight guards. The inner line creates the photographed tall divider between flights.
   [upperY,upperY+92].forEach(railY=>{
     for(let i=0;i<=upperCount;i++){
       const x=turnX+i*treadW;
@@ -196,10 +196,16 @@ function buildPhotoStairs(){
 function isOldStairMesh(obj){
   if(!obj?.isMesh) return false;
   const mats=Array.isArray(obj.material)?obj.material:[obj.material];
-  const colorMatch=mats.some(m=>m?.color && OLD_STAIR_COLORS.has(m.color.getHex()));
-  if(!colorMatch) return false;
-  const p=obj.position;
-  return p.x>-0.55 && p.x<2.75 && p.z>3.9 && p.z<6.7 && p.y<3.6;
+  if(!mats.some(m=>m?.color && OLD_STAIR_COLORS.has(m.color.getHex()))) return false;
+
+  // Winder meshes keep their plan coordinates in the geometry and have x/z position 0,
+  // so use the actual world bounding box rather than only obj.position.
+  const box=new THREE.Box3().setFromObject(obj);
+  const stairZone=new THREE.Box3(
+    new THREE.Vector3(-.60,-.05,3.90),
+    new THREE.Vector3(2.80,3.60,6.70),
+  );
+  return box.intersectsBox(stairZone);
 }
 
 function replaceStairsInHouse(house){
@@ -223,9 +229,7 @@ export function installStairs3DOverride(){
   THREE.Scene.prototype.add=function(...objects){
     const result=originalAdd.apply(this,objects);
     for(const obj of objects){
-      if(obj?.isGroup){
-        queueMicrotask(()=>replaceStairsInHouse(obj));
-      }
+      if(obj?.isGroup) queueMicrotask(()=>replaceStairsInHouse(obj));
     }
     return result;
   };
