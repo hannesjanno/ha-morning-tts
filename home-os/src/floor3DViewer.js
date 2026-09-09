@@ -396,17 +396,8 @@ function addDetailedStairs(g){
 
   // No handrail or balusters on the inner/centre side of the lower flight.
 
-  const upperRailY=upperY;
-  for(let i=0;i<=straightCount;i++){
-    const x=turnX+i*treadW;
-    const base=1.58+Math.min(i,straightCount-1)*.135;
-    addBox(g,x,upperRailY,4.5,4.5,.84,white,base);
-  }
-  addRod(g,turnX,upperRailY,2.40,245,upperRailY,3.22,.034,wood);
-
-  // The winder section is against the wall; there is no centre handrail or centre balusters.
-
-  [[72,upperRailY-2,1.48],[244,upperRailY-2,2.28]].forEach(([x,y,z])=>addBox(g,x,y,8,8,1.02,white,z));
+  // The stair centre and winder section are against the wall.
+  // No centre handrail, balusters or newel posts are added here.
 }
 
 function addDetailedKitchen(g){
