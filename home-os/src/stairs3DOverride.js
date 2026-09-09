@@ -86,11 +86,12 @@ function buildPhotoStairs(){
   const g = new THREE.Group();
   g.name = 'photoReferenceStairs';
 
-  // Final photo references show a long, straight lower run. The turn starts only
-  // near the top and then progressively carries the stair to the right and upward.
+  // Final photo references show two straight, parallel flights connected by a
+  // compact wall-side winder turn. Keep the turn clear of the exterior wall mesh.
   const upperY = 414;
   const lowerY = 550;
   const straightStartX = 62;
+  const upperStartX = 112;
   const treadW = 24;
   const rise = .118;
   const lowerCount = 8;
@@ -104,16 +105,13 @@ function buildPhotoStairs(){
     addHalfMoonRunner(g,x+(treadW-2)/2,lowerY+48,treadW-8,27,z+.054,true);
   }
 
-  // Real winder sequence from the photos. It is deliberately asymmetric: the
-  // first two treads still read almost straight from below, and only the next
-  // treads make the strong right-hand turn into the upper run.
+  // Four fan-shaped winders make the physical 180-degree turn against the wall.
+  // Adjacent polygons share edges so the stair reads as one continuous structure.
   const winders = [
-    [[62,642],[30,642],[22,610],[62,566]],
-    [[62,566],[22,610],[10,580],[18,548],[62,544]],
-    [[62,544],[18,548],[8,520],[18,490],[62,516]],
-    [[62,516],[18,490],[30,456],[62,478]],
-    [[62,478],[30,456],[48,428],[86,438],[86,478]],
-    [[86,478],[48,428],[78,414],[112,414],[112,478]],
+    [[62,642],[18,642],[18,590],[62,550]],
+    [[62,550],[18,590],[18,536],[62,528]],
+    [[62,528],[18,536],[18,466],[82,506]],
+    [[82,506],[18,466],[18,414],[112,414],[112,506]],
   ];
 
   const winderStart=.13+lowerCount*rise;
@@ -127,7 +125,7 @@ function buildPhotoStairs(){
   // Upper flight starts immediately after the last winder and rises back over the
   // lower flight, matching the side/front photos.
   for(let i=0;i<upperCount;i++){
-    const x=110+i*treadW;
+    const x=upperStartX+i*treadW;
     const z=winderStart+winders.length*rise+i*rise;
     addBox(g,x,upperY,treadW-2,92,.052,NEW_WOOD,z);
     addHalfMoonRunner(g,x+(treadW-2)/2,upperY+44,treadW-8,27,z+.054,false);
@@ -137,8 +135,8 @@ function buildPhotoStairs(){
   // until the winder section; the upper stringers start only after the turn.
   addBeam(g,258,lowerY,.08,straightStartX,lowerY,.96,.12,.10,NEW_WHITE);
   addBeam(g,258,lowerY+92,.08,straightStartX,lowerY+92,.96,.12,.10,NEW_WHITE);
-  addBeam(g,110,upperY,1.89,266,upperY,2.65,.12,.10,NEW_WHITE);
-  addBeam(g,110,upperY+92,1.89,266,upperY+92,2.65,.12,.10,NEW_WHITE);
+  addBeam(g,upperStartX,upperY,1.54,268,upperY,2.24,.12,.10,NEW_WHITE);
+  addBeam(g,upperStartX,upperY+92,1.54,268,upperY+92,2.24,.12,.10,NEW_WHITE);
 
   // Lower-flight guard only on the outside edge; the centre side stays open.
   [lowerY+92].forEach(railY=>{
@@ -153,11 +151,11 @@ function buildPhotoStairs(){
   // Upper-flight guard only on the outside edge; the centre side stays open.
   [upperY].forEach(railY=>{
     for(let i=0;i<=upperCount;i++){
-      const x=110+i*treadW;
+      const x=upperStartX+i*treadW;
       const base=winderStart+winders.length*rise+Math.min(i,upperCount-1)*rise;
       addBox(g,x-2.2,railY-2.2,4.4,4.4,.82,NEW_WHITE,base+.02);
     }
-    addRod(g,110,railY,2.73,268,railY,3.48,.032,NEW_WOOD);
+    addRod(g,upperStartX,railY,2.38,268,railY,3.08,.032,NEW_WOOD);
   });
 
   // The turn is against the wall. Do not add an outer arc or an inner divider here.
@@ -166,7 +164,7 @@ function buildPhotoStairs(){
   // Prominent square posts from the photos.
   addBox(g,252,lowerY+88,8,8,1.02,NEW_WHITE,.02);
   addBox(g,straightStartX-4,lowerY+88,8,8,1.02,NEW_WHITE,.90);
-  addBox(g,106,upperY-4,8,8,1.04,NEW_WHITE,1.82);
+  addBox(g,108,upperY-4,8,8,1.04,NEW_WHITE,1.50);
   addBox(g,262,upperY-4,8,8,1.06,NEW_WHITE,2.56);
 
   return g;
