@@ -410,11 +410,10 @@ function addDetailedStairs(g){
   }
   addRod(g,turnX,upperRailY,2.40,245,upperRailY,3.22,.034,wood);
 
-  // Continue the railing around the winder end instead of leaving the turn open.
-  [[72,642,1.80],[36,642,1.94],[12,612,2.08],[10,570,2.22]].forEach(([x,y,z])=>addBox(g,x,y,5,5,.82,white,z-.82));
-  addRod(g,72,642,1.80,36,642,1.94,.034,wood);
-  addRod(g,36,642,1.94,12,612,2.08,.034,wood);
-  addRod(g,12,612,2.08,10,570,2.22,.034,wood);
+  // At the winder end the real handrail continues straight to the straight wall.
+  // It does not curve to the right.
+  [[72,642,1.80],[38,642,1.80]].forEach(([x,y,z])=>addBox(g,x,y,5,5,.82,white,z-.82));
+  addRod(g,72,642,1.80,4,642,1.80,.034,wood);
 
   [[72,lowerRailY-2,.92],[72,upperRailY-2,1.48],[244,lowerRailY-2,.10],[244,upperRailY-2,2.28]].forEach(([x,y,z])=>addBox(g,x,y,8,8,1.02,white,z));
 }
