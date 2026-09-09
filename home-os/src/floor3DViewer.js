@@ -313,65 +313,110 @@ function addLivingRoomTv(g){
 }
 
 function addDetailedStairs(g){
-  const wood = 0xb58f68;
-  const white = 0xf3f1ec;
-  const runner = 0xb8ad9d;
-  const treadW = 30;
-
-  // 2D plan direction: enter the lower flight from the RIGHT, rise to the LEFT,
-  // turn on the LEFT, then return on the upper flight rising LEFT -> RIGHT.
+  const wood = 0xa97950;
+  const white = 0xf5f4ef;
+  const runner = 0xaaa197;
   const upperY = 414;
   const lowerY = 550;
+  const turnX = 72;
+  const straightCount = 7;
+  const treadW = 25;
 
-  // Lower flight, visible in the foreground of the reference photos.
-  for(let i=0;i<8;i++){
-    const x = 8 + i*treadW;
-    const h = .16 + (7-i)*.13;
+  const addFlatShape = (points,height,color,thickness=.055) => {
+    const shape = new THREE.Shape();
+    points.forEach(([x,y],i)=>i ? shape.lineTo(px(x),px(y)) : shape.moveTo(px(x),px(y)));
+    shape.closePath();
+    const geo = new THREE.ExtrudeGeometry(shape,{depth:thickness,bevelEnabled:false});
+    geo.rotateX(Math.PI/2);
+    const mesh = new THREE.Mesh(geo,material(color,.86,0));
+    mesh.position.y = height;
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    g.add(mesh);
+    return mesh;
+  };
+
+  const addHalfMoonRunner = (cx,cy,w,d,height,rotation=0) => {
+    const points=[];
+    for(let i=0;i<=18;i++){
+      const a=Math.PI*i/18;
+      points.push([Math.cos(a)*w/2,Math.sin(a)*d]);
+    }
+    points.push([-w/2,0]);
+    const shape=new THREE.Shape();
+    points.forEach(([x,y],i)=>i?shape.lineTo(px(x),px(y)):shape.moveTo(px(x),px(y)));
+    shape.closePath();
+    const geo=new THREE.ShapeGeometry(shape);
+    geo.rotateX(Math.PI/2);
+    const mesh=new THREE.Mesh(geo,material(runner,.98,0));
+    mesh.position.set(px(cx),height,px(cy));
+    mesh.rotation.y=rotation;
+    mesh.receiveShadow=true;
+    g.add(mesh);
+  };
+
+  // The photographed staircase has two parallel flights with a compact 180-degree
+  // winder turn. The old model used a large rectangular landing, which made both
+  // the plan geometry and the top view visibly wrong.
+  for(let i=0;i<straightCount;i++){
+    const x=turnX+i*treadW;
+    const h=.18+(straightCount-1-i)*.13;
     addBox(g,x,lowerY,treadW-2,92,.055,wood,h);
-    addBox(g,x+3,lowerY+16,treadW-8,60,.025,runner,h+.056);
+    addHalfMoonRunner(x+(treadW-2)/2,lowerY+47,treadW-9,26,h+.057,Math.PI);
   }
 
-  // Left-side turning platform between the two flights.
-  addBox(g,4,upperY,38,228,.07,wood,1.14);
+  // Five fan-shaped winders make the real U-turn at the left end.
+  const pivot=[30,528];
+  const bounds=[
+    [[72,642],[18,642],[18,594],[72,550]],
+    [[72,550],[18,594],[8,550],[18,528],[72,528]],
+    [[72,528],[18,528],[8,506],[18,462],[72,506]],
+    [[72,506],[18,462],[18,414],[72,414]],
+  ];
+  const turnHeights=[1.02,1.16,1.30,1.44];
+  bounds.forEach((poly,i)=>{
+    addFlatShape(poly,turnHeights[i],wood,.055);
+    const c=poly.reduce((acc,p)=>[acc[0]+p[0]/poly.length,acc[1]+p[1]/poly.length],[0,0]);
+    const inset=poly.map(([x,y])=>[c[0]+(x-c[0])*.66,c[1]+(y-c[1])*.66]);
+    addFlatShape(inset,turnHeights[i]+.058,runner,.018);
+  });
 
-  // Upper return flight, rising from the left turn toward the right / second floor.
-  for(let i=0;i<8;i++){
-    const x = 8 + i*treadW;
-    const h = 1.22 + i*.16;
+  for(let i=0;i<straightCount;i++){
+    const x=turnX+i*treadW;
+    const h=1.58+i*.135;
     addBox(g,x,upperY,treadW-2,92,.055,wood,h);
-    addBox(g,x+3,upperY+16,treadW-8,60,.025,runner,h+.056);
+    addHalfMoonRunner(x+(treadW-2)/2,upperY+45,treadW-9,26,h+.057,0);
   }
 
-  // White side stringers follow the same real-world rise directions.
-  addRod(g,246,lowerY,.10,8,lowerY,1.08,.055,white);
-  addRod(g,246,lowerY+92,.10,8,lowerY+92,1.08,.055,white);
-  addRod(g,8,upperY,1.16,246,upperY,2.34,.055,white);
-  addRod(g,8,upperY+92,1.16,246,upperY+92,2.34,.055,white);
+  // White stringers and square balusters, with warm oak handrails as in the photo.
+  addRod(g,244,lowerY,.12,turnX,lowerY,.95,.05,white);
+  addRod(g,244,lowerY+92,.12,turnX,lowerY+92,.95,.05,white);
+  addRod(g,turnX,upperY,1.52,244,upperY,2.36,.05,white);
+  addRod(g,turnX,upperY+92,1.52,244,upperY+92,2.36,.05,white);
 
-  // Lower-flight balusters + oak handrail on the exposed side.
-  const lowerRailY = lowerY+92;
-  for(let i=0;i<=8;i++){
-    const x = 8 + i*treadW;
-    const base = .16 + (7-Math.min(i,7))*.13;
-    addBox(g,x,lowerRailY,5,5,.88,white,base);
+  const lowerRailY=lowerY+92;
+  for(let i=0;i<=straightCount;i++){
+    const x=turnX+i*treadW;
+    const base=.18+(straightCount-1-Math.min(i,straightCount-1))*.13;
+    addBox(g,x,lowerRailY,4.5,4.5,.84,white,base);
   }
-  addRod(g,248,lowerRailY,.98,10,lowerRailY,1.96,.035,wood);
+  addRod(g,245,lowerRailY,.96,turnX,lowerRailY,1.78,.034,wood);
 
-  // Upper-flight balusters + oak handrail on the opposite exposed side.
-  const upperRailY = upperY;
-  for(let i=0;i<=8;i++){
-    const x = 8 + i*treadW;
-    const base = 1.22 + Math.min(i,7)*.16;
-    addBox(g,x,upperRailY,5,5,.88,white,base);
+  const upperRailY=upperY;
+  for(let i=0;i<=straightCount;i++){
+    const x=turnX+i*treadW;
+    const base=1.58+Math.min(i,straightCount-1)*.135;
+    addBox(g,x,upperRailY,4.5,4.5,.84,white,base);
   }
-  addRod(g,10,upperRailY,2.10,248,upperRailY,3.22,.035,wood);
+  addRod(g,turnX,upperRailY,2.40,245,upperRailY,3.22,.034,wood);
 
-  // Newel posts like the photos: right at the lower entrance, left at the turn,
-  // and at the upper return.
-  addBox(g,246,lowerRailY-2,8,8,1.04,white,0);
-  addBox(g,4,lowerRailY-2,8,8,1.90,white,.10);
-  addBox(g,4,upperRailY-2,8,8,1.18,white,1.10);
-  addBox(g,246,upperRailY-2,8,8,1.15,white,2.20);
+  // Continue the railing around the winder end instead of leaving the turn open.
+  [[72,642,1.80],[36,642,1.94],[12,612,2.08],[10,570,2.22]].forEach(([x,y,z])=>addBox(g,x,y,5,5,.82,white,z-.82));
+  addRod(g,72,642,1.80,36,642,1.94,.034,wood);
+  addRod(g,36,642,1.94,12,612,2.08,.034,wood);
+  addRod(g,12,612,2.08,10,570,2.22,.034,wood);
+
+  [[72,lowerRailY-2,.92],[72,upperRailY-2,1.48],[244,lowerRailY-2,.10],[244,upperRailY-2,2.28]].forEach(([x,y,z])=>addBox(g,x,y,8,8,1.02,white,z));
 }
 
 function addDetailedKitchen(g){
