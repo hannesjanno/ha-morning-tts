@@ -77,134 +77,118 @@ function addHalfMoonRunner(group,cx,cy,w,d,height,flip=false){
   addFlatShape(group,halfMoonPoints(cx,cy,w,d,flip),height,NEW_RUNNER,.016);
 }
 
-function annularSectorPoints(cx,cy,outerRx,outerRy,innerRx,innerRy,a0,a1,segments=16){
-  const pts=[];
-  for(let i=0;i<=segments;i++){
-    const a=a0+(a1-a0)*(i/segments);
-    pts.push([cx+Math.cos(a)*outerRx,cy+Math.sin(a)*outerRy]);
-  }
-  for(let i=segments;i>=0;i--){
-    const a=a0+(a1-a0)*(i/segments);
-    pts.push([cx+Math.cos(a)*innerRx,cy+Math.sin(a)*innerRy]);
-  }
-  return pts;
+function insetPolygon(points,factor=.68){
+  const c=points.reduce((acc,[x,y])=>[acc[0]+x/points.length,acc[1]+y/points.length],[0,0]);
+  return points.map(([x,y])=>[c[0]+(x-c[0])*factor,c[1]+(y-c[1])*factor]);
 }
 
 function buildPhotoStairs(){
   const g = new THREE.Group();
   g.name = 'photoReferenceStairs';
 
+  // Final photo references show a long, straight lower run. The turn starts only
+  // near the top and then progressively carries the stair to the right and upward.
   const upperY = 414;
   const lowerY = 550;
-  const straightStartX = 86;
+  const straightStartX = 62;
   const treadW = 24;
-  const rise = .115;
-  const lowerCount = 7;
+  const rise = .118;
+  const lowerCount = 8;
   const upperCount = 7;
 
-  // Lower open flight, as seen from the living room.
+  // Long lower open flight.
   for(let i=0;i<lowerCount;i++){
     const x=straightStartX+i*treadW;
-    const z=.14+(lowerCount-1-i)*rise;
+    const z=.13+(lowerCount-1-i)*rise;
     addBox(g,x,lowerY,treadW-2,92,.052,NEW_WOOD,z);
     addHalfMoonRunner(g,x+(treadW-2)/2,lowerY+48,treadW-8,27,z+.054,true);
   }
 
-  // Approved reference: the middle is not a gap between two straight runs.
-  // It is a broad, continuous 180-degree fan of winder treads that visibly carries
-  // the staircase to the right and upward before it becomes straight again.
-  const cx=86;
-  const cy=528;
-  const outerRx=83;
-  const outerRy=122;
-  const innerRx=18;
-  const innerRy=31;
-  const winderCount=7;
-  const startAngle=Math.PI/2;
-  const sweep=Math.PI;
+  // Real winder sequence from the photos. It is deliberately asymmetric: the
+  // first two treads still read almost straight from below, and only the next
+  // treads make the strong right-hand turn into the upper run.
+  const winders = [
+    [[62,642],[30,642],[22,610],[62,566]],
+    [[62,566],[22,610],[10,580],[18,548],[62,544]],
+    [[62,544],[18,548],[8,520],[18,490],[62,516]],
+    [[62,516],[18,490],[30,456],[62,478]],
+    [[62,478],[30,456],[48,428],[86,438],[86,478]],
+    [[86,478],[48,428],[78,414],[112,414],[112,478]],
+  ];
 
-  for(let i=0;i<winderCount;i++){
-    const a0=startAngle+i*sweep/winderCount;
-    const a1=startAngle+(i+1)*sweep/winderCount;
-    const z=.94+i*rise;
-    addFlatShape(g,annularSectorPoints(cx,cy,outerRx,outerRy,innerRx,innerRy,a0,a1),z,NEW_WOOD,.052);
+  const winderStart=.13+lowerCount*rise;
+  winders.forEach((poly,i)=>{
+    const z=winderStart+i*rise;
+    addFlatShape(g,poly,z,NEW_WOOD,.052);
+    // The carpet follows the wood tread but leaves a clearly visible oak border.
+    addFlatShape(g,insetPolygon(poly,i<2?.66:.62),z+.054,NEW_RUNNER,.016);
+  });
 
-    // Carpet follows each wedge, leaving visible oak at both the inner and outer edge.
-    addFlatShape(
-      g,
-      annularSectorPoints(cx,cy,63,93,30,47,a0+.035,a1-.035,14),
-      z+.054,
-      NEW_RUNNER,
-      .016,
-    );
-  }
-
-  // Upper flight continues naturally from the last winder toward the second floor.
+  // Upper flight starts immediately after the last winder and rises back over the
+  // lower flight, matching the side/front photos.
   for(let i=0;i<upperCount;i++){
-    const x=straightStartX+i*treadW;
-    const z=1.78+i*rise;
+    const x=110+i*treadW;
+    const z=winderStart+winders.length*rise+i*rise;
     addBox(g,x,upperY,treadW-2,92,.052,NEW_WOOD,z);
     addHalfMoonRunner(g,x+(treadW-2)/2,upperY+44,treadW-8,27,z+.054,false);
   }
 
-  // White open-stringer structure on the straight runs.
-  addBeam(g,258,lowerY,.08,straightStartX,lowerY,.86,.12,.10,NEW_WHITE);
-  addBeam(g,258,lowerY+92,.08,straightStartX,lowerY+92,.86,.12,.10,NEW_WHITE);
-  addBeam(g,straightStartX,upperY,1.75,246,upperY,2.48,.12,.10,NEW_WHITE);
-  addBeam(g,straightStartX,upperY+92,1.75,246,upperY+92,2.48,.12,.10,NEW_WHITE);
+  // White open-stringer construction. The lower run remains visually straight
+  // until the winder section; the upper stringers start only after the turn.
+  addBeam(g,258,lowerY,.08,straightStartX,lowerY,.96,.12,.10,NEW_WHITE);
+  addBeam(g,258,lowerY+92,.08,straightStartX,lowerY+92,.96,.12,.10,NEW_WHITE);
+  addBeam(g,110,upperY,1.89,266,upperY,2.65,.12,.10,NEW_WHITE);
+  addBeam(g,110,upperY+92,1.89,266,upperY+92,2.65,.12,.10,NEW_WHITE);
 
-  // Lower-flight balusters and oak handrails.
+  // Lower-flight guards and oak handrails.
   [lowerY,lowerY+92].forEach(railY=>{
     for(let i=0;i<=lowerCount;i++){
       const x=straightStartX+i*treadW;
-      const base=.14+(lowerCount-1-Math.min(i,lowerCount-1))*rise;
+      const base=.13+(lowerCount-1-Math.min(i,lowerCount-1))*rise;
       addBox(g,x-2.2,railY-2.2,4.4,4.4,.82,NEW_WHITE,base+.02);
     }
-    addRod(g,258,railY,.92,straightStartX,railY,1.70,.032,NEW_WOOD);
+    addRod(g,258,railY,.92,straightStartX,railY,1.80,.032,NEW_WOOD);
   });
 
-  // Upper-flight balusters and handrails.
+  // Upper-flight guards.
   [upperY,upperY+92].forEach(railY=>{
     for(let i=0;i<=upperCount;i++){
-      const x=straightStartX+i*treadW;
-      const base=1.78+Math.min(i,upperCount-1)*rise;
+      const x=110+i*treadW;
+      const base=winderStart+winders.length*rise+Math.min(i,upperCount-1)*rise;
       addBox(g,x-2.2,railY-2.2,4.4,4.4,.82,NEW_WHITE,base+.02);
     }
-    addRod(g,straightStartX,railY,2.57,246,railY,3.30,.032,NEW_WOOD);
+    addRod(g,110,railY,2.73,268,railY,3.48,.032,NEW_WOOD);
   });
 
-  // Outer railing follows the full fan with dense white balusters.
-  const outerRail=[];
-  for(let i=0;i<=14;i++){
-    const a=startAngle+i*sweep/14;
-    const x=cx+Math.cos(a)*outerRx;
-    const y=cy+Math.sin(a)*outerRy;
-    const base=.91+i*(.90/14);
-    const top=base+.83;
+  // Continuous outer balustrade through the turn. The points follow the actual
+  // rightward progression seen in the newest front photo rather than a symmetric arc.
+  const outerRail=[
+    [62,642,1.80],[42,626,1.92],[28,604,2.04],[20,578,2.16],
+    [18,548,2.28],[22,516,2.40],[34,482,2.52],[52,452,2.64],[82,430,2.76],
+  ];
+  outerRail.forEach(([x,y,top],i)=>{
+    const base=top-.82;
     addBox(g,x-2.4,y-2.4,4.8,4.8,.82,NEW_WHITE,base);
-    outerRail.push([x,y,top]);
-  }
-  for(let i=0;i<outerRail.length-1;i++) addRod(g,...outerRail[i],...outerRail[i+1],.032,NEW_WOOD);
+    if(i) addRod(g,...outerRail[i-1],x,y,top,.032,NEW_WOOD);
+  });
 
-  // Inner divider follows the opening and makes the turn read as a complete staircase,
-  // matching the approved top-view reference instead of leaving the centre unfinished.
-  const innerRail=[];
-  for(let i=0;i<=10;i++){
-    const a=startAngle+i*sweep/10;
-    const x=cx+Math.cos(a)*innerRx;
-    const y=cy+Math.sin(a)*innerRy;
-    const base=.96+i*(.82/10);
-    const top=base+.80;
+  // Inner divider between the two runs. This is the strong vertical railing seen
+  // in the centre of the latest photo and it continues cleanly into the upper run.
+  const innerRail=[
+    [62,550,1.78],[58,530,1.90],[60,506,2.02],[68,484,2.14],
+    [80,462,2.26],[94,444,2.38],[110,432,2.50],
+  ];
+  innerRail.forEach(([x,y,top],i)=>{
+    const base=top-.80;
     addBox(g,x-2.2,y-2.2,4.4,4.4,.80,NEW_WHITE,base);
-    innerRail.push([x,y,top]);
-  }
-  for(let i=0;i<innerRail.length-1;i++) addRod(g,...innerRail[i],...innerRail[i+1],.03,NEW_WOOD);
+    if(i) addRod(g,...innerRail[i-1],x,y,top,.03,NEW_WOOD);
+  });
 
-  // Newel posts anchor both ends and both sides of the turn.
+  // Prominent square posts from the photos.
   addBox(g,252,lowerY+88,8,8,1.02,NEW_WHITE,.02);
-  addBox(g,straightStartX-4,lowerY+88,8,8,1.02,NEW_WHITE,.82);
-  addBox(g,straightStartX-4,upperY-4,8,8,1.04,NEW_WHITE,1.68);
-  addBox(g,242,upperY-4,8,8,1.06,NEW_WHITE,2.34);
+  addBox(g,straightStartX-4,lowerY+88,8,8,1.02,NEW_WHITE,.90);
+  addBox(g,106,upperY-4,8,8,1.04,NEW_WHITE,1.82);
+  addBox(g,262,upperY-4,8,8,1.06,NEW_WHITE,2.56);
 
   return g;
 }
@@ -216,7 +200,7 @@ function isOldStairMesh(obj){
   const box=new THREE.Box3().setFromObject(obj);
   const stairZone=new THREE.Box3(
     new THREE.Vector3(-.60,-.05,3.90),
-    new THREE.Vector3(2.80,3.60,6.70),
+    new THREE.Vector3(2.90,3.80,6.75),
   );
   return box.intersectsBox(stairZone);
 }
