@@ -410,10 +410,7 @@ function addDetailedStairs(g){
   }
   addRod(g,turnX,upperRailY,2.40,245,upperRailY,3.22,.034,wood);
 
-  // Continue the lower-flight handrail on the same straight rising line to the wall.
-  // It must not flatten out or curve to the right at the winder end.
-  [[72,642,1.80],[38,642,1.96]].forEach(([x,y,z])=>addBox(g,x,y,5,5,.82,white,z-.82));
-  addRod(g,72,642,1.80,4,642,2.12,.034,wood);
+  // The winder section is against the wall; there is no centre handrail or centre balusters.
 
   [[72,lowerRailY-2,.92],[72,upperRailY-2,1.48],[244,lowerRailY-2,.10],[244,upperRailY-2,2.28]].forEach(([x,y,z])=>addBox(g,x,y,8,8,1.02,white,z));
 }
