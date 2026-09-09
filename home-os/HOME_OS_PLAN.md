@@ -219,17 +219,18 @@ Kinnitatud detailid:
 
 - trepp on U-kujuline ja koosneb kahest paralleelsest sirgest trepijooksust;
 - seina juures toimub pööre lehvik-/pöördastmetega, mitte ristkülikukujulise vaheplatvormiga;
-- astmed on avatud konstruktsiooniga heledast soojast naturaalsest puidust;
-- astmete ja väliskäsipuude kinnitatud värvireferents on Palazzo 170, `L78 C16 H80` (ligikaudne sRGB `#D2BEA4`);
-- piirded, tugipostid, kandekonstruktsioon ja balustrid on puhasvalged;
-- allesjäänud väliskäsipuud kasutavad astmetega sama Palazzo 170 puidutooni;
+- astmed on avatud konstruktsiooniga varasemalt kinnitatud soojas naturaalses puidutoonis;
+- piirded, tugipostid, kandekonstruktsioon ja balustrid on varasemalt kinnitatud soojas murdvalges toonis;
+- väliskäsipuud kasutavad astmetega sama varasemalt kinnitatud puidutooni;
+- 2026-09-09 näidispildilt võetakse ainult trepi kuju ja ehitusloogika, mitte värve;
 - trepi pöördeosa on vastu seina: pöördes ei ole välimist kaarpiiret ega sisemist jagajapiiret;
 - mõlema sirge trepijooksu keskpoolne külg on avatud — seal ei ole käsipuud, balustreid ega otsaposte; piire jääb ainult trepi välisküljele;
 - sirgetel astmetel on beežid poolümarad astmematid;
 - pöördastmetel järgivad beežid matid lehvikastmete kuju;
-- trepi asukohta ja varem kinnitatud U-kujulist põhisuunda ei muudeta ilma uue konkreetse infota.
+- trepi asukohta ja varem kinnitatud U-kujulist põhisuunda ei muudeta ilma uue konkreetse infota;
+- mõlemad sirged trepijooksud on joondatud ning seinaäärne 180° pööre koosneb neljast kompaktsest hulknurksest pöördastmest; laia kaarjat pöördegeomeetriat ei kasutata.
 
-Aktiivse fotopõhise trepiversiooni lähtekoht on commit `31e23bf9aec781c67709be7ea30c0cafba77dbb7`. Aktiivse `stairs3DOverride.js` välimine kaarpiire, sisemine jagajapiire ja trepijooksude keskpiirded eemaldati commitis `6970c0c9193d677bc3da68ab6c7a1913b6230d4b`.
+Aktiivse fotopõhise trepiversiooni lähtekoht on commit `31e23bf9aec781c67709be7ea30c0cafba77dbb7`. Aktiivse `stairs3DOverride.js` välimine kaarpiire, sisemine jagajapiire ja trepijooksude keskpiirded eemaldati commitis `6970c0c9193d677bc3da68ab6c7a1913b6230d4b`. Varasem kinnitatud värv taastati commitis `3ea56f89360111d99c623640e4cc9920c1225e0f`; kuju muudeti näidise järgi kompaktseks sirgete lendudega U-trepiks commitis `8bc558649601e48d1472d9355c6f1130430d510e`.
 
 ## 12. Laed — kavandatud lahendus
 
