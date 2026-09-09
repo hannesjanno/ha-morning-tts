@@ -220,8 +220,9 @@ Kinnitatud detailid:
 - trepp on U-kujuline ja koosneb kahest paralleelsest sirgest trepijooksust;
 - seina juures toimub pööre lehvik-/pöördastmetega, mitte ristkülikukujulise vaheplatvormiga;
 - astmed on avatud konstruktsiooniga heledast soojast naturaalsest puidust;
-- piirded, tugipostid ja balustrid on valged;
-- käsipuud on heledast naturaalsest puidust;
+- astmete ja väliskäsipuude kinnitatud värvireferents on Palazzo 170, `L78 C16 H80` (ligikaudne sRGB `#D2BEA4`);
+- piirded, tugipostid, kandekonstruktsioon ja balustrid on puhasvalged;
+- allesjäänud väliskäsipuud kasutavad astmetega sama Palazzo 170 puidutooni;
 - trepi pöördeosa on vastu seina: pöördes ei ole välimist kaarpiiret ega sisemist jagajapiiret;
 - mõlema sirge trepijooksu keskpoolne külg on avatud — seal ei ole käsipuud, balustreid ega otsaposte; piire jääb ainult trepi välisküljele;
 - sirgetel astmetel on beežid poolümarad astmematid;
