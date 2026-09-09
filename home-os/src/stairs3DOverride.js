@@ -84,7 +84,7 @@ function insetPolygon(points,factor=.68){
 
 function buildPhotoStairs(){
   const g = new THREE.Group();
-  g.name = 'photoReferenceStairs';
+  g.name = 'customReferenceStairs';
 
   // Reference shape: two aligned straight flights with a compact wall-side U-turn.
   // Keep the turn polygonal and tight; never introduce a sweeping centre arc.
@@ -149,22 +149,24 @@ function buildPhotoStairs(){
     addRod(g,258,railY,.92,straightStartX,railY,1.80,.032,NEW_WOOD);
   });
 
-  // Upper-flight guard only on the outside edge; the centre side stays open.
-  [upperY].forEach(railY=>{
-    for(let i=0;i<=upperCount;i++){
-      const x=upperStartX+i*treadW;
-      const base=upperStartZ+Math.min(i,upperCount-1)*rise;
-      addBox(g,x-2.2,railY-2.2,4.4,4.4,.82,NEW_WHITE,base+.02);
-    }
-    addRod(g,upperStartX,railY,upperStartZ+.86,258,railY,upperStartZ+(upperCount-1)*rise+.86,.032,NEW_WOOD);
+  // The returning flight runs beside a straight wall. Its wooden handrail is
+  // wall-mounted with short white brackets, not carried by a curved balustrade.
+  const upperRailY=upperY-3;
+  const upperRailStartZ=upperStartZ+.86;
+  const upperRailEndZ=upperStartZ+(upperCount-1)*rise+.86;
+  addRod(g,upperStartX,upperRailY,upperRailStartZ,258,upperRailY,upperRailEndZ,.032,NEW_WOOD);
+  [1,3,5,7].forEach(i=>{
+    const x=upperStartX+i*treadW;
+    const z=upperStartZ+i*rise+.80;
+    addRod(g,x,upperRailY,z,x,upperRailY+5,z-.06,.016,NEW_WHITE);
   });
 
-  // The turn is against the wall. Do not add an outer arc or an inner divider here.
-  // The centre of the U-shaped stair remains completely free of handrails and balusters.
+  // The compact turn is against the wall. There is no arc, inner divider,
+  // handrail, baluster or newel post in the open centre of the U.
+  // Its shape is made exclusively by the four straight-edged winder polygons.
 
-  // Square end posts only on the outer sides. No posts in the centre or turn.
+  // One square newel remains at the exposed foot of the lower outside guard.
   addBox(g,252,lowerY+88,8,8,1.02,NEW_WHITE,.02);
-  addBox(g,252,upperY-4,8,8,1.06,NEW_WHITE,upperStartZ+(upperCount-1)*rise-.04);
 
   return g;
 }
