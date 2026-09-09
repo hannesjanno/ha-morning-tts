@@ -223,6 +223,7 @@ Kinnitatud detailid:
 - piirded, tugipostid, kandekonstruktsioon ja balustrid on varasemalt kinnitatud soojas murdvalges toonis;
 - väliskäsipuud kasutavad astmetega sama varasemalt kinnitatud puidutooni;
 - 2026-09-09 näidispildilt võetakse ainult trepi kuju ja ehitusloogika, mitte värve;
+- Täiendav geomeetriareferents: [Sketchfab — 25_I_Riik](https://sketchfab.com/3d-models/25-i-riik-19cc207903a94554ac5a3e5b6b5aea64), Stairconi eksport autorilt Andris Sild / Andu Trepp. Referentsist kasutatakse ainult trepi ehitusloogikat; mudelifaili tohib projekti importida alles siis, kui on olemas allalaaditav GLB/GLTF ja selge kasutusõigus.
 - trepi pöördeosa on vastu seina: pöördes ei ole välimist kaarpiiret ega sisemist jagajapiiret;
 - mõlema sirge trepijooksu keskpoolne külg on avatud — seal ei ole käsipuud, balustreid ega otsaposte; piire jääb ainult trepi välisküljele;
 - sirgetel astmetel on beežid poolümarad astmematid;
