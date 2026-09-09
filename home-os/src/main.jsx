@@ -13,6 +13,7 @@ import { installFirstFloorWcOverlay } from './wcOverlay.js';
 import { installFirstFloorSaunaOverlay } from './saunaOverlay.js';
 import { installFirstFloorWashroomOverlay } from './washroomOverlay.js';
 import { installFirstFloorUtilityRoomOverlay } from './utilityRoomOverlay.js';
+import { installStairs3DOverride } from './stairs3DOverride.js';
 import { installFloor3DViewer } from './floor3DViewer.js';
 
 createRoot(document.getElementById('root')).render(
@@ -32,6 +33,7 @@ installFirstFloorWcOverlay();
 installFirstFloorSaunaOverlay();
 installFirstFloorWashroomOverlay();
 installFirstFloorUtilityRoomOverlay();
+installStairs3DOverride();
 
 // React may not have committed the floor panel on the first animation frame.
 // Retry briefly and install the 3D controls exactly once when the panel exists.
