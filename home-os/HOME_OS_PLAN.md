@@ -17,6 +17,7 @@ Põhimõte: fotod ja päris maja paigutus on 3D mudeli visuaalse tõe allikas. K
 - Aktiivne tööbranch: `home-os`.
 - `main` peab jääma puutumata, kuni kasutaja eraldi teisiti otsustab.
 - Aktiivne Three.js 3D vaade: `home-os/src/floor3DViewer.js`.
+- Aktiivse trepi lõplik geomeetria asendatakse failis `home-os/src/stairs3DOverride.js`; trepimuudatusi tuleb teha eelkõige seal.
 - `home-os/src/floor3DOverlay.js` on vana lahendus ja ei ole aktiivse 3D vaate alus.
 - `home-os/src/main.jsx` paigaldab 3D vieweri.
 - Three.js on projektis juba olemas; tavapärase muudatuse järel ei ole vaja `npm install` käivitada.
@@ -221,12 +222,13 @@ Kinnitatud detailid:
 - astmed on avatud konstruktsiooniga heledast soojast naturaalsest puidust;
 - piirded, tugipostid ja balustrid on valged;
 - käsipuud on heledast naturaalsest puidust;
-- trepi pöördeosa on vastu seina ning alumise trepijooksu sisemisel/keskpoolsel küljel ei ole käsipuud, balustreid ega otsaposte; sinna ei lisata kaart ega sirget piiret;
+- trepi pöördeosa on vastu seina: pöördes ei ole välimist kaarpiiret ega sisemist jagajapiiret;
+- mõlema sirge trepijooksu keskpoolne külg on avatud — seal ei ole käsipuud, balustreid ega otsaposte; piire jääb ainult trepi välisküljele;
 - sirgetel astmetel on beežid poolümarad astmematid;
 - pöördastmetel järgivad beežid matid lehvikastmete kuju;
 - trepi asukohta ja varem kinnitatud U-kujulist põhisuunda ei muudeta ilma uue konkreetse infota.
 
-Aktiivse fotopõhise trepiversiooni lähtekoht on commit `31e23bf9aec781c67709be7ea30c0cafba77dbb7`. Alumise trepijooksu ekslik sisemine käsipuu, balustrid ja otsapostid eemaldati commitis `5e37881ba36cdee83fb88d942bc09b0b29152af0`.
+Aktiivse fotopõhise trepiversiooni lähtekoht on commit `31e23bf9aec781c67709be7ea30c0cafba77dbb7`. Aktiivse `stairs3DOverride.js` välimine kaarpiire, sisemine jagajapiire ja trepijooksude keskpiirded eemaldati commitis `6970c0c9193d677bc3da68ab6c7a1913b6230d4b`.
 
 ## 12. Laed — kavandatud lahendus
 
