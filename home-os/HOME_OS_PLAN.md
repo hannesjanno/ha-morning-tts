@@ -226,6 +226,7 @@ Kinnitatud detailid:
 - Täiendav geomeetriareferents: [Sketchfab — 25_I_Riik](https://sketchfab.com/3d-models/25-i-riik-19cc207903a94554ac5a3e5b6b5aea64), Stairconi eksport autorilt Andris Sild / Andu Trepp. Referentsist kasutatakse ainult trepi ehitusloogikat; mudelifaili tohib projekti importida alles siis, kui on olemas allalaaditav GLB/GLTF ja selge kasutusõigus.
 - trepi pöördeosa on vastu seina: pöördes ei ole välimist kaarpiiret ega sisemist jagajapiiret;
 - mõlema sirge trepijooksu keskpoolne külg on avatud — seal ei ole käsipuud, balustreid ega otsaposte; piire jääb ainult trepi välisküljele;
+- ülemise jooksu seinaäärne käsipuu on sirge ja kinnitub lühikeste kronsteinidega otse seinale; see ei jätku pöördes kaarena;
 - sirgetel astmetel on beežid poolümarad astmematid;
 - pöördastmetel järgivad beežid matid lehvikastmete kuju;
 - trepi asukohta ja varem kinnitatud U-kujulist põhisuunda ei muudeta ilma uue konkreetse infota;
