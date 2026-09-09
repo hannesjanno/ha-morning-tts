@@ -221,11 +221,12 @@ Kinnitatud detailid:
 - astmed on avatud konstruktsiooniga heledast soojast naturaalsest puidust;
 - piirded, tugipostid ja balustrid on valged;
 - käsipuud on heledast naturaalsest puidust;
+- pöörde juures ei kaardu käsipuu paremale: see jätkub sirgelt ja kinnitub otse ees oleva sirge seina külge;
 - sirgetel astmetel on beežid poolümarad astmematid;
 - pöördastmetel järgivad beežid matid lehvikastmete kuju;
 - trepi asukohta ja varem kinnitatud U-kujulist põhisuunda ei muudeta ilma uue konkreetse infota.
 
-Aktiivne fotopõhine trepiversioon realiseeriti failis `floor3DViewer.js` commitidega `868d678c10555e230f96f80fc4f09629aa28b1ef` ja `c1880b15911c55e9edba9828fdef807e00a5eb3e`.
+Aktiivse fotopõhise trepiversiooni lähtekoht on commit `31e23bf9aec781c67709be7ea30c0cafba77dbb7`. Sirgelt seina külge kinnituv käsipuu parandati commitis `332d796d77ef60e7b96dac3d4579771032effb38`.
 
 ## 12. Laed — kavandatud lahendus
 
