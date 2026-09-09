@@ -394,13 +394,7 @@ function addDetailedStairs(g){
   addRod(g,turnX,upperY,1.52,244,upperY,2.36,.05,white);
   addRod(g,turnX,upperY+92,1.52,244,upperY+92,2.36,.05,white);
 
-  const lowerRailY=lowerY+92;
-  for(let i=0;i<=straightCount;i++){
-    const x=turnX+i*treadW;
-    const base=.18+(straightCount-1-Math.min(i,straightCount-1))*.13;
-    addBox(g,x,lowerRailY,4.5,4.5,.84,white,base);
-  }
-  addRod(g,245,lowerRailY,.96,turnX,lowerRailY,1.78,.034,wood);
+  // No handrail or balusters on the inner/centre side of the lower flight.
 
   const upperRailY=upperY;
   for(let i=0;i<=straightCount;i++){
@@ -412,7 +406,7 @@ function addDetailedStairs(g){
 
   // The winder section is against the wall; there is no centre handrail or centre balusters.
 
-  [[72,lowerRailY-2,.92],[72,upperRailY-2,1.48],[244,lowerRailY-2,.10],[244,upperRailY-2,2.28]].forEach(([x,y,z])=>addBox(g,x,y,8,8,1.02,white,z));
+  [[72,upperRailY-2,1.48],[244,upperRailY-2,2.28]].forEach(([x,y,z])=>addBox(g,x,y,8,8,1.02,white,z));
 }
 
 function addDetailedKitchen(g){
