@@ -4,8 +4,8 @@ const SCALE = 0.01;
 const px = (v) => v * SCALE;
 
 const OLD_STAIR_COLORS = new Set([0xa97950, 0xf5f4ef, 0xaaa197]);
-const NEW_WOOD = 0xd2bea4; // Palazzo 170: L78 C16 H80
-const NEW_WHITE = 0xf8f7f3;
+const NEW_WOOD = 0xb07d4f;
+const NEW_WHITE = 0xf6f4ef;
 const NEW_RUNNER = 0xb6ada3;
 
 const material = (color, roughness=.82, metalness=.02) =>
