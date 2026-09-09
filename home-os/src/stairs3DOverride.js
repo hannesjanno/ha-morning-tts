@@ -79,23 +79,26 @@ function addFlatShape(group,points,height,color,thickness=.052){
   return mesh;
 }
 
-function halfMoonPoints(cx,cy,w,d,flip=false){
+function roundedRunnerPoints(cx,cy,w,d,r=6){
   const pts=[];
-  for(let i=0;i<=24;i++){
-    const a=Math.PI*i/24;
-    const yy=(flip ? -1 : 1)*Math.sin(a)*d;
-    pts.push([cx+Math.cos(a)*w/2,cy+yy]);
-  }
+  const steps=6;
+  const corners=[
+    [cx+w/2-r,cy+d/2-r,0,Math.PI/2],
+    [cx-w/2+r,cy+d/2-r,Math.PI/2,Math.PI],
+    [cx-w/2+r,cy-d/2+r,Math.PI,Math.PI*1.5],
+    [cx+w/2-r,cy-d/2+r,Math.PI*1.5,Math.PI*2],
+  ];
+  corners.forEach(([x,y,a1,a2])=>{
+    for(let i=0;i<=steps;i++){
+      const a=a1+(a2-a1)*i/steps;
+      pts.push([x+Math.cos(a)*r,y+Math.sin(a)*r]);
+    }
+  });
   return pts;
 }
 
-function addHalfMoonRunner(group,cx,cy,w,d,height,flip=false){
-  addFlatShape(group,halfMoonPoints(cx,cy,w,d,flip),height,NEW_RUNNER,.016);
-}
-
-function insetPolygon(points,factor=.68){
-  const c=points.reduce((acc,[x,y])=>[acc[0]+x/points.length,acc[1]+y/points.length],[0,0]);
-  return points.map(([x,y])=>[c[0]+(x-c[0])*factor,c[1]+(y-c[1])*factor]);
+function addRoundedRunner(group,cx,cy,w,d,height){
+  addFlatShape(group,roundedRunnerPoints(cx,cy,w,d),height,NEW_RUNNER,.016);
 }
 
 function buildPhotoStairs(){
@@ -118,7 +121,7 @@ function buildPhotoStairs(){
     const x=straightStartX+i*treadW;
     const z=.13+(lowerCount-1-i)*rise;
     addBox(g,x,lowerY,treadW-2,92,.052,NEW_WOOD,z);
-    addHalfMoonRunner(g,x+(treadW-2)/2,lowerY+48,treadW-8,27,z+.054,true);
+    addRoundedRunner(g,x+(treadW-2)/2,lowerY+46,treadW-6,68,z+.054);
   }
 
   // Four fan-shaped winders make the physical 180-degree turn against the wall.
@@ -131,11 +134,16 @@ function buildPhotoStairs(){
   ];
 
   const winderStart=.13+lowerCount*rise;
+  const winderRunners = [
+    [[57,632],[25,622],[25,594],[57,564]],
+    [[57,546],[25,568],[25,537],[58,532]],
+    [[58,522],[26,526],[28,481],[75,508]],
+    [[85,496],[29,464],[29,428],[103,429],[103,489]],
+  ];
   winders.forEach((poly,i)=>{
     const z=winderStart+i*rise;
     addFlatShape(g,poly,z,NEW_WOOD,.052);
-    // The carpet follows the wood tread but leaves a clearly visible oak border.
-    addFlatShape(g,insetPolygon(poly,i<2?.66:.62),z+.054,NEW_RUNNER,.016);
+    addFlatShape(g,winderRunners[i],z+.054,NEW_RUNNER,.016);
   });
 
   // Upper flight starts immediately after the last winder and rises back over the
@@ -144,7 +152,7 @@ function buildPhotoStairs(){
     const x=upperStartX+i*treadW;
     const z=winderStart+winders.length*rise+i*rise;
     addBox(g,x,upperY,treadW-2,92,.052,NEW_WOOD,z);
-    addHalfMoonRunner(g,x+(treadW-2)/2,upperY+44,treadW-8,27,z+.054,false);
+    addRoundedRunner(g,x+(treadW-2)/2,upperY+46,treadW-6,68,z+.054);
   }
 
   // White open-stringer construction. The lower run remains visually straight
