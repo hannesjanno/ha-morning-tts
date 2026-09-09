@@ -49,6 +49,22 @@ function addBeam(group,x1,y1,h1,x2,y2,h2,width,depth,color){
   return mesh;
 }
 
+function addSideBoard(group,x1,y1,h1,x2,y2,h2,height,thickness,color){
+  const a = new THREE.Vector3(px(x1),h1,px(y1));
+  const b = new THREE.Vector3(px(x2),h2,px(y2));
+  const dir = new THREE.Vector3().subVectors(b,a);
+  const len = dir.length();
+  if(len < .001) return null;
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(len,height,thickness),material(color,.9,0));
+  mesh.position.copy(a).add(b).multiplyScalar(.5);
+  mesh.position.y += height/2;
+  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(1,0,0),dir.clone().normalize());
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  group.add(mesh);
+  return mesh;
+}
+
 function addFlatShape(group,points,height,color,thickness=.052){
   const shape = new THREE.Shape();
   points.forEach(([x,y],i)=>i ? shape.lineTo(px(x),px(y)) : shape.moveTo(px(x),px(y)));
@@ -133,10 +149,14 @@ function buildPhotoStairs(){
 
   // White open-stringer construction. The lower run remains visually straight
   // until the winder section; the upper stringers start only after the turn.
-  addBeam(g,258,lowerY,.08,straightStartX,lowerY,.96,.12,.10,NEW_WHITE);
-  addBeam(g,258,lowerY+92,.08,straightStartX,lowerY+92,.96,.12,.10,NEW_WHITE);
-  addBeam(g,upperStartX,upperY,1.54,268,upperY,2.24,.12,.10,NEW_WHITE);
-  addBeam(g,upperStartX,upperY+92,1.54,268,upperY+92,2.24,.12,.10,NEW_WHITE);
+  addSideBoard(g,258,lowerY,.02,straightStartX,lowerY,.90,.30,.09,NEW_WHITE);
+  addSideBoard(g,258,lowerY+92,.02,straightStartX,lowerY+92,.90,.30,.09,NEW_WHITE);
+  addSideBoard(g,upperStartX,upperY,1.48,268,upperY,2.18,.30,.09,NEW_WHITE);
+  addSideBoard(g,upperStartX,upperY+92,1.48,268,upperY+92,2.18,.30,.09,NEW_WHITE);
+
+  // Video reference: the last upper tread meets a small flat upstairs threshold.
+  addBox(g,268,upperY,40,92,.052,NEW_WOOD,2.38);
+  addFlatShape(g,[[272,upperY+16],[304,upperY+16],[304,upperY+76],[272,upperY+76]],2.434,NEW_RUNNER,.016);
 
   // Lower-flight guard only on the outside edge; the centre side stays open.
   [lowerY+92].forEach(railY=>{
@@ -145,7 +165,7 @@ function buildPhotoStairs(){
       const base=.13+(lowerCount-1-Math.min(i,lowerCount-1))*rise;
       addBox(g,x-2.2,railY-2.2,4.4,4.4,.82,NEW_WHITE,base+.02);
     }
-    addRod(g,258,railY,.92,straightStartX,railY,1.80,.032,NEW_WOOD);
+    addRod(g,258,railY,.92,straightStartX,railY,1.80,.035,NEW_WOOD);
   });
 
   // Upper-flight guard only on the outside edge; the centre side stays open.
@@ -155,7 +175,7 @@ function buildPhotoStairs(){
       const base=winderStart+winders.length*rise+Math.min(i,upperCount-1)*rise;
       addBox(g,x-2.2,railY-2.2,4.4,4.4,.82,NEW_WHITE,base+.02);
     }
-    addRod(g,upperStartX,railY,2.38,268,railY,3.08,.032,NEW_WOOD);
+    addRod(g,upperStartX,railY,2.38,268,railY,3.08,.035,NEW_WOOD);
   });
 
   // The turn is against the wall. Do not add an outer arc or an inner divider here.
