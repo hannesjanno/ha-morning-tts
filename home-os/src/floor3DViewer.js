@@ -313,110 +313,112 @@ function addLivingRoomTv(g){
 }
 
 function addDetailedStairs(g){
-  const wood=0xb9824e,white=0xf0eee8,runner=0xb9ad99;
-  const woodMaterial=material(wood,.78,0);
-  const runnerMaterial=material(runner,.99,0);
-  const turnX=42,turnY=528,innerR=11,outerR=108;
-  const lowerY=550,upperY=414,treadD=92,treadW=28;
+  const wood = 0xa97950;
+  const white = 0xf5f4ef;
+  const runner = 0xaaa197;
+  const upperY = 414;
+  const lowerY = 550;
+  const turnX = 72;
+  const straightCount = 7;
+  const treadW = 25;
 
-  const addHalfMoonMat=(x,y,w,d,z,rotation=0)=>{
+  const addFlatShape = (points,height,color,thickness=.055) => {
+    const shape = new THREE.Shape();
+    points.forEach(([x,y],i)=>i ? shape.lineTo(px(x),px(y)) : shape.moveTo(px(x),px(y)));
+    shape.closePath();
+    const geo = new THREE.ExtrudeGeometry(shape,{depth:thickness,bevelEnabled:false});
+    geo.rotateX(Math.PI/2);
+    const mesh = new THREE.Mesh(geo,material(color,.86,0));
+    mesh.position.y = height;
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    g.add(mesh);
+    return mesh;
+  };
+
+  const addHalfMoonRunner = (cx,cy,w,d,height,rotation=0) => {
+    const points=[];
+    for(let i=0;i<=18;i++){
+      const a=Math.PI*i/18;
+      points.push([Math.cos(a)*w/2,Math.sin(a)*d]);
+    }
+    points.push([-w/2,0]);
     const shape=new THREE.Shape();
-    shape.moveTo(-px(w/2),px(d*.42));
-    shape.lineTo(px(w/2),px(d*.42));
-    shape.quadraticCurveTo(px(w/2),-px(d*.30),0,-px(d*.58));
-    shape.quadraticCurveTo(-px(w/2),-px(d*.30),-px(w/2),px(d*.42));
+    points.forEach(([x,y],i)=>i?shape.lineTo(px(x),px(y)):shape.moveTo(px(x),px(y)));
+    shape.closePath();
     const geo=new THREE.ShapeGeometry(shape);
     geo.rotateX(Math.PI/2);
-    const mesh=new THREE.Mesh(geo,runnerMaterial);
-    mesh.position.set(px(x),z,px(y));
+    const mesh=new THREE.Mesh(geo,material(runner,.98,0));
+    mesh.position.set(px(cx),height,px(cy));
     mesh.rotation.y=rotation;
     mesh.receiveShadow=true;
     g.add(mesh);
   };
 
-  const sectorShape=(r0,r1,a0,a1)=>{
-    // A convex four-corner wedge triangulates reliably in ShapeGeometry/ExtrudeGeometry.
-    const shape=new THREE.Shape();
-    shape.moveTo(px(r1*Math.cos(a0)),px(r1*Math.sin(a0)));
-    shape.lineTo(px(r1*Math.cos(a1)),px(r1*Math.sin(a1)));
-    shape.lineTo(px(r0*Math.cos(a1)),px(r0*Math.sin(a1)));
-    shape.lineTo(px(r0*Math.cos(a0)),px(r0*Math.sin(a0)));
-    shape.closePath();
-    return shape;
-  };
-
-  const addTurnStep=(a0,a1,z)=>{
-    const geo=new THREE.ExtrudeGeometry(sectorShape(innerR,outerR,a0,a1),{depth:.06,bevelEnabled:false,curveSegments:18});
-    geo.rotateX(Math.PI/2);
-    const step=new THREE.Mesh(geo,woodMaterial);
-    step.position.set(px(turnX),z+.06,px(turnY));
-    step.castShadow=true; step.receiveShadow=true; g.add(step);
-
-    const matGeo=new THREE.ShapeGeometry(sectorShape(innerR+8,outerR-17,a0+.025,a1-.025));
-    matGeo.rotateX(Math.PI/2);
-    const matMesh=new THREE.Mesh(matGeo,runnerMaterial);
-    matMesh.position.set(px(turnX),z+.064,px(turnY));
-    matMesh.receiveShadow=true; g.add(matMesh);
-  };
-
-  const lowerSteps=[];
-  for(let i=0;i<6;i++){
-    const x=92+i*treadW,z=1.04-i*.148;
-    lowerSteps.push({x,z});
-    addBox(g,x,lowerY,treadW-2,treadD,.06,wood,z,woodMaterial);
-    addHalfMoonMat(x+(treadW-2)/2,lowerY+treadD/2,58,20,z+.064,Math.PI/2);
+  // The photographed staircase has two parallel flights with a compact 180-degree
+  // winder turn. The old model used a large rectangular landing, which made both
+  // the plan geometry and the top view visibly wrong.
+  for(let i=0;i<straightCount;i++){
+    const x=turnX+i*treadW;
+    const h=.18+(straightCount-1-i)*.13;
+    addBox(g,x,lowerY,treadW-2,92,.055,wood,h);
+    addHalfMoonRunner(x+(treadW-2)/2,lowerY+47,treadW-9,26,h+.057,Math.PI);
   }
 
-  for(let i=0;i<5;i++){
-    const a0=Math.PI/2-(i+1)*Math.PI/5;
-    const a1=Math.PI/2-i*Math.PI/5;
-    addTurnStep(a0,a1,1.15+i*.14);
-  }
-
-  const upperSteps=[];
-  for(let i=0;i<6;i++){
-    const x=92+i*treadW,z=1.87+i*.12;
-    upperSteps.push({x,z});
-    addBox(g,x,upperY,treadW-2,treadD,.06,wood,z,woodMaterial);
-    addHalfMoonMat(x+(treadW-2)/2,upperY+treadD/2,58,20,z+.064,-Math.PI/2);
-  }
-
-  const addFlightRailing=(steps,y)=>{
-    steps.forEach(({x,z},i)=>{
-      if(i===steps.length-1||i%1===0){
-        addBox(g,x+4,y-2,5,5,.84,white,z+.02);
-      }
-    });
-    for(let i=0;i<steps.length-1;i++){
-      const a=steps[i],b=steps[i+1];
-      addRod(g,a.x+6,y,a.z+.86,b.x+6,y,b.z+.86,.032,wood);
-    }
-  };
-
-  addFlightRailing(lowerSteps,lowerY);
-  addFlightRailing(lowerSteps,lowerY+treadD);
-  addFlightRailing(upperSteps,upperY);
-  addFlightRailing(upperSteps,upperY+treadD);
-
-  const curvePosts=[];
-  for(let i=0;i<=6;i++){
-    const a=Math.PI/2-i*Math.PI/6;
-    const x=turnX+outerR*Math.cos(a),y=turnY+outerR*Math.sin(a);
-    const base=1.13+i*(.72/6);
-    curvePosts.push({x,y,h:base+.88});
-    addBox(g,x-2.5,y-2.5,5,5,.86,white,base);
-  }
-  for(let i=0;i<curvePosts.length-1;i++){
-    const a=curvePosts[i],b=curvePosts[i+1];
-    addRod(g,a.x,a.y,a.h,b.x,b.y,b.h,.032,wood);
-  }
-
-  [[247,lowerY],[247,lowerY+treadD],[247,upperY],[247,upperY+treadD]].forEach(([x,y],idx)=>{
-    const upper=idx>1;
-    const z=upper?2.43:.28;
-    addBox(g,x-4,y-4,8,8,.98,white,z);
+  // Five fan-shaped winders make the real U-turn at the left end.
+  const pivot=[30,528];
+  const bounds=[
+    [[72,642],[18,642],[18,594],[72,550]],
+    [[72,550],[18,594],[8,550],[18,528],[72,528]],
+    [[72,528],[18,528],[8,506],[18,462],[72,506]],
+    [[72,506],[18,462],[18,414],[72,414]],
+  ];
+  const turnHeights=[1.02,1.16,1.30,1.44];
+  bounds.forEach((poly,i)=>{
+    addFlatShape(poly,turnHeights[i],wood,.055);
+    const c=poly.reduce((acc,p)=>[acc[0]+p[0]/poly.length,acc[1]+p[1]/poly.length],[0,0]);
+    const inset=poly.map(([x,y])=>[c[0]+(x-c[0])*.66,c[1]+(y-c[1])*.66]);
+    addFlatShape(inset,turnHeights[i]+.058,runner,.018);
   });
+
+  for(let i=0;i<straightCount;i++){
+    const x=turnX+i*treadW;
+    const h=1.58+i*.135;
+    addBox(g,x,upperY,treadW-2,92,.055,wood,h);
+    addHalfMoonRunner(x+(treadW-2)/2,upperY+45,treadW-9,26,h+.057,0);
+  }
+
+  // White stringers and square balusters, with warm oak handrails as in the photo.
+  addRod(g,244,lowerY,.12,turnX,lowerY,.95,.05,white);
+  addRod(g,244,lowerY+92,.12,turnX,lowerY+92,.95,.05,white);
+  addRod(g,turnX,upperY,1.52,244,upperY,2.36,.05,white);
+  addRod(g,turnX,upperY+92,1.52,244,upperY+92,2.36,.05,white);
+
+  const lowerRailY=lowerY+92;
+  for(let i=0;i<=straightCount;i++){
+    const x=turnX+i*treadW;
+    const base=.18+(straightCount-1-Math.min(i,straightCount-1))*.13;
+    addBox(g,x,lowerRailY,4.5,4.5,.84,white,base);
+  }
+  addRod(g,245,lowerRailY,.96,turnX,lowerRailY,1.78,.034,wood);
+
+  const upperRailY=upperY;
+  for(let i=0;i<=straightCount;i++){
+    const x=turnX+i*treadW;
+    const base=1.58+Math.min(i,straightCount-1)*.135;
+    addBox(g,x,upperRailY,4.5,4.5,.84,white,base);
+  }
+  addRod(g,turnX,upperRailY,2.40,245,upperRailY,3.22,.034,wood);
+
+  // Continue the railing around the winder end instead of leaving the turn open.
+  [[72,642,1.80],[36,642,1.94],[12,612,2.08],[10,570,2.22]].forEach(([x,y,z])=>addBox(g,x,y,5,5,.82,white,z-.82));
+  addRod(g,72,642,1.80,36,642,1.94,.034,wood);
+  addRod(g,36,642,1.94,12,612,2.08,.034,wood);
+  addRod(g,12,612,2.08,10,570,2.22,.034,wood);
+
+  [[72,lowerRailY-2,.92],[72,upperRailY-2,1.48],[244,lowerRailY-2,.10],[244,upperRailY-2,2.28]].forEach(([x,y,z])=>addBox(g,x,y,8,8,1.02,white,z));
 }
+
 function addDetailedKitchen(g){
   const mint=0x7fa991,mintDark=0x658b78,white=0xf2f0ea,wood=0x9a704c,darkWood=0x6f432b,black=0x17191b;
   const mintPanelMaterial = new THREE.MeshStandardMaterial({color:mintDark,roughness:.82,metalness:.03,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
