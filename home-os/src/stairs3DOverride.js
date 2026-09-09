@@ -151,8 +151,9 @@ function buildPhotoStairs(){
   addSideBoard(g,258,lowerY+92,.02,straightStartX,lowerY+92,.90,.30,.09,NEW_WHITE);
 
   // The red-marked area from the review image is not an open stair run in the
-  // real house. The video shows one straight stairwell wall here, not an L.
+  // real house. The video shows this as the stairwell wall beside the turn.
   addBox(g,upperStartX,upperY-6,176,12,2.42,NEW_WHITE,0);
+  addBox(g,upperStartX-8,upperY,12,96,2.42,NEW_WHITE,0);
 
   // Video reference: the lower flight has guards on both sides, with the inner
   // side forming the straight divider between the two parallel runs.
