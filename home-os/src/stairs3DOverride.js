@@ -140,8 +140,8 @@ function buildPhotoStairs(){
   addBeam(g,110,upperY,1.89,266,upperY,2.65,.12,.10,NEW_WHITE);
   addBeam(g,110,upperY+92,1.89,266,upperY+92,2.65,.12,.10,NEW_WHITE);
 
-  // Lower-flight guards and oak handrails.
-  [lowerY,lowerY+92].forEach(railY=>{
+  // Lower-flight guard only on the outside edge; the centre side stays open.
+  [lowerY+92].forEach(railY=>{
     for(let i=0;i<=lowerCount;i++){
       const x=straightStartX+i*treadW;
       const base=.13+(lowerCount-1-Math.min(i,lowerCount-1))*rise;
@@ -150,8 +150,8 @@ function buildPhotoStairs(){
     addRod(g,258,railY,.92,straightStartX,railY,1.80,.032,NEW_WOOD);
   });
 
-  // Upper-flight guards.
-  [upperY,upperY+92].forEach(railY=>{
+  // Upper-flight guard only on the outside edge; the centre side stays open.
+  [upperY].forEach(railY=>{
     for(let i=0;i<=upperCount;i++){
       const x=110+i*treadW;
       const base=winderStart+winders.length*rise+Math.min(i,upperCount-1)*rise;
@@ -160,29 +160,8 @@ function buildPhotoStairs(){
     addRod(g,110,railY,2.73,268,railY,3.48,.032,NEW_WOOD);
   });
 
-  // Continuous outer balustrade through the turn. The points follow the actual
-  // rightward progression seen in the newest front photo rather than a symmetric arc.
-  const outerRail=[
-    [62,642,1.80],[42,626,1.92],[28,604,2.04],[20,578,2.16],
-    [18,548,2.28],[22,516,2.40],[34,482,2.52],[52,452,2.64],[82,430,2.76],
-  ];
-  outerRail.forEach(([x,y,top],i)=>{
-    const base=top-.82;
-    addBox(g,x-2.4,y-2.4,4.8,4.8,.82,NEW_WHITE,base);
-    if(i) addRod(g,...outerRail[i-1],x,y,top,.032,NEW_WOOD);
-  });
-
-  // Inner divider between the two runs. This is the strong vertical railing seen
-  // in the centre of the latest photo and it continues cleanly into the upper run.
-  const innerRail=[
-    [62,550,1.78],[58,530,1.90],[60,506,2.02],[68,484,2.14],
-    [80,462,2.26],[94,444,2.38],[110,432,2.50],
-  ];
-  innerRail.forEach(([x,y,top],i)=>{
-    const base=top-.80;
-    addBox(g,x-2.2,y-2.2,4.4,4.4,.80,NEW_WHITE,base);
-    if(i) addRod(g,...innerRail[i-1],x,y,top,.03,NEW_WOOD);
-  });
+  // The turn is against the wall. Do not add an outer arc or an inner divider here.
+  // The centre of the U-shaped stair remains completely free of handrails and balusters.
 
   // Prominent square posts from the photos.
   addBox(g,252,lowerY+88,8,8,1.02,NEW_WHITE,.02);
