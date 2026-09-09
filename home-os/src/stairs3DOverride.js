@@ -158,8 +158,9 @@ function buildPhotoStairs(){
   addBox(g,268,upperY,40,92,.052,NEW_WOOD,2.38);
   addFlatShape(g,[[272,upperY+16],[304,upperY+16],[304,upperY+76],[272,upperY+76]],2.434,NEW_RUNNER,.016);
 
-  // Lower-flight guard only on the outside edge; the centre side stays open.
-  [lowerY+92].forEach(railY=>{
+  // Video reference: the lower flight has guards on both sides, with the inner
+  // side forming the straight divider between the two parallel runs.
+  [lowerY, lowerY+92].forEach(railY=>{
     for(let i=0;i<=lowerCount;i++){
       const x=straightStartX+i*treadW;
       const base=.13+(lowerCount-1-Math.min(i,lowerCount-1))*rise;
@@ -168,8 +169,10 @@ function buildPhotoStairs(){
     addRod(g,258,railY,.92,straightStartX,railY,1.80,.035,NEW_WOOD);
   });
 
-  // Upper-flight guard only on the outside edge; the centre side stays open.
-  [upperY].forEach(railY=>{
+  // The upper flight also carries a straight centre divider plus the wall-side
+  // balustrade seen in the video. The turn itself remains a compact winder, not
+  // a broad circular rail.
+  [upperY, upperY+92].forEach(railY=>{
     for(let i=0;i<=upperCount;i++){
       const x=upperStartX+i*treadW;
       const base=winderStart+winders.length*rise+Math.min(i,upperCount-1)*rise;
@@ -178,8 +181,10 @@ function buildPhotoStairs(){
     addRod(g,upperStartX,railY,2.38,268,railY,3.08,.035,NEW_WOOD);
   });
 
-  // The turn is against the wall. Do not add an outer arc or an inner divider here.
-  // The centre of the U-shaped stair remains completely free of handrails and balusters.
+  // Square newel posts anchor the straight rails around the winder, as in the
+  // video. Keep them straight and block-like; no curved centre rail is added.
+  addBox(g,58,lowerY-4,8,8,1.08,NEW_WHITE,.86);
+  addBox(g,108,upperY+88,8,8,1.18,NEW_WHITE,1.34);
 
   // Prominent square posts from the photos.
   addBox(g,252,lowerY+88,8,8,1.02,NEW_WHITE,.02);
