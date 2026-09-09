@@ -114,6 +114,7 @@ function buildPhotoStairs(){
   const treadW = 24;
   const rise = .118;
   const lowerCount = 8;
+  const upperCount = 7;
 
   // Long lower open flight.
   for(let i=0;i<lowerCount;i++){
@@ -145,15 +146,25 @@ function buildPhotoStairs(){
     addFlatShape(g,winderRunners[i],z+.054,NEW_RUNNER,.016);
   });
 
+  // Upper flight starts immediately after the last winder and rises back over the
+  // lower flight, matching the side/front photos.
+  for(let i=0;i<upperCount;i++){
+    const x=upperStartX+i*treadW;
+    const z=winderStart+winders.length*rise+i*rise;
+    addBox(g,x,upperY,treadW-2,92,.052,NEW_WOOD,z);
+    addRoundedRunner(g,x+(treadW-2)/2,upperY+46,treadW-6,68,z+.054);
+  }
+
   // White open-stringer construction. The lower run remains visually straight
-  // until the winder section.
+  // until the winder section; the upper stringers start only after the turn.
   addSideBoard(g,258,lowerY,.02,straightStartX,lowerY,.90,.30,.09,NEW_WHITE);
   addSideBoard(g,258,lowerY+92,.02,straightStartX,lowerY+92,.90,.30,.09,NEW_WHITE);
+  addSideBoard(g,upperStartX,upperY,1.48,268,upperY,2.18,.30,.09,NEW_WHITE);
+  addSideBoard(g,upperStartX,upperY+92,1.48,268,upperY+92,2.18,.30,.09,NEW_WHITE);
 
-  // The red-marked area from the review image is not an open stair run in the
-  // real house. The video shows this as the stairwell wall beside the turn.
-  addBox(g,upperStartX,upperY-6,176,12,2.42,NEW_WHITE,0);
-  addBox(g,upperStartX-8,upperY,12,96,2.42,NEW_WHITE,0);
+  // Video reference: the last upper tread meets a small flat upstairs threshold.
+  addBox(g,268,upperY,40,92,.052,NEW_WOOD,2.38);
+  addFlatShape(g,[[272,upperY+16],[304,upperY+16],[304,upperY+76],[272,upperY+76]],2.434,NEW_RUNNER,.016);
 
   // Video reference: the lower flight has guards on both sides, with the inner
   // side forming the straight divider between the two parallel runs.
@@ -166,14 +177,28 @@ function buildPhotoStairs(){
     addRod(g,258,railY,.92,straightStartX,railY,1.80,.035,NEW_WOOD);
   });
 
-  // Square newel posts anchor the straight lower rails around the winder, as in
-  // the video. Keep them straight and block-like; no curved centre rail is added.
+  // The upper flight also carries a straight centre divider plus the wall-side
+  // balustrade seen in the video. The turn itself remains a compact winder, not
+  // a broad circular rail.
+  [upperY, upperY+92].forEach(railY=>{
+    for(let i=0;i<=upperCount;i++){
+      const x=upperStartX+i*treadW;
+      const base=winderStart+winders.length*rise+Math.min(i,upperCount-1)*rise;
+      addBox(g,x-2.2,railY-2.2,4.4,4.4,.82,NEW_WHITE,base+.02);
+    }
+    addRod(g,upperStartX,railY,2.38,268,railY,3.08,.035,NEW_WOOD);
+  });
+
+  // Square newel posts anchor the straight rails around the winder, as in the
+  // video. Keep them straight and block-like; no curved centre rail is added.
   addBox(g,58,lowerY-4,8,8,1.08,NEW_WHITE,.86);
-  addBox(g,108,lowerY-4,8,8,1.18,NEW_WHITE,1.34);
+  addBox(g,108,upperY+88,8,8,1.18,NEW_WHITE,1.34);
 
   // Prominent square posts from the photos.
   addBox(g,252,lowerY+88,8,8,1.02,NEW_WHITE,.02);
   addBox(g,straightStartX-4,lowerY+88,8,8,1.02,NEW_WHITE,.90);
+  addBox(g,108,upperY-4,8,8,1.04,NEW_WHITE,1.50);
+  addBox(g,262,upperY-4,8,8,1.06,NEW_WHITE,2.56);
 
   return g;
 }
